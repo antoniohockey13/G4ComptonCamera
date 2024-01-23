@@ -6,8 +6,8 @@ find_package(Geant4 REQUIRED ui_all vis_all)
 
 include(${Geant4_USE_FILE})
 
-file(GLOB sources ${PROJECT_SOURCE_DIR}/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/*.hh)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/Source/*.cc)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/Headers/*.hh)
 
 file(GLOB MACRO_FILES
 	"*.mac"
