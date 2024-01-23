@@ -8,7 +8,7 @@
 
 #include "construction.hh" //Detectores
 #include "physics.hh" //Interacciones
-#include "action.hh" //Partículas
+// #include "action.hh" //Partículas
 
 
 int main(int argc, char** argv)
