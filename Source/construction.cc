@@ -45,7 +45,8 @@ void MyDetectorConstruction::ConstructWorld(G4double width, G4double height, G4d
 {
     solidWorld = new G4Box("World", width/2, height/2, depth/2); // Create world solid, length arguments half of the actual length
     logicWorld = new G4LogicalVolume(solidWorld, worldMaterial, "World"); // Create world logical volume
-    physWorld = new G4PVPlacement(0, G4ThreeVector(-width/2, 0, 0), logicWorld, "World", 0, false, 0); // Create world physical volume
+    physWorld = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicWorld, "World", 0, false, 0); // Create world physical volume
+    // CANT change orgin NEED TO RE DO GEOMETRY 
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
 
@@ -53,14 +54,14 @@ void MyDetectorConstruction::ConstructDetector1(G4double distance, G4double thic
 {
     solidDetector1 = new G4Box("Detector1", size/2, size/2, thickness/2); // Create detector solid, length arguments half of the actual length
     logicDetector1 = new G4LogicalVolume(solidDetector1, detectorMaterial, "Detector1"); // Create detector logical volume
-    physDetector1 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), logicDetector1, "Detector1", logicWorld, false, 0); // Create detector physical volume
+    physDetector1 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0 , 0), logicDetector1, "Detector1", logicWorld, false, 0); // Create detector physical volume
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
 
 void MyDetectorConstruction::ConstructDetector2(G4double distance, G4double thickness, G4double size, G4double w_width)
 {
-    solidDetector1 = new G4Box("Detector2", size/2, size/2, thickness/2); // Create detector solid, length arguments half of the actual length
-    logicDetector1 = new G4LogicalVolume(solidDetector2, detectorMaterial, "Detector2"); // Create detector logical volume
-    physDetector1 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), logicDetector2, "Detector2", logicWorld, false, 0); // Create detector physical volume
+    solidDetector2 = new G4Box("Detector2", size/2, size/2, thickness/2); // Create detector solid, length arguments half of the actual length
+    logicDetector2 = new G4LogicalVolume(solidDetector2, detectorMaterial, "Detector2"); // Create detector logical volume
+    physDetector2 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), logicDetector2, "Detector2", logicWorld, false, 0); // Create detector physical volume
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
