@@ -6,11 +6,9 @@ MyPrimaryGenerator::MyPrimaryGenerator()
     G4ThreeVector mom = G4ThreeVector(1.0, 0.0, 0.0);
     fParticleGun = new G4ParticleGun(1); // Number of particles per event
     fParticleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("photon"));
-    fParticleGun->SetParticleEnergy(70 * KeV);
+    fParticleGun->SetParticleEnergy(70 * keV);
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
-
-    fParticleGun->GeneratePrimaryVertex(anEvent);
     
 }
 

@@ -13,15 +13,15 @@
 int main(int argc, char** argv)
 {
 	G4RunManager *runManager = new G4RunManager();
-	
-	runManager->SetUserInitialization(new MyDetectorConstruction());
+		
+	runManager->SetUserInitialization(new MyDetectorConstruction()); // Instantiate MyDetectorConstruction
 	runManager->SetUserInitialization(new MyPhysicsList());
 	//runManager->SetUserInitialization(new MyActionInitialization());
-	
+		
 	runManager->Initialize();	
 	//Solo crear modelo gráfico si no se le pasa ningun comando
 	G4UIExecutive *ui = 0;
-	
+		
 	if(argc == 1)
 	{
 		ui = new G4UIExecutive(argc, argv);

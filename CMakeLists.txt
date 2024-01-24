@@ -5,9 +5,9 @@ project(Simulation) # Name simulation
 find_package(Geant4 REQUIRED ui_all vis_all)
 
 include(${Geant4_USE_FILE})
-
-file(GLOB sources ${PROJECT_SOURCE_DIR}/*.cc)
-file(GLOB headers ${PROJECT_HEADERS_DIR}/*.hh) # HEADRS por SOURCE
+include_directories(${PROJECT_SOURCE_DIR}/Headers)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/Source/*.cc)
+file(GLOB headers ${PROJECT_HEADERS_DIR}/Headers/*.hh) # HEADRS por SOURCE
 
 file(GLOB MACRO_FILES
 	"*.mac"
@@ -18,4 +18,3 @@ add_executable(sim Source/sim.cc ${sources} ${headers})
 target_link_libraries(sim ${Geant4_LIBRARIES})
 
 add_custom_target(Simulation DEPENDS sim)
-

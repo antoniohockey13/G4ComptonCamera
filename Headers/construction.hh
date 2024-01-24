@@ -8,7 +8,7 @@
 #include "G4PVPlacement.hh" // for placement of volumes
 #include "G4NistManager.hh" // for NIST materials
 #include "G4SystemOfUnits.hh" // for units
-// #include "G4GenericMessenger.hh" // for UI commands
+#include "G4GenericMessenger.hh" // for UI commands
 
 // #include "detector.hh" // for detector class
 
@@ -27,9 +27,9 @@ private:
     G4Material *worldMaterial, *detectorMaterial;
     
     void DefineMaterials();
-    void ConstructWorld();
-    void ConstructDetector1();
-    void ConstructDetector2();
+    void ConstructWorld(G4double const world_width, G4double const world_height, G4double const world_depth);
+    void ConstructDetector1(G4double const detector1_distance, G4double const detector_thickness, G4double const detector_size, G4double const world_width);
+    void ConstructDetector2(G4double const detector2_distance, G4double const detector_thickness, G4double const detector_size, G4double const world_width);
 
 //    virtual void ConstructSDandField();
 
