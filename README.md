@@ -4,7 +4,7 @@
 
 ## Code structure
 
-Two main folders ``Headers´´ and ``Source´´:
+Two main folders ``Headers`` and ``Source``:
 In headers all *.hh files.
 In Source all *.cc files.
 

@@ -1,4 +1,0 @@
-/home/g4user/G4114Source/CMakeFiles/sim.dir
-/home/g4user/G4114Source/CMakeFiles/Simulation.dir
-/home/g4user/G4114Source/CMakeFiles/edit_cache.dir
-/home/g4user/G4114Source/CMakeFiles/rebuild_cache.dir
