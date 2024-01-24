@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/sim.dir/sim.cc.o"
-  "CMakeFiles/sim.dir/sim.cc.o.d"
+  "CMakeFiles/sim.dir/Source/sim.cc.o"
+  "CMakeFiles/sim.dir/Source/sim.cc.o.d"
   "sim"
   "sim.pdb"
 )

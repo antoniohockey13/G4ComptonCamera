@@ -1,1 +1,5 @@
 docker-compose.yml
+CMakeFiles/*
+CMakeCache.txt
+cmake_install.cmake/*
+.vscode

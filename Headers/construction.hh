@@ -31,7 +31,7 @@ private:
     void ConstructDetector1();
     void ConstructDetector2();
 
-    virtual void ConstructSDandField();
+//    virtual void ConstructSDandField();
 
     G4double detector1_distance = -1; // Distance between source and detector 1
     G4double detector2_distance = -1; // Distance between source and detector 2

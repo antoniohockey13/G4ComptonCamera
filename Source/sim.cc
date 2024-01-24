@@ -2,12 +2,11 @@
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
-#include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 
-#include "construction.hh" //Detectores
-#include "physics.hh" //Interacciones
+#include "../Headers/construction.hh" //Detectores
+#include "../Headers/physics.hh" //Interacciones
 // #include "action.hh" //Partículas
 
 
@@ -17,7 +16,7 @@ int main(int argc, char** argv)
 	
 	runManager->SetUserInitialization(new MyDetectorConstruction());
 	runManager->SetUserInitialization(new MyPhysicsList());
-	runManager->SetUserInitialization(new MyActionInitialization());
+	//runManager->SetUserInitialization(new MyActionInitialization());
 	
 	runManager->Initialize();	
 	//Solo crear modelo gráfico si no se le pasa ningun comando
@@ -43,9 +42,10 @@ int main(int argc, char** argv)
 		UImanager -> ApplyCommand("/vis/scene/add/trajectories smooth"); //Dibuja las partículas
 		UImanager -> ApplyCommand("/vis/scene/endOfEventAction accumulate"); //Muestra todos sucesos a la vez
 		
-        //Solo si está vis.mac
+        /*//Solo si está vis.mac
 		UImanager->ApplyCommand("/control/execute vis.mac");
 		ui->SessionStart();
+		*/
 	}
 	else
 	{

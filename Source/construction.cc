@@ -1,6 +1,5 @@
 #include "construction.hh"
 
-
 MyDetectorConstruction::MyDetectorConstruction()
 {
     // Define world size including walls 
