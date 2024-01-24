@@ -5,12 +5,14 @@
 #include "G4ParticleGun.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ParticleTable.hh"
+// To import world_width from detector construction to redefine source position
+#include "construction.hh"
 
-class MyPrimaryGenerator : public G4VUserPrimaryGeneratorAction
+class ComptCameraPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
 public:
-	MyPrimaryGenerator();
-	~MyPrimaryGenerator();
+	ComptCameraPrimaryGenerator();
+	~ComptCameraPrimaryGenerator();
 
 	virtual void GeneratePrimaries(G4Event *);
 

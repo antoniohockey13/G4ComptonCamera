@@ -1,9 +1,9 @@
 #include "physics.hh"
 
-MyPhysicsList::MyPhysicsList()
+ComptCameraPhysicsList::ComptCameraPhysicsList()
 {
 	RegisterPhysics(new G4EmStandardPhysics_option4());
 }
-MyPhysicsList::~MyPhysicsList()
+ComptCameraPhysicsList::~ComptCameraPhysicsList()
 {
 }

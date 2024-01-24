@@ -16,7 +16,10 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
   ComptCameraDetectorConstruction();
+    // World dimension in x axis, width. Public because it is needed to define the source position in generator.cc
+	  G4double world_width = -1;
   ~ComptCameraDetectorConstruction();
+
 
   virtual G4VPhysicalVolume* Construct();
 
@@ -40,8 +43,7 @@ private:
     // Angle between source and detectors not used yet
 	  // G4double _angle = 0; 
 
-    // World dimension in x axis, width
-	  G4double _world_width = -1;
+
     // World dimension in y axis, height 
 	  G4double _world_height = -1;
     // World dimension in z axis, depth	
