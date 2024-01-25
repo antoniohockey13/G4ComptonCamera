@@ -18,6 +18,7 @@ public:
 
 private:
 	G4ParticleGun *fParticleGun;
+	G4double _world_width;
 };
 
 #endif

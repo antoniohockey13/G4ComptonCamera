@@ -4,7 +4,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
     // Define world size including walls 
     // TO DO : Define operating space and walls
-    world_width = 682*mm;
+    _world_width = 682*mm;
     _world_height = 562*mm;
     _world_depth = 354*mm;
 
@@ -34,9 +34,9 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
 {
-    _ConstructWorld(world_width, _world_height, _world_depth);
-    _ConstructDetector1(_detector1_distance, _detector_thickness, _detector_size, world_width);
-    _ConstructDetector2(_detector2_distance, _detector_thickness, _detector_size, world_width);
+    _ConstructWorld(_world_width, _world_height, _world_depth);
+    _ConstructDetector(1, _detector1_distance, _detector_thickness, _detector_size, _world_width);
+    _ConstructDetector(2, _detector2_distance, _detector_thickness, _detector_size, _world_width);
 
     return _phys_world;
 }
@@ -59,27 +59,21 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     _logic_detector2->SetSensitiveDetector(f_scoring_volume2);
 }
 */
-void ComptCameraDetectorConstruction::_ConstructDetector1(G4double distance, G4double thickness, G4double size, G4double w_width)
-{
-    // Create detector solid, length arguments half of the actual length
-    _solid_detector1 = new G4Box("Detector1", size/2, size/2, thickness/2);
-    // Create detector logical volume 
-    _logic_detector1 = new G4LogicalVolume(_solid_detector1, _detector_material, "Detector1");
-    f_scoring_volume1 = _logic_detector1;
-    // Create detector physical volume
-    _phys_detector1 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0 , 0), _logic_detector1, "Detector1", _logic_world, false, 0);
-    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
-}
 
-void ComptCameraDetectorConstruction::_ConstructDetector2(G4double distance, G4double thickness, G4double size, G4double w_width)
+void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance, G4double thickness, G4double size, G4double w_width)
 {
     // Create detector solid, length arguments half of the actual length
-    _solid_detector2 = new G4Box("Detector2", size/2, size/2, thickness/2); 
+    _solid_detector = new G4Box("Detector" + std::to_string(detector_number), size/2, size/2, thickness/2); 
     // Create detector logical volume
-    _logic_detector2 = new G4LogicalVolume(_solid_detector2, _detector_material, "Detector2");
-    f_scoring_volume2 = _logic_detector2;
+    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, "Detector" + std::to_string(detector_number));
     // Create detector physical volume
-    _phys_detector2 = new G4PVPlacement (0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector2, "Detector2", _logic_world, false, 0);
+    _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector, "Detector" + std::to_string(detector_number), _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
-}
 
+    // Store detector and its variables in a map
+    DetectorInfo detector_info;
+    detector_info.solid = _solid_detector;
+    detector_info.logic = _logic_detector;
+    detector_info.physical = _phys_detector;
+    _detector_map[detector_number] = detector_info;
+}
