@@ -10,7 +10,7 @@
 #include "G4SystemOfUnits.hh" // for units
 #include "G4GenericMessenger.hh" // for UI commands
 
-// #include "detector.hh" // for detector class
+#include "lgadSD.hh" // for detector class
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -56,9 +56,9 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     // World dimension in x axis, width
     G4double _world_width = -1;
     // World dimension in y axis, height 
-	  G4double _world_height = -1;
+    G4double _world_height = -1;
     // World dimension in z axis, depth	
-	  G4double _world_depth = -1; 
+    G4double _world_depth = -1; 
     
     // Detector size in x and y axis
     G4double _detector_size = -1; 

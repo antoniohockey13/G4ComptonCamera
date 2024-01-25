@@ -22,7 +22,7 @@ file(GLOB MACRO_FILES
 file(COPY ${MACRO_FILES} DESTINATION ${PROJECT_BINARY_DIR})
 
 # Add the executable, and link it to the Geant4 libraries
-add_executable(ComptCamera src/sim.cc ${sources} ${headers})
+add_executable(ComptCamera sim.cc ${sources} ${headers})
 target_link_libraries(ComptCamera ${Geant4_LIBRARIES})
 
 add_custom_target(Simulation DEPENDS ComptCamera)

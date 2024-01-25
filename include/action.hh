@@ -4,8 +4,8 @@
 
 #include "generator.hh"
 #include "run.hh"
-//#include "event.hh"
-//#include "stepping.hh"
+#include "event.hh"
+#include "stepping.hh"
 
 class ComptCameraActionInitialization : public G4VUserActionInitialization
 {
