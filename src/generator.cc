@@ -21,7 +21,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     fParticleGun->SetParticleMomentumDirection(mom);
     
     // Particle type
-    fParticleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("photon"));
+    fParticleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
     // Particle energy
     fParticleGun->SetParticleEnergy(70 * keV);
 }

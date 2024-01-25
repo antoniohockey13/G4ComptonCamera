@@ -10,7 +10,7 @@
 //Interacciones
 #include "physics.hh" 
 //Partículas
-// #include "action.hh" 
+#include "action.hh" 
 
 
 int main(int argc, char** argv)
@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 		
 	runManager->SetUserInitialization(new ComptCameraDetectorConstruction()); // Instantiate MyDetectorConstruction
 	runManager->SetUserInitialization(new ComptCameraPhysicsList());
-	//runManager->SetUserInitialization(new ComptCameraActionInitialization());
+	runManager->SetUserInitialization(new ComptCameraActionInitialization());
 		
 	runManager->Initialize();	
 
