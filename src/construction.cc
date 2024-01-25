@@ -51,13 +51,21 @@ void ComptCameraDetectorConstruction::_ConstructWorld(G4double width, G4double h
     _phys_world = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0);  
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
-
+/*
+// Set sensitive detector to logical volume
+void ComptCameraDetectorConstruction::ConstructSDandField()
+{
+    _logic_detector1->SetSensitiveDetector(f_scoring_volume1);
+    _logic_detector2->SetSensitiveDetector(f_scoring_volume2);
+}
+*/
 void ComptCameraDetectorConstruction::_ConstructDetector1(G4double distance, G4double thickness, G4double size, G4double w_width)
 {
     // Create detector solid, length arguments half of the actual length
     _solid_detector1 = new G4Box("Detector1", size/2, size/2, thickness/2);
     // Create detector logical volume 
     _logic_detector1 = new G4LogicalVolume(_solid_detector1, _detector_material, "Detector1");
+    f_scoring_volume1 = _logic_detector1;
     // Create detector physical volume
     _phys_detector1 = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0 , 0), _logic_detector1, "Detector1", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
@@ -68,8 +76,10 @@ void ComptCameraDetectorConstruction::_ConstructDetector2(G4double distance, G4d
     // Create detector solid, length arguments half of the actual length
     _solid_detector2 = new G4Box("Detector2", size/2, size/2, thickness/2); 
     // Create detector logical volume
-    _logic_detector2 = new G4LogicalVolume(_solid_detector2, _detector_material, "Detector2"); 
+    _logic_detector2 = new G4LogicalVolume(_solid_detector2, _detector_material, "Detector2");
+    f_scoring_volume2 = _logic_detector2;
     // Create detector physical volume
     _phys_detector2 = new G4PVPlacement (0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector2, "Detector2", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
+

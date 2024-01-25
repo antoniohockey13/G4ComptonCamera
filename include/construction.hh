@@ -18,13 +18,15 @@ public:
   ComptCameraDetectorConstruction();
     // World dimension in x axis, width. Public because it is needed to define the source position in generator.cc
 	  G4double world_width = -1;
+    // Set sensitive material 
+    G4LogicalVolume *GetScoringVolume() {return f_scoring_volume1, f_scoring_volume2;}
   ~ComptCameraDetectorConstruction();
 
 
   virtual G4VPhysicalVolume* Construct();
 
 private:
-    G4LogicalVolume *_logic_world, *_logic_detector1, *_logic_sensitive1, *_logic_detector2, *_logic_sensitive2;
+    G4LogicalVolume *_logic_world, *_logic_detector1, *_logic_sensitive1, *_logic_detector2, *_logic_sensitive2, *f_scoring_volume1, *f_scoring_volume2;
     G4VPhysicalVolume *_phys_world, *_phys_detector1, *_phys_sensitive1, *_phys_detector2, *_phys_sensitive2;
     G4Box *_solid_world, *_solid_detector1, *_solid_sensitive1, *_solid_detector2, *_solid_sensitive2;
     G4Material *_world_material, *_detector_material;
@@ -34,7 +36,7 @@ private:
     void _ConstructDetector1(G4double const _detector1_distance, G4double const _detector_thickness, G4double const _detector_size, G4double const _world_width);
     void _ConstructDetector2(G4double const _detector2_distance, G4double const _detector_thickness, G4double const _detector_size, G4double const _world_width);
 
-//    virtual void ConstructSDandField();
+    // virtual void ConstructSDandField();
 
   // Distance between source and detector 1
     G4double _detector1_distance = -1; 
