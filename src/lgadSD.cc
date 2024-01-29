@@ -50,7 +50,6 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	anManager->FillNtupleDColumn(0, 2, posDetector[0]);
 	anManager->FillNtupleDColumn(0, 3, posDetector[1]);
 	anManager->FillNtupleDColumn(0, 4, posDetector[2]);
-	anManager->AddNtupleRow(0);
 
 	// Get the pre-step kinetic energy
 	G4double kinEnergy = aStep->GetPreStepPoint()->GetKineticEnergy();
@@ -67,8 +66,8 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
 	// Export particle ID to root
 	anManager->FillNtupleIColumn(0, 6, particleID);
+	anManager->AddNtupleRow(0);
 
-	anManager->AddNtupleRow(2);
 
 
     // Exaple B2a

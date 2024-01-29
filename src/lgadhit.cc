@@ -25,7 +25,7 @@ void LGADHit::Draw()
     G4VVisManager* vis_manager = G4VVisManager::GetConcreteInstance();
     if(vis_manager)
     {
-        G4Circle circle(_f_pos);
+        G4Circle circle(_pos);
         circle.SetScreenSize(4.);
         circle.SetFillStyle(G4Circle::filled);
         G4VisAttributes attribs(G4Colour::Red());
@@ -34,17 +34,14 @@ void LGADHit::Draw()
     }
 }
 
-// Print hit information
-
 void LGADHit::Print()
 {
-    G4cout
-    << "  trackID: " << _f_track_id << " chamberNb: " << _f_detector_nb
-    << "Edep: "
-    << std::setw(7) << G4BestUnit(_f_e_dep,"Energy")
-    << " Position: "
-    << std::setw(7) << G4BestUnit( _f_pos,"Length")
-    << std::setw(7) << G4BestUnit( _f_mom,"Momentun")
-    << G4endl;
+  G4cout
+     << "  trackID: " << _track_id << " chamberNb: " << _detector_nb
+     << "Edep: "
+     << std::setw(7) << G4BestUnit(_e_dep,"Energy")
+     << " Position: "
+     << std::setw(7) << G4BestUnit( _pos,"Length")
+     << G4endl;
 }
 

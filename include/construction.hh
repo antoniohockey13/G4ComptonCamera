@@ -48,27 +48,25 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     
 
     void _DefineMaterials();
-    void _ConstructWorld(G4double const _world_width, G4double const _world_height, G4double const _world_depth);
-    void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance, G4double const _detector_thickness, G4double const _detector_size, G4double const _world_width);
+    void _ConstructWorld();
+    void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance);
     virtual void ConstructSDandField();
 
     // Distance between source and detector 1
-    G4double _detector1_distance = -1; 
+    G4double _detector1_distance; 
     // Distance between source and detector 2
-    G4double _detector2_distance = -1; 
-    // Angle between source and detectors not used yet
-	  // G4double _angle = 0; 
+    G4double _detector2_distance; 
     
     // World dimension in x axis, width
-    G4double _world_width = -1;
+    G4double _world_width;
     // World dimension in y axis, height 
-    G4double _world_height = -1;
+    G4double _world_height;
     // World dimension in z axis, depth	
-    G4double _world_depth = -1; 
+    G4double _world_depth; 
     
     // Detector size in x and y axis
-    G4double _detector_size = -1; 
+    G4double _detector_size; 
     // Detector thickness in z axiss
-    G4double _detector_thickness = -1;
+    G4double _detector_thickness;
 };
 #endif
