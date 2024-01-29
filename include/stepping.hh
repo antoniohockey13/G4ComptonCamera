@@ -1,4 +1,3 @@
-/*
 #ifndef  STEPPING_HH
 #define  STEPPING_HH
 
@@ -7,15 +6,14 @@
 #include "construction.hh"
 #include "event.hh"
 
-class ComptCameraEventAction : public G4UserSteppingAction
+class ComptCameraSteppingAction : public G4UserSteppingAction
 {
     public:
-        ComptCameraEventAction(ComptCameraRunAction *event_action);
-        ~ComptCameraEventAction();
+        ComptCameraSteppingAction(ComptCameraEventAction *event_action);
+        ~ComptCameraSteppingAction();
 
         virtual void UserSteppingAction(const G4Step *);
     private:
-        ComptCameraRunAction *_f_event_action;
+        ComptCameraEventAction *_f_event_action;
 };
 #endif 
-*/

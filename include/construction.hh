@@ -24,7 +24,8 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     // Get world width
     G4double GetWorldWidth() {return _world_width;}
     // Set sensitive material 
-    G4LogicalVolume *GetScoringVolume() {return f_scoring_volume1, f_scoring_volume2;}
+    G4LogicalVolume *GetScoringVolume1() const {return f_scoring_volume1;}
+    G4LogicalVolume *GetScoringVolume2() const {return f_scoring_volume2;}
     ~ComptCameraDetectorConstruction();
 
 

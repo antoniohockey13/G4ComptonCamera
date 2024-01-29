@@ -1,26 +1,20 @@
 #include "event.hh"
-/*
+
 ComptCameraEventAction::ComptCameraEventAction(ComptCameraRunAction *)
 {
-    _f_edep = 0;
 }
-
 ComptCameraEventAction::~ComptCameraEventAction()
-{
-}
+{}
 
 void ComptCameraEventAction::BeginOfEventAction(const G4Event *)
 {
-    _f_edep = 0;
 }
 
-void ComptCameraEventAction::EndOfEventAction(const G4Event *)
+void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
 {
-    // Get analysis manager
-    G4AnalysisManager *analysisManager = G4AnalysisManager::Instance();
-
-    // Fill ntuple
-    analysisManager->FillNtupleDColumn(0, _f_edep);
-    analysisManager->AddNtupleRow();
+    //get event ID
+    G4int event_id = event->GetEventID();
+    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl;
+    G4cout << "Event ID: " << event_id << G4endl;
+    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl;
 }
-*/

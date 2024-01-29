@@ -54,18 +54,24 @@ void ComptCameraDetectorConstruction::_ConstructWorld(G4double width, G4double h
 }
 
 // Set sensitive detector to logical volume
-// Copy from example B2a
+
 void ComptCameraDetectorConstruction::ConstructSDandField()
 {
+    // Copy from example B2a
     G4String lgadSDname = "/lgadSD";
     auto algadSD = new LGADSD(lgadSDname, "LGADHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(algadSD);
     // Setting algadSD to all logical volumes with the same name
     // of "Lgad_LV".
     SetSensitiveDetector("Detector", algadSD, true);
-/*
-    _logic_detector1->SetSensitiveDetector(f_scoring_volume1);
-    _logic_detector2->SetSensitiveDetector(f_scoring_volume2);
+
+    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl; 
+    G4cout << " ComptCameraDetectorConstruction::ConstructSDandField()" << G4endl;
+    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl; 
+/* // Copy from braqui work
+    LGADSD *sensDet = new LGADSD("SensitiveDetector", "HitsDetector");
+    _detector_map[1].logic->SetSensitiveDetector(sensDet);
+    _detector_map[2].logic->SetSensitiveDetector(sensDet);
 */
 }
 
@@ -76,6 +82,15 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     _solid_detector = new G4Box("Detector", size/2, size/2, thickness/2); 
     // Create detector logical volume
     _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, "Detector");
+    //Create scoring volume
+    if (detector_number == 1)
+    {
+        f_scoring_volume1 = _logic_detector;
+    }
+    else if (detector_number == 2)
+    {
+        f_scoring_volume2 = _logic_detector;
+    }
     // Create detector physical volume
     _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector, "Detector", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
