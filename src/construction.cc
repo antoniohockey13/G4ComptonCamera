@@ -1,5 +1,6 @@
 #include "construction.hh"
 
+
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
     // Define world size including walls 
@@ -51,23 +52,32 @@ void ComptCameraDetectorConstruction::_ConstructWorld(G4double width, G4double h
     _phys_world = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0);  
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 }
-/*
+
 // Set sensitive detector to logical volume
+// Copy from example B2a
 void ComptCameraDetectorConstruction::ConstructSDandField()
 {
+    G4String lgadSDname = "/lgadSD";
+    auto algadSD = new LGADSD(lgadSDname, "LGADHitsCollection");
+    G4SDManager::GetSDMpointer()->AddNewDetector(algadSD);
+    // Setting algadSD to all logical volumes with the same name
+    // of "Lgad_LV".
+    SetSensitiveDetector("Detector", algadSD, true);
+/*
     _logic_detector1->SetSensitiveDetector(f_scoring_volume1);
     _logic_detector2->SetSensitiveDetector(f_scoring_volume2);
-}
 */
+}
+
 
 void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance, G4double thickness, G4double size, G4double w_width)
 {
     // Create detector solid, length arguments half of the actual length
-    _solid_detector = new G4Box("Detector" + std::to_string(detector_number), size/2, size/2, thickness/2); 
+    _solid_detector = new G4Box("Detector", size/2, size/2, thickness/2); 
     // Create detector logical volume
-    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, "Detector" + std::to_string(detector_number));
+    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, "Detector");
     // Create detector physical volume
-    _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector, "Detector" + std::to_string(detector_number), _logic_world, false, 0);
+    _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-w_width/2, 0, 0), _logic_detector, "Detector", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 
     // Store detector and its variables in a map

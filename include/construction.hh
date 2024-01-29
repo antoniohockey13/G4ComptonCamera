@@ -1,6 +1,8 @@
 #ifndef CONSTRUCTION_HH
 #define CONSTRUCTION_HH
 
+#include "globals.hh" 
+#include "tls.hh"
 #include "G4VUserDetectorConstruction.hh" // for detector construction
 #include "G4VPhysicalVolume.hh" // for physical volumes
 #include "G4LogicalVolume.hh" // for logical volumes
@@ -9,8 +11,11 @@
 #include "G4NistManager.hh" // for NIST materials
 #include "G4SystemOfUnits.hh" // for units
 #include "G4GenericMessenger.hh" // for UI commands
+#include "G4SDManager.hh" // for sensitive detector manager
+#include "G4VSensitiveDetector.hh" // for sensitive detector
 
 #include "lgadSD.hh" // for detector class
+
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -44,7 +49,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     void _DefineMaterials();
     void _ConstructWorld(G4double const _world_width, G4double const _world_height, G4double const _world_depth);
     void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance, G4double const _detector_thickness, G4double const _detector_size, G4double const _world_width);
-    // virtual void ConstructSDandField();
+    virtual void ConstructSDandField();
 
     // Distance between source and detector 1
     G4double _detector1_distance = -1; 
