@@ -36,6 +36,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
 {
     _ConstructWorld();
+    // Cant do loop for detector construction becuase of different distances
     _ConstructDetector(1, _detector1_distance);
     _ConstructDetector(2, _detector2_distance);
 
@@ -61,43 +62,28 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     G4String lgadSDname = "/lgadSD";
     auto algadSD = new LGADSD(lgadSDname, "LGADHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(algadSD);
-    // Setting algadSD to all logical volumes with the same name
-    // of "Lgad_LV".
-    //SetSensitiveDetector("Detector", algadSD, true);
 
-    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl; 
-    G4cout << " ComptCameraDetectorConstruction::ConstructSDandField()" << G4endl;
-    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl; 
-/* // Copy from braqui work
-    LGADSD *sensDet = new LGADSD("SensitiveDetector", "HitsDetector");
-    _detector_map[1].logic->SetSensitiveDetector(sensDet);
-    _detector_map[2].logic->SetSensitiveDetector(sensDet);
-*/
+    // Make a loop to set sensitive detector to all detectors
+    for (auto &detector : _detector_map)
+    {
+        detector.second.logic->SetSensitiveDetector(algadSD);
+    }
 }
 
 void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance)
 {
     // Create detector solid, length arguments half of the actual length
-    _solid_detector = new G4Box("Detector", _detector_size/2, _detector_size/2, _detector_thickness/2); 
+    G4String name = "Detector" + std::to_string(detector_number);
+    _solid_detector = new G4Box(name, _detector_size/2, _detector_size/2, _detector_thickness/2); 
     // Create detector logical volume
-    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, "Detector");
-    //Create scoring volume
-    if (detector_number == 1)
-    {
-        f_scoring_volume1 = _logic_detector;
-    }
-    else if (detector_number == 2)
-    {
-        f_scoring_volume2 = _logic_detector;
-    }
+    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, name);
+    
     // Create detector physical volume
     _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _logic_detector, "Detector", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
 
-    // Store detector and its variables in a map
+    // Add detector to map
     DetectorInfo detector_info;
-    detector_info.solid = _solid_detector;
     detector_info.logic = _logic_detector;
-    detector_info.physical = _phys_detector;
     _detector_map[detector_number] = detector_info;
 }

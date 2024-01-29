@@ -6,8 +6,7 @@
 #include "G4ios.hh"
 
 
-LGADSD::LGADSD(const G4String& name,
-        const G4String& hitsCollectionName)
+LGADSD::LGADSD(const G4String& name, const G4String& hitsCollectionName)
     : G4VSensitiveDetector(name)
     {
         collectionName.insert(hitsCollectionName);
@@ -43,8 +42,7 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	G4int event = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
     // Creates instance off singleton G4AnalysisManager. Whenever you change this lines in run.cc you should go to detector.hh to make the same changes
-	G4AnalysisManager *anManager = G4AnalysisManager::Instance(); 
-																  
+	G4AnalysisManager *anManager = G4AnalysisManager::Instance();															  
 	anManager->FillNtupleIColumn(0, 0, event);
     anManager->FillNtupleIColumn(0, 1, copyNo);
 	anManager->FillNtupleDColumn(0, 2, posDetector[0]);

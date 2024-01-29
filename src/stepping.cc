@@ -11,7 +11,6 @@ ComptCameraSteppingAction::~ComptCameraSteppingAction()
 
 void ComptCameraSteppingAction::UserSteppingAction(const G4Step *step)
 {
-   
     G4LogicalVolume *volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
 
     const ComptCameraDetectorConstruction *detector_construction = static_cast<const ComptCameraDetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());

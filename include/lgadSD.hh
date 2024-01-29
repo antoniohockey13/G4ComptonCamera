@@ -13,8 +13,7 @@ class G4HCofThisEvent;
 class LGADSD: public G4VSensitiveDetector
 {
     public:
-        LGADSD(const G4String& name,
-                const G4String& hitsCollectionName);
+        LGADSD(const G4String& name, const G4String& hitsCollectionName);
         ~LGADSD() override = default;
     
     // Methods from base class

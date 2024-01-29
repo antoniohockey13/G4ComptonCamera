@@ -34,9 +34,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
   private:
     struct DetectorInfo
     {
-      G4Box* solid;
       G4LogicalVolume* logic;
-      G4VPhysicalVolume* physical;
     };
     std::map<G4int, DetectorInfo> _detector_map;
     
