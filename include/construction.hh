@@ -24,9 +24,9 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     // Get world width
     G4double GetWorldWidth() {return _world_width;}
     // Set sensitive material 
-      G4LogicalVolume *GetScoringVolume1() const {return f_scoring_volume1;}
-      G4LogicalVolume *GetScoringVolume2() const {return f_scoring_volume2;}
-      ~ComptCameraDetectorConstruction();
+    //G4LogicalVolume *GetScoringVolume1() const {return f_scoring_volume1;}
+    //G4LogicalVolume *GetScoringVolume2() const {return f_scoring_volume2;}
+    ~ComptCameraDetectorConstruction();
 
 
       virtual G4VPhysicalVolume* Construct();
@@ -35,9 +35,8 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
       std::map<G4int, G4LogicalVolume*> _detector_map;
       
 
-      G4LogicalVolume *_logic_world, *_logic_detector, *_logic_sensitive, *f_scoring_volume1, *f_scoring_volume2;
-      G4VPhysicalVolume *_phys_world, *_phys_detector, *_phys_sensitive;
-      G4Box *_solid_world, *_solid_detector, *_solid_sensitive;
+      G4LogicalVolume *_logic_world;
+      G4VPhysicalVolume *_phys_world;
       G4Material *_world_material, *_detector_material;
     
 

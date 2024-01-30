@@ -6,14 +6,19 @@
 #include "construction.hh"
 #include "event.hh"
 
+class ComptCameraDetectorConstruction;
+
+class ComptCameraEventAction;
+
 class ComptCameraSteppingAction : public G4UserSteppingAction
 {
     public:
-        ComptCameraSteppingAction(ComptCameraEventAction *event_action);
-        ~ComptCameraSteppingAction();
+        ComptCameraSteppingAction(const ComptCameraDetectorConstruction* detConstruction, ComptCameraEventAction* eventAction);
+        ~ComptCameraSteppingAction() override = default;
 
-        virtual void UserSteppingAction(const G4Step *);
+        virtual void UserSteppingAction(const G4Step step) override;
     private:
-        ComptCameraEventAction *_f_event_action;
+        const ComptCameraDetectorConstruction* _det_construction = nullptr;
+        ComptCameraEventAction* _event_action = nullptr;
 };
 #endif 
