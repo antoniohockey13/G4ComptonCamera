@@ -11,12 +11,9 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 
     _detector_size = 2*mm;
     _detector_thickness = 0.1*mm;
-
-    // Define detector 1 distance to source
-    _detector1_distance = 100*mm;
-
-    // Define detector 2 distance to source
-    _detector2_distance = 200*mm;
+    //Define map with distances
+    _detector_distance[1] = 100*mm;
+    _detector_distance[2] = 200*mm;
 
     _DefineMaterials();
 }
@@ -36,10 +33,18 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
 {
     _ConstructWorld();
-    // Cant do loop for detector construction becuase of different distances, maybe store distances in a vector and loop through that(?)
-    _ConstructDetector(1, _detector1_distance);
-    _ConstructDetector(2, _detector2_distance);
-
+    // Loop over detectors and construct them
+    G4cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<G4endl;
+    G4cout << "Entering construct detector loop "<< _detector_distance[1] << G4endl;
+    G4cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<G4endl;
+    for (auto &detector : _detector_distance    )
+    {
+        G4cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<G4endl;
+        G4cout << detector << G4endl;
+        G4cout << "Constructing detector " << detector.first << " at distance " << detector.second << G4endl;
+        G4cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<G4endl;
+        _ConstructDetector(detector.first, detector.second);
+    }
     return _phys_world;
 }
 
@@ -66,7 +71,7 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     // Make a loop to set sensitive detector to all detectors
     for (auto &detector : _detector_map)
     {
-        detector.second.logic->SetSensitiveDetector(algadSD);
+        detector.second->SetSensitiveDetector(algadSD);
     }
 }
 
@@ -76,14 +81,9 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     G4String name = "Detector" + std::to_string(detector_number);
     _solid_detector = new G4Box(name, _detector_size/2, _detector_size/2, _detector_thickness/2); 
     // Create detector logical volume
-    _logic_detector = new G4LogicalVolume(_solid_detector, _detector_material, name);
+    _detector_map[detector_number] = new G4LogicalVolume(_solid_detector, _detector_material, name);
     
     // Create detector physical volume
     _phys_detector = new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _logic_detector, "Detector", _logic_world, false, 0);
-    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy number
-
-    // Add detector to map
-    DetectorInfo detector_info;
-    detector_info.logic = _logic_detector;
-    _detector_map[detector_number] = detector_info;
+    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 }
