@@ -21,8 +21,11 @@ class LGADSD: public G4VSensitiveDetector
     G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* hist) override;
     void EndOfEvent(G4HCofThisEvent* hitCollection) override;
 
+    // Get hits collection
+    LGADHitsCollection* GetHitsCollection() const { return _hits_collection;}; 
+
     private:
-        LGADHitsCollection* _f_hits_collection = nullptr;
+        LGADHitsCollection* _hits_collection = nullptr;
 };
 
 #endif

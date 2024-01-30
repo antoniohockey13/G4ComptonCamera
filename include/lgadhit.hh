@@ -30,6 +30,7 @@ class LGADHit : public G4VHit
         void SetDetectorNb(G4int detector_nb) { _detector_nb = detector_nb;};
         void SetEdep(G4double e_dep) { _e_dep = e_dep;};
         void SetPos(G4ThreeVector pos) { _pos = pos;};
+        void SetMom(G4ThreeVector mom) { _mom = mom;};
 
         //getters
         G4int GetTrackID() const { return _track_id;};

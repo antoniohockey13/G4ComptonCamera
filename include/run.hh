@@ -5,6 +5,7 @@
 #include "G4Run.hh"
 #include "G4AnalysisManager.hh" 
 
+
 class ComptCameraRunAction : public G4UserRunAction
 {
 public:
@@ -13,6 +14,8 @@ public:
 	
 	virtual void BeginOfRunAction(const G4Run *);
 	virtual void EndOfRunAction(const G4Run *);
+private:
+	// LGADHitsCollection* _hits_collection;
 };
 
 #endif

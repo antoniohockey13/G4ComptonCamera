@@ -36,7 +36,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
 {
     _ConstructWorld();
-    // Cant do loop for detector construction becuase of different distances
+    // Cant do loop for detector construction becuase of different distances, maybe store distances in a vector and loop through that(?)
     _ConstructDetector(1, _detector1_distance);
     _ConstructDetector(2, _detector2_distance);
 
