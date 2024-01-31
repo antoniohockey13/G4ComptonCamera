@@ -18,9 +18,10 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("X");
     anManager->CreateNtupleDColumn("Y");
     anManager->CreateNtupleDColumn("Z");
-    anManager->CreateNtupleDColumn("Momentum"); //5
-    anManager->CreateNtupleDColumn("Edep");
-    anManager->CreateNtupleIColumn("ParticleID"); //7
+    anManager->CreateNtupleDColumn("MomentumX");//5
+    anManager->CreateNtupleDColumn("MomentumY");
+    anManager->CreateNtupleDColumn("MomentumZ");
+    anManager->CreateNtupleDColumn("Edep"); //8
     anManager->FinishNtuple(0);
     
 }
