@@ -70,8 +70,10 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     // Exaple B2a
     // energy deposits
     G4double _e_dep = aStep->GetTotalEnergyDeposit();
-    if (_e_dep==0.) return false;
-
+    if (_e_dep==0.)
+    {
+        return false;
+    }
     auto _new_hit = new LGADHit();
     
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());

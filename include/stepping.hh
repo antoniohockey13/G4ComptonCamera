@@ -13,12 +13,9 @@ class ComptCameraEventAction;
 class ComptCameraSteppingAction : public G4UserSteppingAction
 {
     public:
-        ComptCameraSteppingAction(const ComptCameraDetectorConstruction* detConstruction, ComptCameraEventAction* eventAction);
-        ~ComptCameraSteppingAction() override = default;
+        ComptCameraSteppingAction(ComptCameraEventAction* eventAction);
+        ~ComptCameraSteppingAction();
 
-        virtual void UserSteppingAction(const G4Step step) override;
-    private:
-        const ComptCameraDetectorConstruction* _det_construction = nullptr;
-        ComptCameraEventAction* _event_action = nullptr;
+        virtual void UserSteppingAction(const G4Step* step);
 };
 #endif 
