@@ -35,10 +35,13 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 3, (*hit_collection)[i]->GetPos()[1]);
         anManager->FillNtupleDColumn(0, 4, (*hit_collection)[i]->GetPos()[2]);
         anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetMom()[0]);
-        anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetMom()[1]);
-        anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetMom()[2]);
-        anManager->FillNtupleDColumn(0, 6, (*hit_collection)[i]->GetEdep());
-        //anManager->FillNtupleIColumn(0, 7, (*hit_collection)[i]->GetParticleID());
+        anManager->FillNtupleDColumn(0, 6, (*hit_collection)[i]->GetMom()[1]);
+        anManager->FillNtupleDColumn(0, 7, (*hit_collection)[i]->GetMom()[2]);
+        anManager->FillNtupleDColumn(0, 8, (*hit_collection)[i]->GetEdep());
+        anManager->FillNtupleIColumn(0, 9, (*hit_collection)[i]->GetParticleID());
+        anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
+        anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
+        anManager->FillNtupleDColumn(0, 12, (*hit_collection)[i]->GetTime());
         anManager->AddNtupleRow(0);
     }
     

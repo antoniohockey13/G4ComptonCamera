@@ -10,7 +10,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     // Creates instance off singleton G4AnalysisManager
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
 
-    // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes
+    // Whenever you change this lines in run.cc you should go to event.cc to make the same changes
 
     anManager->CreateNtuple("Hits", "Hits");
     anManager->CreateNtupleIColumn("Event"); //0
@@ -22,6 +22,10 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumY");
     anManager->CreateNtupleDColumn("MomentumZ");
     anManager->CreateNtupleDColumn("Edep"); //8
+    anManager->CreateNtupleIColumn("ParticleID"); //9
+    anManager->CreateNtupleIColumn("TrackID"); //10
+    anManager->CreateNtupleIColumn("ParentID"); //11
+    anManager->CreateNtupleDColumn("Time"); //12
     anManager->FinishNtuple(0);
     
 }
