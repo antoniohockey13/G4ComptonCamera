@@ -80,6 +80,6 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     _detector_map[detector_number] = new G4LogicalVolume(solid_detector, _detector_material, name);
     
     // Create detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _detector_map[detector_number], "Detector", _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _detector_map[detector_number], name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 }

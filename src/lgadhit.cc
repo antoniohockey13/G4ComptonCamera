@@ -37,7 +37,7 @@ void LGADHit::Draw()
 void LGADHit::Print()
 {
     G4cout
-    << "  trackID: " << _track_id << " chamberNb: " << _detector_nb
+    << "  trackID: " << _track_id << " Detector Nb: " << _detector_nb
     << "Edep: "
     << std::setw(7) << G4BestUnit(_e_dep,"Energy")
     << " Position: "

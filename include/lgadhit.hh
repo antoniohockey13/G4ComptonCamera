@@ -27,21 +27,32 @@ class LGADHit : public G4VHit
 
         //setters
         void SetTrackID(G4int track_id) { _track_id = track_id;};
-        void SetDetectorNb(G4int detector_nb) { _detector_nb = detector_nb;};
+        //Transform name of the from DetectorX to int(X)
+        void SetDetectorNb(G4String detector_name) { _detector_nb = std::stoi(detector_name.erase(0,8));};
         void SetEdep(G4double e_dep) { _e_dep = e_dep;};
         void SetPos(G4ThreeVector pos) { _pos = pos;};
         void SetMom(G4ThreeVector mom) { _mom = mom;};
+        void SetParticleID(G4int particle_id) { _particle_id = particle_id;};
+        void SetParentID(G4int parent_id) { _parent_id = parent_id;};
+        void SetTime(G4double time) { _time = time;};
+
 
         //getters
         G4int GetTrackID() const { return _track_id;};
+        G4int GetParticleID() const { return _particle_id;};
+        G4int GetParentID() const { return _parent_id;};
         G4int GetDetectorNb() const { return _detector_nb;};
+        G4double GetTime() const { return _time;};
         G4double GetEdep() const { return _e_dep;};
         G4ThreeVector GetPos() const { return _pos;};
         G4ThreeVector GetMom() const { return _mom;};
 
     private:
         G4int _track_id;
+        G4int _particle_id;
+        G4int _parent_id;
         G4int _detector_nb;
+        G4double _time;
         G4double _e_dep = 0;
         G4ThreeVector _pos;
         G4ThreeVector _mom;
