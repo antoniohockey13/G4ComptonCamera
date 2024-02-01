@@ -38,16 +38,6 @@ int main(int argc, char** argv)
 	G4UImanager *UImanager = G4UImanager::GetUIpointer();
 	if(ui)
 	{
-		/* 
-		// Do not execute if the file vis.mac is used
-		UImanager -> ApplyCommand("/vis/open OGL"); //Abre visualizador gráfico
-		UImanager -> ApplyCommand("/vis/viewer/set/viewpointVector 1 1 1"); //Cambia punto de vista inicial
-		UImanager -> ApplyCommand("/vis/drawVolume"); //Dibuja el volumen
-		UImanager -> ApplyCommand("/vis/viewer/set/autoRefresh true"); //Actualiza
-		UImanager -> ApplyCommand("/vis/scene/add/trajectories smooth"); //Dibuja las partículas
-		UImanager -> ApplyCommand("/vis/scene/endOfEventAction accumulate"); //Muestra todos sucesos a la vez
-    	*/
-   		// With the file vis.mac
 		UImanager->ApplyCommand("/control/execute vis.mac");
 		ui->SessionStart();
 	}

@@ -1,0 +1,4 @@
+/run/beamOn 100
+/ComptCamera/detector/detector_number 1
+/run/reinitializeGeometry
+/run/beamOn 100

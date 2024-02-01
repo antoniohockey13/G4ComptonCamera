@@ -2,19 +2,31 @@
 #define CONSTRUCTION_HH
 
 #include "globals.hh" 
-#include "tls.hh"
-#include "G4VUserDetectorConstruction.hh" // for detector construction
-#include "G4VPhysicalVolume.hh" // for physical volumes
-#include "G4LogicalVolume.hh" // for logical volumes
-#include "G4Box.hh" // for box geometry
-#include "G4PVPlacement.hh" // for placement of volumes
-#include "G4NistManager.hh" // for NIST materials
-#include "G4SystemOfUnits.hh" // for units
-#include "G4GenericMessenger.hh" // for UI commands
-#include "G4SDManager.hh" // for sensitive detector manager
-#include "G4VSensitiveDetector.hh" // for sensitive detector
-
-#include "lgadSD.hh" // for detector class
+// #include "tls.hh"
+// for detector construction
+#include "G4VUserDetectorConstruction.hh" 
+// for physical volumes
+#include "G4VPhysicalVolume.hh" 
+ // for logical volumes
+#include "G4LogicalVolume.hh"
+// for box geometry
+#include "G4Box.hh" 
+// for placement of volumes
+#include "G4PVPlacement.hh" 
+// for NIST materials
+#include "G4NistManager.hh" 
+// for units
+#include "G4SystemOfUnits.hh" 
+// for UI commands
+#include "G4GenericMessenger.hh"
+// for sensitive detector manager 
+#include "G4SDManager.hh" 
+// for sensitive detector
+#include "G4VSensitiveDetector.hh" 
+ // for visualization manager
+#include "G4VisManager.hh" 
+// for detector class
+#include "lgadSD.hh" 
 
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
@@ -47,7 +59,9 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 
     // Distance between source and detectors
     std::map<G4int, G4double> _detector_distance;
-    
+
+    G4int _detector_number;   
+    G4int _number;
     // World dimension in x axis, width
     G4double _world_width;
     // World dimension in y axis, height 
@@ -59,5 +73,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     G4double _detector_size; 
     // Detector thickness in z axiss
     G4double _detector_thickness;
+    // Messenger
+    G4GenericMessenger *_messenger;
 };
 #endif

@@ -34,8 +34,6 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     }
     auto _new_hit = new LGADHit();
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
-    // Get volume of the current step
-    G4cout << "NAME " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
     _new_hit->SetEdep(_e_dep/keV);
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
@@ -46,8 +44,7 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
     _hits_collection->insert(_new_hit);
     
-    
-    _new_hit->Print();
+    //_new_hit->Print();
     return true;
 }
 
