@@ -37,11 +37,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleIColumn(0, 9, (*hit_collection)[i]->GetParticleID());
         anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
         anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
-<<<<<<< HEAD
-        anManager->FillNtupleDColumn(0, 12, (*hit_collection)[i]->GetTime());
-=======
         anManager->FillNtupleIColumn(0, 12, (*hit_collection)[i]->GetTime());
->>>>>>> temp_work
         anManager->AddNtupleRow(0);
     }
     

@@ -5,10 +5,6 @@
 #include "G4SDManager.hh"
 #include "G4ios.hh"
 #include "G4SystemOfUnits.hh"
-<<<<<<< HEAD
-
-=======
->>>>>>> temp_work
 
 
 LGADSD::LGADSD(const G4String& name, const G4String& hitsCollectionName)
@@ -28,12 +24,8 @@ void LGADSD::Initialize(G4HCofThisEvent* hit_collection)
 }
 
 G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
-<<<<<<< HEAD
-{   // Exaple B2a
-=======
 {
     // Exaple B2a
->>>>>>> temp_work
     // energy deposits
     G4double _e_dep = aStep->GetTotalEnergyDeposit();
     if (_e_dep==0.)
@@ -41,22 +33,6 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
         return false;
     }
     auto _new_hit = new LGADHit();
-<<<<<<< HEAD
-    
-    _new_hit->SetTrackID (aStep->GetTrack()->GetTrackID());
-    _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
-    _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-    _new_hit->SetVolume(aStep->GetTrack()->GetVolume()->GetName());
-    _new_hit->SetDetectorNb(aStep->GetTrack()->GetVolume()->GetName());
-    _new_hit->SetEdep(_e_dep/keV);
-    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
-    _new_hit->SetMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
-    _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime()/s);
-
-    
-    _hits_collection->insert(_new_hit);
-    // _new_hit->Print();
-=======
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     // Get volume of the current step
     G4cout << "NAME " << aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName() << G4endl;
@@ -72,7 +48,6 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     
     
     _new_hit->Print();
->>>>>>> temp_work
     return true;
 }
 
