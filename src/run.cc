@@ -25,7 +25,11 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleIColumn("ParticleID"); //9
     anManager->CreateNtupleIColumn("TrackID"); //10
     anManager->CreateNtupleIColumn("ParentID"); //11
+<<<<<<< HEAD
     anManager->CreateNtupleDColumn("Time"); //12
+=======
+    anManager->CreateNtupleIColumn("Time"); //12
+>>>>>>> temp_work
     anManager->FinishNtuple(0);
     
 }

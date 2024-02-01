@@ -15,10 +15,6 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
 {
     //get event ID
     G4int event_id = event->GetEventID();
-    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl;
-    G4cout << "Event ID: " << event_id << G4endl;
-    G4cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << G4endl;
-   
     //Get hit_collection
     LGADHitsCollection* hit_collection = static_cast<LGADHitsCollection*>(event->GetHCofThisEvent()->GetHC(0));
     
@@ -29,7 +25,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
     // Defined in run.cc
     for (size_t i = 0; i < hit_collection->entries(); ++i)
     {
-        anManager->FillNtupleIColumn(0, 0, (*hit_collection)[i]->GetTrackID());
+        anManager->FillNtupleIColumn(0, 0, event_id);
         anManager->FillNtupleIColumn(0, 1, (*hit_collection)[i]->GetDetectorNb());
         anManager->FillNtupleDColumn(0, 2, (*hit_collection)[i]->GetPos()[0]);
         anManager->FillNtupleDColumn(0, 3, (*hit_collection)[i]->GetPos()[1]);
@@ -41,7 +37,11 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleIColumn(0, 9, (*hit_collection)[i]->GetParticleID());
         anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
         anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
+<<<<<<< HEAD
         anManager->FillNtupleDColumn(0, 12, (*hit_collection)[i]->GetTime());
+=======
+        anManager->FillNtupleIColumn(0, 12, (*hit_collection)[i]->GetTime());
+>>>>>>> temp_work
         anManager->AddNtupleRow(0);
     }
     
