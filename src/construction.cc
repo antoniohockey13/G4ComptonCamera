@@ -10,7 +10,8 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _world_depth = 354*mm;
 
     _detector_size = 300*mm;
-    _detector_thickness = 2*mm;
+    // Timing 50um
+    _detector_thickness = 150*um;
     _detector_number = 2;
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
