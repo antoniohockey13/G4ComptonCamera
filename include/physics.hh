@@ -7,9 +7,10 @@
 /* 
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmExtraPhysics.hh"
-#include "G4HadronPhysicsFTFP_BERT_HP.hh"
-#include "G4IonPhysics.hh"
 */
+#include "G4HadronPhysicsFTFP_BERT_HP.hh"
+// #include "G4IonPhysics.hh"
+
 class ComptCameraPhysicsList : public G4VModularPhysicsList 
 {
 public:

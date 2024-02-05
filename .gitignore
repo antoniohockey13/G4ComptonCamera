@@ -5,4 +5,5 @@ cmake_install.cmake
 Makefile
 .vscode
 build
+.ipynb_checkpoints
 sim
