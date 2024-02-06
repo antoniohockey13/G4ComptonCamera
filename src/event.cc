@@ -38,6 +38,8 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
         anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
         anManager->FillNtupleIColumn(0, 12, (*hit_collection)[i]->GetTime());
+        anManager->FillNtupleDColumn(0, 13, (*hit_collection)[i]->GetKineticEnergy());
+        anManager->FillNtupleSColumn(0, 14, (*hit_collection)[i]->GetProcessName());
         anManager->AddNtupleRow(0);
     }
     

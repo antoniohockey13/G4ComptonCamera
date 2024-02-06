@@ -26,6 +26,8 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleIColumn("TrackID"); //10
     anManager->CreateNtupleIColumn("ParentID"); //11
     anManager->CreateNtupleIColumn("Time"); //12
+    anManager->CreateNtupleDColumn("KineticEnergy"); //13
+    anManager->CreateNtupleSColumn("ProcessName"); //14
     anManager->FinishNtuple(0);
     
 }
