@@ -42,7 +42,8 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
     _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
-    _new_hit->SetKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
+    _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
+    _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy()/keV);
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
     _hits_collection->insert(_new_hit);
     

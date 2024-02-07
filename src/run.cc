@@ -25,9 +25,10 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleIColumn("ParticleID"); //9
     anManager->CreateNtupleIColumn("TrackID"); //10
     anManager->CreateNtupleIColumn("ParentID"); //11
-    anManager->CreateNtupleIColumn("Time"); //12
-    anManager->CreateNtupleDColumn("KineticEnergy"); //13
-    anManager->CreateNtupleSColumn("ProcessName"); //14
+    anManager->CreateNtupleDColumn("Time"); //12
+    anManager->CreateNtupleDColumn("PreKineticEnergy"); //13
+    anManager->CreateNtupleDColumn("PostKineticEnergy"); //14
+    anManager->CreateNtupleSColumn("ProcessName"); //15
     anManager->FinishNtuple(0);
     
 }
