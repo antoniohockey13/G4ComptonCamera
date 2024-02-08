@@ -14,14 +14,14 @@ ComptCameraRunAction::ComptCameraRunAction()
 
     anManager->CreateNtuple("Hits", "Hits");
     anManager->CreateNtupleIColumn("Event"); //0
-    anManager->CreateNtupleIColumn("DetectorID");
-    anManager->CreateNtupleDColumn("X");
-    anManager->CreateNtupleDColumn("Y");
-    anManager->CreateNtupleDColumn("Z");
+    anManager->CreateNtupleIColumn("DetectorID"); //1
+    anManager->CreateNtupleDColumn("X"); //2
+    anManager->CreateNtupleDColumn("Y"); //3
+    anManager->CreateNtupleDColumn("Z"); //4
     anManager->CreateNtupleDColumn("MomentumX");//5
-    anManager->CreateNtupleDColumn("MomentumY");
-    anManager->CreateNtupleDColumn("MomentumZ");
-    anManager->CreateNtupleDColumn("Edep"); //8
+    anManager->CreateNtupleDColumn("MomentumY"); //6
+    anManager->CreateNtupleDColumn("MomentumZ"); //7
+    anManager->CreateNtupleDColumn("ELost"); //8
     anManager->CreateNtupleIColumn("ParticleID"); //9
     anManager->CreateNtupleIColumn("TrackID"); //10
     anManager->CreateNtupleIColumn("ParentID"); //11

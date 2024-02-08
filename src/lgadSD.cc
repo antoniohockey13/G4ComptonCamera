@@ -25,17 +25,14 @@ void LGADSD::Initialize(G4HCofThisEvent* hit_collection)
 
 G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    // Exaple B2a
-    // energy deposits
-    G4double _e_dep = aStep->GetTotalEnergyDeposit();
-    if (_e_dep==0.)
+    G4String _process_name = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+    if (_process_name == "Transportation")
     {
         return false;
     }
     auto _new_hit = new LGADHit();
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
-    _new_hit->SetEdep(_e_dep/keV);
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
     _new_hit->SetMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
     _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime()/ps);
@@ -44,7 +41,7 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
     _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
     _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy()/keV);
-    _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+    _new_hit->SetProcessName(_process_name);
     _hits_collection->insert(_new_hit);
     
     //_new_hit->Print();

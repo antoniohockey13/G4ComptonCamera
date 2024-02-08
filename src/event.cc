@@ -33,7 +33,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetMom()[0]);
         anManager->FillNtupleDColumn(0, 6, (*hit_collection)[i]->GetMom()[1]);
         anManager->FillNtupleDColumn(0, 7, (*hit_collection)[i]->GetMom()[2]);
-        anManager->FillNtupleDColumn(0, 8, (*hit_collection)[i]->GetEdep());
+        anManager->FillNtupleDColumn(0, 8, (*hit_collection)[i]->GetEnergyLost());
         anManager->FillNtupleIColumn(0, 9, (*hit_collection)[i]->GetParticleID());
         anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
         anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
@@ -43,5 +43,4 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleSColumn(0, 15, (*hit_collection)[i]->GetProcessName());
         anManager->AddNtupleRow(0);
     }
-    
 }
