@@ -25,8 +25,8 @@ void LGADSD::Initialize(G4HCofThisEvent* hit_collection)
 
 G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    G4String _process_name = aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
-    if (_process_name == "Transportation")
+    // Only lower than because energy is always positive
+    if (aStep->GetTotalEnergyDeposit() <1e-10) 
     {
         return false;
     }
@@ -34,14 +34,15 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
-    _new_hit->SetMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
+    _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum()/keV);
+    _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
     _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime()/ps);
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
     _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
     _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
     _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy()/keV);
-    _new_hit->SetProcessName(_process_name);
+    _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
     _hits_collection->insert(_new_hit);
     
     //_new_hit->Print();

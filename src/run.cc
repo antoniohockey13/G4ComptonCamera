@@ -18,17 +18,20 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("X"); //2
     anManager->CreateNtupleDColumn("Y"); //3
     anManager->CreateNtupleDColumn("Z"); //4
-    anManager->CreateNtupleDColumn("MomentumX");//5
-    anManager->CreateNtupleDColumn("MomentumY"); //6
-    anManager->CreateNtupleDColumn("MomentumZ"); //7
-    anManager->CreateNtupleDColumn("ELost"); //8
-    anManager->CreateNtupleIColumn("ParticleID"); //9
-    anManager->CreateNtupleIColumn("TrackID"); //10
-    anManager->CreateNtupleIColumn("ParentID"); //11
-    anManager->CreateNtupleDColumn("Time"); //12
-    anManager->CreateNtupleDColumn("PreKineticEnergy"); //13
-    anManager->CreateNtupleDColumn("PostKineticEnergy"); //14
-    anManager->CreateNtupleSColumn("ProcessName"); //15
+    anManager->CreateNtupleDColumn("PreMomentumX");//5
+    anManager->CreateNtupleDColumn("PreMomentumY"); //6
+    anManager->CreateNtupleDColumn("PreMomentumZ"); //7
+    anManager->CreateNtupleDColumn("PostMomentumX"); //8
+    anManager->CreateNtupleDColumn("PostMomentumY"); //9
+    anManager->CreateNtupleDColumn("PostMomentumZ"); //10
+    anManager->CreateNtupleDColumn("ELost"); //11
+    anManager->CreateNtupleIColumn("ParticleID"); //12
+    anManager->CreateNtupleIColumn("TrackID"); //13
+    anManager->CreateNtupleIColumn("ParentID"); //14
+    anManager->CreateNtupleDColumn("Time"); //15
+    anManager->CreateNtupleDColumn("PreKineticEnergy"); //16
+    anManager->CreateNtupleDColumn("PostKineticEnergy"); //17
+    anManager->CreateNtupleSColumn("ProcessName"); //18
     anManager->FinishNtuple(0);
     
 }

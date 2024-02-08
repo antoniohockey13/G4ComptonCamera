@@ -30,17 +30,20 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 2, (*hit_collection)[i]->GetPos()[0]);
         anManager->FillNtupleDColumn(0, 3, (*hit_collection)[i]->GetPos()[1]);
         anManager->FillNtupleDColumn(0, 4, (*hit_collection)[i]->GetPos()[2]);
-        anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetMom()[0]);
-        anManager->FillNtupleDColumn(0, 6, (*hit_collection)[i]->GetMom()[1]);
-        anManager->FillNtupleDColumn(0, 7, (*hit_collection)[i]->GetMom()[2]);
-        anManager->FillNtupleDColumn(0, 8, (*hit_collection)[i]->GetEnergyLost());
-        anManager->FillNtupleIColumn(0, 9, (*hit_collection)[i]->GetParticleID());
-        anManager->FillNtupleIColumn(0, 10, (*hit_collection)[i]->GetTrackID());
-        anManager->FillNtupleIColumn(0, 11, (*hit_collection)[i]->GetParentID());
-        anManager->FillNtupleDColumn(0, 12, (*hit_collection)[i]->GetTime());
-        anManager->FillNtupleDColumn(0, 13, (*hit_collection)[i]->GetPreKineticEnergy());
-        anManager->FillNtupleDColumn(0, 14, (*hit_collection)[i]->GetPostKineticEnergy());
-        anManager->FillNtupleSColumn(0, 15, (*hit_collection)[i]->GetProcessName());
+        anManager->FillNtupleDColumn(0, 5, (*hit_collection)[i]->GetPreMom()[0]);
+        anManager->FillNtupleDColumn(0, 6, (*hit_collection)[i]->GetPreMom()[1]);
+        anManager->FillNtupleDColumn(0, 7, (*hit_collection)[i]->GetPreMom()[2]);
+        anManager->FillNtupleDColumn(0, 8, (*hit_collection)[i]->GetPostMom()[0]);
+        anManager->FillNtupleDColumn(0, 9, (*hit_collection)[i]->GetPostMom()[1]);
+        anManager->FillNtupleDColumn(0, 10, (*hit_collection)[i]->GetPostMom()[2]);
+        anManager->FillNtupleDColumn(0, 11, (*hit_collection)[i]->GetEnergyLost());
+        anManager->FillNtupleIColumn(0, 12, (*hit_collection)[i]->GetParticleID());
+        anManager->FillNtupleIColumn(0, 13, (*hit_collection)[i]->GetTrackID());
+        anManager->FillNtupleIColumn(0, 14, (*hit_collection)[i]->GetParentID());
+        anManager->FillNtupleDColumn(0, 15, (*hit_collection)[i]->GetTime());
+        anManager->FillNtupleDColumn(0, 16, (*hit_collection)[i]->GetPreKineticEnergy());
+        anManager->FillNtupleDColumn(0, 17, (*hit_collection)[i]->GetPostKineticEnergy());
+        anManager->FillNtupleSColumn(0, 18, (*hit_collection)[i]->GetProcessName());
         anManager->AddNtupleRow(0);
     }
 }
