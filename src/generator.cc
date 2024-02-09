@@ -14,8 +14,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
     
-    // Particle type
-    // What particle to use opticalphoton or gamma? Should be gamma? 
+    // Particle type 
     fParticleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
     // Particle energy
     fParticleGun->SetParticleEnergy(70* keV);

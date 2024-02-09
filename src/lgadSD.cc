@@ -43,6 +43,7 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
     _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy()/keV);
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+    _new_hit->SetStepLength(aStep->GetStepLength()/mm);
     _hits_collection->insert(_new_hit);
     
     //_new_hit->Print();

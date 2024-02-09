@@ -33,6 +33,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("PostKineticEnergy"); //17
     anManager->CreateNtupleSColumn("ProcessName"); //18
     anManager->CreateNtupleDColumn("ComptonAngle"); //19
+    anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->FinishNtuple(0);
     
 }

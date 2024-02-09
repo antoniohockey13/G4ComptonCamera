@@ -38,6 +38,7 @@ class LGADHit : public G4VHit
         void SetPostKineticEnergy(G4double post_kinetic_energy) { _post_kinetic_energy = post_kinetic_energy;};
         void SetPreKineticEnergy(G4double pre_kinetic_energy) { _pre_kinetic_energy = pre_kinetic_energy;};
         void SetProcessName(G4String process_name) { _process_name = process_name;};
+        void SetStepLength(G4double step_length) { _step_length = step_length;};
 
         //getters
         G4int GetTrackID() const { return _track_id;};
@@ -53,6 +54,7 @@ class LGADHit : public G4VHit
         G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
         G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
         G4String GetProcessName() const { return _process_name;};
+        G4double GetStepLength() const { return _step_length;};
 
     private:
         G4int _track_id;
@@ -67,6 +69,7 @@ class LGADHit : public G4VHit
         G4ThreeVector _pre_mom;
         G4ThreeVector _post_mom;
         G4String _process_name;
+        G4double _step_length;
 };
 
 
