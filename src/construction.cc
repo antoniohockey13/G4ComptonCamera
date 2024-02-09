@@ -42,7 +42,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 {
     G4NistManager* nist = G4NistManager::Instance();
     // World material is air
-    _world_material = nist->FindOrBuildMaterial("G4_AIR"); 
+    _world_material = nist->FindOrBuildMaterial("G4_AIR"); //G4_Galactic
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
 }
