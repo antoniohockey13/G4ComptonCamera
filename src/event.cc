@@ -44,6 +44,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 16, (*hit_collection)[i]->GetPreKineticEnergy());
         anManager->FillNtupleDColumn(0, 17, (*hit_collection)[i]->GetPostKineticEnergy());
         anManager->FillNtupleSColumn(0, 18, (*hit_collection)[i]->GetProcessName());
+        anManager->FillNtupleDColumn(0, 19, (*hit_collection)[i]->GetComptonAngle());
         anManager->AddNtupleRow(0);
     }
 }

@@ -51,6 +51,7 @@ class LGADHit : public G4VHit
         G4double GetPreKineticEnergy() const { return _pre_kinetic_energy;};
         G4double GetPostKineticEnergy() const { return _post_kinetic_energy;};
         G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
+        G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
         G4String GetProcessName() const { return _process_name;};
 
     private:
