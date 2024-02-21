@@ -1,4 +1,4 @@
-#include "lgadhit.hh"
+#include "phantomHit.hh"
 // Copy from example B2a
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
@@ -9,16 +9,18 @@
 
 #include <iomanip>
 
-G4ThreadLocal G4Allocator<lgadHit>* lgadHitAllocator = nullptr;
+G4ThreadLocal G4Allocator<phantomHit>* phantomHitAllocator = nullptr;
 
-G4bool lgadHit::operator==(const lgadHit& right) const
+//
+
+G4bool phantomHit::operator==(const phantomHit& right) const
 {
     return (this == &right) ? true : false;
 }
 
 // Draw hit
 
-void lgadHit::Draw()
+void phantomHit::Draw()
 {
     G4VVisManager* vis_manager = G4VVisManager::GetConcreteInstance();
     if(vis_manager)
@@ -32,7 +34,7 @@ void lgadHit::Draw()
     }
 }
 
-void lgadHit::Print()
+void phantomHit::Print()
 {
     G4cout
     << "  trackID: " << _track_id << " Detector Nb: " << _detector_nb
@@ -42,3 +44,4 @@ void lgadHit::Print()
     << std::setw(7) << G4BestUnit( _pos,"Length")
     << G4endl;
 }
+

@@ -1,22 +1,23 @@
-#ifndef LGADHIT_HH
-#define LGADHIT_HH
+#ifndef PHANTOMHIT_HH
+#define PHANTOMHIT_HH
 
+// Copy from example B2a
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
 
-class lgadHit : public G4VHit
+class phantomHit : public G4VHit
 {
     public:
-        lgadHit() = default;
-        lgadHit(const lgadHit&) = default;
-        ~lgadHit() override = default;
+        phantomHit() = default;
+        phantomHit(const phantomHit&) = default;
+        ~phantomHit() override = default;
 
         //operators
-        lgadHit& operator=(const lgadHit&) = default;
-        G4bool operator==(const lgadHit&) const;
+        phantomHit& operator=(const phantomHit&) = default;
+        G4bool operator==(const phantomHit&) const;
 
         inline void* operator new(size_t);
         inline void operator delete(void*);
@@ -72,23 +73,23 @@ class lgadHit : public G4VHit
 };
 
 
-using lgadHitsCollection = G4THitsCollection<lgadHit>;
-extern G4ThreadLocal G4Allocator<lgadHit>* lgadHitAllocator;
+using phantomHitsCollection = G4THitsCollection<phantomHit>;
+extern G4ThreadLocal G4Allocator<phantomHit>* phantomHitAllocator;
 
-inline void* lgadHit::operator new(size_t) 
+inline void* phantomHit::operator new(size_t) 
 {
-    if (!lgadHitAllocator)
+    if (!phantomHitAllocator)
     {
-        lgadHitAllocator = new G4Allocator<lgadHit>;
+        phantomHitAllocator = new G4Allocator<phantomHit>;
     }
-    return (void*)lgadHitAllocator->MallocSingle();
+    return (void*)phantomHitAllocator->MallocSingle();
 }
 
 //
 
-inline void lgadHit::operator delete(void* hit)
+inline void phantomHit::operator delete(void* hit)
 {
-    lgadHitAllocator->FreeSingle((lgadHit*) hit);
+    phantomHitAllocator->FreeSingle((phantomHit*) hit);
 }
 
 #endif

@@ -32,6 +32,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     // Messenge does NOT work with maps
     _messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
+    _phantom_detector = true;
     _DefineMaterials();
 }
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
@@ -58,6 +59,11 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
         _ConstructDetector(detector.first, detector.second);
     }
 
+    if (_phantom_detector)
+    {
+        _ConstructPhantomDetector();
+    }
+
     return _phys_world;
 }
 
@@ -77,13 +83,21 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
 {
     // Copy from example B2a
     G4String lgadSDname = "/lgadSD";
-    auto algadSD = new LGADSD(lgadSDname, "LGADHitsCollection");
+    auto algadSD = new lgadSD(lgadSDname, "lgadHitsCollection");
     G4SDManager::GetSDMpointer()->AddNewDetector(algadSD);
 
     // Make a loop to set sensitive detector to all detectors
     for (auto &detector : _detector_map)
     {
         detector.second->SetSensitiveDetector(algadSD);
+    }
+
+    if (_phantom_detector)
+    {
+        G4String phantomSDname = "/phantomSD";
+        auto aphantomSD = new phantomSD(phantomSDname, "phantomHitsCollection");
+        G4SDManager::GetSDMpointer()->AddNewDetector(aphantomSD);
+        _logic_phantom_detector->SetSensitiveDetector(aphantomSD);
     }
 }
     
@@ -99,4 +113,19 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     // Create detector physical volume
     new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _detector_map[detector_number], name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
+}
+
+void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
+{   
+    // Create phantom detector solid, length arguments half of the actual length
+    G4String name = "PhantomDetector";
+
+    G4Box* solid_phantom_detector = new G4Box(name, _detector_distance[1]/2, _world_height/2, _world_depth/2); 
+    // Create phantom detector logical volume
+    _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
+    
+    // Create phantom detector physical volume
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
+
 }

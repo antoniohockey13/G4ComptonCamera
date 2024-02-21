@@ -17,7 +17,7 @@ public:
 	virtual void GeneratePrimaries(G4Event *);
 
 private:
-	G4ParticleGun *fParticleGun;
+	G4ParticleGun *_particle_gun;
 	G4double _world_width;
 };
 

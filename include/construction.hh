@@ -27,7 +27,7 @@
 #include "G4VisManager.hh" 
 // for detector class
 #include "lgadSD.hh" 
-
+#include "phantomSD.hh"
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -35,6 +35,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     ComptCameraDetectorConstruction();
     // Get world width
     G4double GetWorldWidth() {return _world_width;}
+    G4bool GetPhantomDetector() {return _phantom_detector;}
     // Set sensitive material 
     //G4LogicalVolume *GetScoringVolume1() const {return f_scoring_volume1;}
     //G4LogicalVolume *GetScoringVolume2() const {return f_scoring_volume2;}
@@ -47,7 +48,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
       std::map<G4int, G4LogicalVolume*> _detector_map;
       
 
-      G4LogicalVolume *_logic_world;
+      G4LogicalVolume *_logic_world, *_logic_phantom_detector;
       G4VPhysicalVolume *_phys_world;
       G4Material *_world_material, *_detector_material;
     
@@ -55,6 +56,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     void _DefineMaterials();
     void _ConstructWorld();
     void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance);
+    void _ConstructPhantomDetector();
     virtual void ConstructSDandField();
 
     // Distance between source and detectors
@@ -75,5 +77,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     G4double _detector_thickness;
     // Messenger
     G4GenericMessenger *_messenger;
+    // Phantom detector
+    G4bool _phantom_detector;
 };
 #endif
