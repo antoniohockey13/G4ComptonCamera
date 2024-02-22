@@ -25,14 +25,9 @@ void phantomSD::Initialize(G4HCofThisEvent* hit_collection_phantom)
 
 G4bool phantomSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    // Only lower than because energy is always positive
-    if (aStep->GetTotalEnergyDeposit() <1e-10) 
-    {
-        return false;
-    }
     auto _new_hit = new phantomHit();
-    _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
-    _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
+    _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
+    _new_hit->SetDetectorNb();
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
     _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum()/keV);
     _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum()/keV);

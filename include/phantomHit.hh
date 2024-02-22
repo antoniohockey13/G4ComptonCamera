@@ -27,8 +27,7 @@ class phantomHit : public G4VHit
 
         //setters
         void SetTrackID(G4int track_id) { _track_id = track_id;};
-        //Transform name of the from DetectorX to int(X)
-        void SetDetectorNb(G4String detector_name) { _detector_nb = std::stoi(detector_name.erase(0,8));};
+        void SetDetectorNb() { _detector_nb = 0;};
         void SetPos(G4ThreeVector pos) { _pos = pos;};
         void SetPreMom(G4ThreeVector pre_mom) { _pre_mom = pre_mom;};
         void SetPostMom(G4ThreeVector post_mom) { _post_mom = post_mom;};
