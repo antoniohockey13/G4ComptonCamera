@@ -1,6 +1,5 @@
 #include "run.hh"
 #include "G4RunManager.hh"
-#include "G4RandomTools.hh"
 #include "lgadhit.hh"
 #include "phantomHit.hh"
 #include "construction.hh"
@@ -9,7 +8,8 @@
 ComptCameraRunAction::ComptCameraRunAction()
 {
     // Set seed
-    //G4RandomTools::setSeed(12345);
+    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine());
+    CLHEP::HepRandom::setTheSeed(124);
     // Define here with anManager the data wanted to colect
     // Example:
     // Creates instance off singleton G4AnalysisManager
@@ -50,8 +50,6 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     G4int runNumber = run->GetRunID();
     std::string strRunID = std::to_string(runNumber);
-
-    // Open separate files for lgadHits and phantomHits
     anManager->OpenFile("output" + strRunID + ".root");
 }
 
@@ -59,11 +57,7 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
 void ComptCameraRunAction::EndOfRunAction(const G4Run *)
 {
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
-
-    // Write and close the lgadHits Ntuple
-
-
-    // Write and close the phantomHits Ntuple
+    // Write and close
     anManager->Write();
     anManager->CloseFile();
 }
