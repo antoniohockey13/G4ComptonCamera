@@ -1,4 +1,9 @@
 #include "action.hh"
+#include "generator.hh"
+#include "run.hh"
+#include "event.hh"
+#include "stepping.hh"
+
 
 ComptCameraActionInitialization::ComptCameraActionInitialization()
 {

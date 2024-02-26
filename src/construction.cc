@@ -1,5 +1,18 @@
 #include "construction.hh"
+#include "lgadSD.hh" 
+#include "phantomSD.hh"
 
+#include "globals.hh" 
+
+#include "G4GenericMessenger.hh"
+#include "G4VisManager.hh" 
+#include "G4VPhysicalVolume.hh" 
+#include "G4LogicalVolume.hh"
+#include "G4Box.hh" 
+#include "G4PVPlacement.hh" 
+#include "G4SystemOfUnits.hh" 
+#include "G4SDManager.hh" 
+#include "G4VSensitiveDetector.hh" 
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
@@ -22,6 +35,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _detector_distance[2] = 200*mm;
 
     //Messenger
+    G4GenericMessenger *_messenger;
     _number = 1;
     // Cange number of detectors not working
     _messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
@@ -43,7 +57,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 {
     G4NistManager* nist = G4NistManager::Instance();
     // World material is air
-    _world_material = nist->FindOrBuildMaterial("G4_AIR"); //G4_Galactic
+    _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
 }
@@ -125,7 +139,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance[1]/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }

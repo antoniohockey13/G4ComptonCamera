@@ -1,19 +1,9 @@
 #include "run.hh"
-#include "G4RunManager.hh"
-#include "lgadhit.hh"
-#include "phantomHit.hh"
-#include "construction.hh"
 
+#include "G4AnalysisManager.hh" 
 
 ComptCameraRunAction::ComptCameraRunAction()
 {
-    // Set seed
-    CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine());
-    CLHEP::HepRandom::setTheSeed(124);
-    // Define here with anManager the data wanted to colect
-    // Example:
-    // Creates instance off singleton G4AnalysisManager
-
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
 
     // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes
@@ -41,6 +31,17 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->FinishNtuple(0); 
 
+    anManager->CreateNtuple("PhantomHits", "Phantom Hits");
+    anManager->CreateNtupleIColumn("Event"); //0
+    anManager->CreateNtupleDColumn("X"); //1
+    anManager->CreateNtupleDColumn("Y"); //2
+    anManager->CreateNtupleDColumn("Z"); //3
+    anManager->CreateNtupleDColumn("MomentumX");//4
+    anManager->CreateNtupleDColumn("MomentumY"); //5
+    anManager->CreateNtupleDColumn("MomentumZ"); //6
+    anManager->CreateNtupleDColumn("ELost"); //7
+    anManager->CreateNtupleIColumn("ParticleID"); //8
+    anManager->FinishNtuple(1); 
 
 }
 ComptCameraRunAction::~ComptCameraRunAction() {}

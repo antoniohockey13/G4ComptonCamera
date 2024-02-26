@@ -1,11 +1,9 @@
 #ifndef PHANTOMSD_HH
 #define PHANTOMSD_HH
-//Copy from example B2a
-#include "G4VSensitiveDetector.hh"
+
 #include "phantomHit.hh"
 
-#include "G4RunManager.hh"
-#include "G4AnalysisManager.hh"
+#include "G4VSensitiveDetector.hh"
 
 class G4Step;
 class G4HCofThisEvent;

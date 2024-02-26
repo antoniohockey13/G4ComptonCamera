@@ -1,5 +1,5 @@
 #include "lgadhit.hh"
-// Copy from example B2a
+
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"

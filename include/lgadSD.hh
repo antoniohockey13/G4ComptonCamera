@@ -1,11 +1,10 @@
 #ifndef LGADSD_HH
 #define LGADSD_HH
-//Copy from example B2a
-#include "G4VSensitiveDetector.hh"
+
 #include "lgadhit.hh"
 
-#include "G4RunManager.hh"
-#include "G4AnalysisManager.hh"
+#include "G4VSensitiveDetector.hh"
+
 
 class G4Step;
 class G4HCofThisEvent;

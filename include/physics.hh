@@ -3,9 +3,6 @@
 
 #include "G4VModularPhysicsList.hh"
 
-
-
-
 class ComptCameraPhysicsList : public G4VModularPhysicsList 
 {
 public:

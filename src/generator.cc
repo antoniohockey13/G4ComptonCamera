@@ -1,4 +1,8 @@
 #include "generator.hh"
+#include "construction.hh"
+
+#include "G4SystemOfUnits.hh"
+#include "G4ParticleTable.hh"
 
 ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
 {

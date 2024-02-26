@@ -1,11 +1,9 @@
 #include "lgadSD.hh"
-// Copy from example B2a
+
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4SDManager.hh"
-#include "G4ios.hh"
-#include "G4SystemOfUnits.hh"
-
+#include "G4RunManager.hh"
 
 lgadSD::lgadSD(const G4String& name, const G4String& hitsCollectionName)
     : G4VSensitiveDetector(name)
@@ -33,17 +31,17 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     auto _new_hit = new lgadHit();
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
-    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
-    _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum()/keV);
-    _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
-    _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime()/ps);
+    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition());
+    _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum());
+    _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum());
+    _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime());
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
     _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
-    _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
-    _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy()/keV);
+    _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy());
+    _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
-    _new_hit->SetStepLength(aStep->GetStepLength()/mm);
+    _new_hit->SetStepLength(aStep->GetStepLength());
     _hits_collection_lgad->insert(_new_hit);
     
     //_new_hit->Print();

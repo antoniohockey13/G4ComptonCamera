@@ -26,49 +26,22 @@ class phantomHit : public G4VHit
         void Print() override;
 
         //setters
-        void SetTrackID(G4int track_id) { _track_id = track_id;};
-        void SetDetectorNb() { _detector_nb = 0;};
         void SetPos(G4ThreeVector pos) { _pos = pos;};
-        void SetPreMom(G4ThreeVector pre_mom) { _pre_mom = pre_mom;};
-        void SetPostMom(G4ThreeVector post_mom) { _post_mom = post_mom;};
+        void SetMom(G4ThreeVector mom) { _pre_mom = mom;};
         void SetParticleID(G4int particle_id) { _particle_id = particle_id;};
-        void SetParentID(G4int parent_id) { _parent_id = parent_id;};
-        void SetTime(G4double time) { _time = time;};
-        void SetPostKineticEnergy(G4double post_kinetic_energy) { _post_kinetic_energy = post_kinetic_energy;};
-        void SetPreKineticEnergy(G4double pre_kinetic_energy) { _pre_kinetic_energy = pre_kinetic_energy;};
-        void SetProcessName(G4String process_name) { _process_name = process_name;};
-        void SetStepLength(G4double step_length) { _step_length = step_length;};
+        void SetEnergyLost(G4double elost){ _edep = elost;};
 
         //getters
-        G4int GetTrackID() const { return _track_id;};
         G4int GetParticleID() const { return _particle_id;};
-        G4int GetParentID() const { return _parent_id;};
-        G4int GetDetectorNb() const { return _detector_nb;};
-        G4double GetTime() const { return _time;};
         G4ThreeVector GetPos() const { return _pos;};
-        G4ThreeVector GetPreMom() const { return _pre_mom;};
-        G4ThreeVector GetPostMom() const { return _post_mom;};
-        G4double GetPreKineticEnergy() const { return _pre_kinetic_energy;};
-        G4double GetPostKineticEnergy() const { return _post_kinetic_energy;};
-        G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
-        G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
-        G4String GetProcessName() const { return _process_name;};
-        G4double GetStepLength() const { return _step_length;};
+        G4ThreeVector GetMom() const { return _pre_mom;};
+        G4double GetEnergyLost() const { return _edep;};
 
     private:
-        G4int _track_id;
         G4int _particle_id;
-        G4int _parent_id;
-        G4int _detector_nb;
-        G4double _time;
-        G4double _e_dep;
-        G4double _pre_kinetic_energy;
-        G4double _post_kinetic_energy;
+        G4double _edep;
         G4ThreeVector _pos;
         G4ThreeVector _pre_mom;
-        G4ThreeVector _post_mom;
-        G4String _process_name;
-        G4double _step_length;
 };
 
 

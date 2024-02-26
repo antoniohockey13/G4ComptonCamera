@@ -1,5 +1,5 @@
 #include "phantomHit.hh"
-// Copy from example B2a
+
 #include "G4UnitsTable.hh"
 #include "G4VVisManager.hh"
 #include "G4Circle.hh"
@@ -28,7 +28,7 @@ void phantomHit::Draw()
         G4Circle circle(_pos);
         circle.SetScreenSize(4.);
         circle.SetFillStyle(G4Circle::filled);
-        G4VisAttributes attribs(G4Colour::Red());
+        G4VisAttributes attribs(G4Colour::Blue());
         circle.SetVisAttributes(attribs);
         vis_manager->Draw(circle);
     }
@@ -37,9 +37,10 @@ void phantomHit::Draw()
 void phantomHit::Print()
 {
     G4cout
-    << "  trackID: " << _track_id << " Detector Nb: " << _detector_nb
-    << "Edep: "
-    << std::setw(7) << G4BestUnit(_e_dep,"Energy")
+    << "Particle: "
+    << _particle_id
+    << " Edep: "
+    << std::setw(7) << G4BestUnit(_edep,"Energy")
     << " Position: "
     << std::setw(7) << G4BestUnit( _pos,"Length")
     << G4endl;
