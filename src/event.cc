@@ -39,7 +39,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 2, (*hit_collection_lgad)[i]->GetPos()[0]/mm);
         anManager->FillNtupleDColumn(0, 3, (*hit_collection_lgad)[i]->GetPos()[1]/mm);
         anManager->FillNtupleDColumn(0, 4, (*hit_collection_lgad)[i]->GetPos()[2]/mm);
-        anManager->FillNtupleDColumn(0, 5, (*hit_collection_lgad)[i]->GetPreMom()[0/keV]);
+        anManager->FillNtupleDColumn(0, 5, (*hit_collection_lgad)[i]->GetPreMom()[0]/keV);
         anManager->FillNtupleDColumn(0, 6, (*hit_collection_lgad)[i]->GetPreMom()[1]/keV);
         anManager->FillNtupleDColumn(0, 7, (*hit_collection_lgad)[i]->GetPreMom()[2]/keV);
         anManager->FillNtupleDColumn(0, 8, (*hit_collection_lgad)[i]->GetPostMom()[0]/keV);

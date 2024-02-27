@@ -9,3 +9,5 @@ build
 Pictures
 .Trash*
 sim
+*.root
+
