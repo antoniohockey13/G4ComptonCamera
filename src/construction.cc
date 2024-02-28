@@ -134,7 +134,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     // Create phantom detector solid, length arguments half of the actual length
     G4String name = "PhantomDetector";
 
-    G4Box* solid_phantom_detector = new G4Box(name, _detector_distance[1]/2, _world_height/2, _world_depth/2); 
+    G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
     // Create phantom detector logical volume
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     
