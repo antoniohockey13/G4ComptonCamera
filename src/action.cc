@@ -20,10 +20,18 @@ void ComptCameraActionInitialization::Build() const
 	
 	ComptCameraRunAction *runAction = new ComptCameraRunAction();
 	SetUserAction(runAction);
-	
+
 	ComptCameraEventAction *eventAction = new ComptCameraEventAction(runAction);
 	SetUserAction(eventAction);
 	
 	ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
 	SetUserAction(steppingAction); 
 }
+
+
+void ComptCameraActionInitialization::BuildForMaster() const
+{
+	ComptCameraRunAction *runAction = new ComptCameraRunAction();
+	SetUserAction(runAction);
+}
+

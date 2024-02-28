@@ -57,8 +57,6 @@ inline void* phantomHit::operator new(size_t)
     return (void*)phantomHitAllocator->MallocSingle();
 }
 
-//
-
 inline void phantomHit::operator delete(void* hit)
 {
     phantomHitAllocator->FreeSingle((phantomHit*) hit);

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "G4RunManager.hh"
+#include "G4MTRunManager.hh"
 #include "G4UImanager.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
@@ -15,9 +15,10 @@
 
 int main(int argc, char** argv)
 {
-	G4RunManager *runManager = new G4RunManager();
-		
-	runManager->SetUserInitialization(new ComptCameraDetectorConstruction()); // Instantiate MyDetectorConstruction
+	G4MTRunManager *runManager = new G4MTRunManager();
+	
+	runManager->SetNumberOfThreads(4);
+	runManager->SetUserInitialization(new ComptCameraDetectorConstruction());
 	runManager->SetUserInitialization(new ComptCameraPhysicsList());
 	runManager->SetUserInitialization(new ComptCameraActionInitialization());
 		

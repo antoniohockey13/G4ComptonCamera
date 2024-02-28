@@ -84,8 +84,6 @@ inline void* lgadHit::operator new(size_t)
     return (void*)lgadHitAllocator->MallocSingle();
 }
 
-//
-
 inline void lgadHit::operator delete(void* hit)
 {
     lgadHitAllocator->FreeSingle((lgadHit*) hit);

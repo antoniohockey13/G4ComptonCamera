@@ -11,7 +11,6 @@
 
 G4ThreadLocal G4Allocator<phantomHit>* phantomHitAllocator = nullptr;
 
-//
 
 G4bool phantomHit::operator==(const phantomHit& right) const
 {

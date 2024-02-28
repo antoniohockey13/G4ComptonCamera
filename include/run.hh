@@ -9,11 +9,11 @@ class ComptCameraRunAction : public G4UserRunAction
 public:
 	ComptCameraRunAction();
 	~ComptCameraRunAction();
-	
+	virtual void RecordEvent(const G4Run *);
+	virtual void Merge(const G4Run *);
 	virtual void BeginOfRunAction(const G4Run *);
 	virtual void EndOfRunAction(const G4Run *);
-private:
-	// LGADHitsCollection* _hits_collection;
+
 };
 
 #endif

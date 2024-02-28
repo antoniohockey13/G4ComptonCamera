@@ -51,7 +51,9 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     G4int runNumber = run->GetRunID();
     std::string strRunID = std::to_string(runNumber);
-    anManager->OpenFile("output" + strRunID + ".root");
+    G4int thread_number = G4Threading::G4GetThreadId();
+    std::string strThreadID = std::to_string(thread_number);
+    anManager->OpenFile("output" + strRunID + "-" + strThreadID + ".root");
 }
 
 
@@ -61,4 +63,14 @@ void ComptCameraRunAction::EndOfRunAction(const G4Run *)
     // Write and close
     anManager->Write();
     anManager->CloseFile();
+}
+
+void ComptCameraRunAction::RecordEvent(const G4Run *)
+{
+    // This function is not used
+}
+
+void ComptCameraRunAction::Merge(const G4Run *)
+{
+    // This function is not used
 }
