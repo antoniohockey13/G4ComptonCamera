@@ -46,7 +46,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     // Messenge does NOT work with maps
     _messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
-    _phantom_detector = true;
+    _phantom_detector = false;
     _DefineMaterials();
 }
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()

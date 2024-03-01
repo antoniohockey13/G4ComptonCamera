@@ -31,6 +31,27 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->FinishNtuple(0); 
 
+    anManager->CreateNtuple("ComptonHits", "Compton events hits");
+    anManager->CreateNtupleIColumn("Event"); //0
+    anManager->CreateNtupleDColumn("X1"); //1
+    anManager->CreateNtupleDColumn("Y1"); //2
+    anManager->CreateNtupleDColumn("Z1"); //3
+    anManager->CreateNtupleDColumn("X2"); //4
+    anManager->CreateNtupleDColumn("Y2"); //5
+    anManager->CreateNtupleDColumn("Z2"); //6
+    anManager->CreateNtupleDColumn("PreMomentumX");//7
+    anManager->CreateNtupleDColumn("PreMomentumY"); //8
+    anManager->CreateNtupleDColumn("PreMomentumZ"); //9
+    anManager->CreateNtupleDColumn("PostMomentumX"); //10
+    anManager->CreateNtupleDColumn("PostMomentumY"); //11
+    anManager->CreateNtupleDColumn("PostMomentumZ"); //12
+    anManager->CreateNtupleDColumn("Time1");//13
+    anManager->CreateNtupleDColumn("Time2");//14
+    anManager->CreateNtupleDColumn("ComptonAngle"); //15
+    anManager->FinishNtuple(1);
+
+
+
     anManager->CreateNtuple("PhantomHits", "Phantom Hits");
     anManager->CreateNtupleIColumn("Event"); //0
     anManager->CreateNtupleDColumn("X"); //1
@@ -41,7 +62,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumZ"); //6
     anManager->CreateNtupleDColumn("ELost"); //7
     anManager->CreateNtupleIColumn("ParticleID"); //8
-    anManager->FinishNtuple(1); 
+    anManager->FinishNtuple(2); 
 
 }
 ComptCameraRunAction::~ComptCameraRunAction() {}
