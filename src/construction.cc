@@ -17,22 +17,30 @@
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
     // Define world size including walls 
-    // TO DO : Define operating space and walls
     _world_width = 682*mm;
     _world_height = 562*mm;
     _world_depth = 354*mm;
 
-    _detector_size = 300*mm;
-    // Timing 50um
+    // Define detector size
+    _detector_size = 1.3*mm;
+    // Timing 50um, 150um
     _detector_thickness = 150*um;
     _detector_number = 2;
+
+    //Define subdetector number
+    _y_nb_detector = 10;
+    _z_nb_detector = 10;
+
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
     {
-        _detector_distance[i] = 100*(i)*mm;
+        _detector_distance[i] = 10*(i)*mm;
     }
     _detector_distance[1] = 100*mm;
-    _detector_distance[2] = 200*mm;
+    _detector_distance[2] = 110*mm;
+
+    //Space between subdetectors
+    _spacing = 0.1*mm;
 
     //Messenger
     G4GenericMessenger *_messenger;
@@ -47,8 +55,10 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
     _phantom_detector = false;
+
     _DefineMaterials();
 }
+
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
 {
 }
@@ -60,6 +70,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
+    _pcb_material = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
@@ -68,9 +79,10 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     _ConstructWorld();
 
     // Loop over detectors and construct them
-    for (auto &detector : _detector_distance    )
+    for (auto &detector : _detector_distance)
     {
-        _ConstructDetector(detector.first, detector.second);
+        _ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, detector.first, detector.second);
+        _ConstructPCB(detector.second+_detector_thickness);
     }
 
     if (_phantom_detector)
@@ -114,9 +126,10 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         _logic_phantom_detector->SetSensitiveDetector(aphantomSD);
     }
 }
-    
+/*    
 void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance)
 {
+
     // Create detector solid, length arguments half of the actual length
     G4String name = "Detector" + std::to_string(detector_number);
 
@@ -127,11 +140,13 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     // Create detector physical volume
     new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _detector_map[detector_number], name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
+    
 }
+*/
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
 {   
-    // Create phantom detector solid, length arguments half of the actual length
+    // Create phantom detector
     G4String name = "PhantomDetector";
 
     G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
@@ -142,4 +157,42 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance[1]/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
+}
+
+
+void ComptCameraDetectorConstruction::_ConstructDetectorsGrid(G4int y_nb_detector, G4int z_nb_detector, G4int detector_number, G4double distance)
+{
+    // Iterate over rows
+    for (G4int i = 0; i < y_nb_detector; ++i)
+    {
+        G4double yPos = (_detector_size + _spacing)*(i-(_y_nb_detector-1)/2);
+        // Iterate over columns
+        for (G4int j = 0; j < z_nb_detector; ++j)
+        {
+            // Calculate the position for each detector in the grid
+            G4double xPos = distance - _world_width / 2;
+            G4double zPos = (_detector_size + _spacing)*(j-(_z_nb_detector-1)/2);
+
+            // Create a unique name for each detector
+            G4String name = "Detector_" + std::to_string(detector_number) + "_" + std::to_string(i) + "_" + std::to_string(j);
+
+            // Create detector solid, length arguments half of the actual length
+            G4Box* solid_detector = new G4Box(name, _detector_thickness / 2, _detector_size / 2, _detector_size / 2);
+
+            // Create detector logical volume
+            _detector_map[name] = new G4LogicalVolume(solid_detector, _detector_material, name);
+
+            // Create detector physical volume
+            new G4PVPlacement(0, G4ThreeVector(xPos, yPos, zPos), _detector_map[name], name, _logic_world, false, 0);
+        }
+    }
+}
+void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
+{
+    G4Box* solid_pcb = new G4Box("PCB", 3*mm, _world_height/2, _world_depth/2); 
+    // Create PCB logical volume
+    G4LogicalVolume* logic_pcb = new G4LogicalVolume(solid_pcb, _pcb_material, "PCB");
+    // Create PCB physical volume
+    new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), logic_pcb, "PCB", _logic_world, false, 0);
+    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 }
