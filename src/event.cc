@@ -64,7 +64,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         // Check if the particle is a photon and hit the first detector
         if (((*hit_collection_lgad)[i]->GetParticleID() == 22) & ((*hit_collection_lgad)[i]->GetDetectorNb() == 1))
         {
-            for (size_t j = 0; j < hit_collection_lgad->entries(); ++j)
+            for (size_t j = i; j < hit_collection_lgad->entries(); ++j)
             {
                 // Check if the particle is a photon, hit the second detector and the same track than the first detector hit
                 if (((*hit_collection_lgad)[j]->GetParticleID() == 22) & ((*hit_collection_lgad)[j]->GetDetectorNb() == 2) & ((*hit_collection_lgad)[j]->GetTrackID() == (*hit_collection_lgad)[i]->GetTrackID()))
