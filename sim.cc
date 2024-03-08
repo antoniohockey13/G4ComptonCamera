@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
 	G4MTRunManager *runManager = new G4MTRunManager();
 	
-	runManager->SetNumberOfThreads(1);
+	runManager->SetNumberOfThreads(3);
 	runManager->SetUserInitialization(new ComptCameraDetectorConstruction());
 	runManager->SetUserInitialization(new ComptCameraPhysicsList());
 	runManager->SetUserInitialization(new ComptCameraActionInitialization());

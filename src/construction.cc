@@ -59,7 +59,11 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     // World material is air
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
-    _detector_material = nist->FindOrBuildMaterial("G4_Si");
+    //_detector_material = nist->FindOrBuildMaterial("G4_Si");
+G4Material* SiC = new G4Material("SiC", 3.21 * g / cm3, 2);
+SiC->AddElement(nist->FindOrBuildElement("Si"), 1);
+SiC->AddElement(nist->FindOrBuildElement("C"), 1);
+_detector_material = SiC;
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
