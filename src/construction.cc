@@ -70,7 +70,16 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
-    _pcb_material = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+    //Epoxy material
+    G4Material* _epoxy = new G4Material("Epoxy", 1.3 * CLHEP::g / CLHEP::cm3, 3);
+    _epoxy->AddElement(nist->FindOrBuildElement("H"), 44);
+    _epoxy->AddElement(nist->FindOrBuildElement("C"), 15);
+    _epoxy->AddElement(nist->FindOrBuildElement("O"), 7);
+    //PCB material
+    _pcb_material = new G4Material("PCB", 1.7 * CLHEP::g / CLHEP::cm3, 3);    
+    _pcb_material->AddMaterial(nist->FindOrBuildMaterial("G4_SILICON_DIOXIDE"), 0.773);
+    _pcb_material->AddMaterial(_epoxy, 0.147);
+    _pcb_material->AddElement(nist->FindOrBuildElement("Cl"), 0.08);
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
