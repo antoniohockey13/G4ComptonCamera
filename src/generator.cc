@@ -21,8 +21,8 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     // Particle type 
     _particle_gun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
     // Particle energy
-    //_particle_gun->SetParticleEnergy(70* keV);
-_particle_gun->SetParticleEnergy(316.5*keV);
+    _particle_gun->SetParticleEnergy(70* keV);
+//_particle_gun->SetParticleEnergy(316.5*keV);
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()

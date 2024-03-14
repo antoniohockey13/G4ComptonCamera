@@ -17,7 +17,6 @@
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
     // Define world size including walls 
-    // TO DO : Define operating space and walls
     _world_width = 682*mm;
     _world_height = 562*mm;
     _world_depth = 354*mm;
@@ -59,11 +58,11 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     // World material is air
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
-    //_detector_material = nist->FindOrBuildMaterial("G4_Si");
-G4Material* SiC = new G4Material("SiC", 3.21 * g / cm3, 2);
-SiC->AddElement(nist->FindOrBuildElement("Si"), 1);
-SiC->AddElement(nist->FindOrBuildElement("C"), 1);
-_detector_material = SiC;
+    _detector_material = nist->FindOrBuildMaterial("G4_Si");
+//G4Material* SiC = new G4Material("SiC", 3.21 * g / cm3, 2);
+//SiC->AddElement(nist->FindOrBuildElement("Si"), 1);
+//SiC->AddElement(nist->FindOrBuildElement("C"), 1);
+//_detector_material = SiC;
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
