@@ -26,12 +26,12 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 
     void _DefineMaterials();
     void _ConstructWorld();
-    void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance);
+    void _ConstructDetector(G4int const _detector_number, G4double const _detector_distance, G4double const _detector_thickness);
     void _ConstructPhantomDetector();
     virtual void ConstructSDandField();
 
     // Distance between source and detectors
-    std::map<G4int, G4double> _detector_distance;
+    std::map<G4int, std::pair<G4double, G4double>> _detector_distance_thickness;
 
     G4int _detector_number;   
     G4int _number;
@@ -44,8 +44,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     
     // Detector size in x and y axis
     G4double _detector_size; 
-    // Detector thickness in z axiss
-    G4double _detector_thickness;
+
     // Phantom detector
     G4bool _phantom_detector;
 };

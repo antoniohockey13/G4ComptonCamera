@@ -22,16 +22,18 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _world_depth = 354*mm;
 
     _detector_size = 300*mm;
-    // Timing 50um
-    _detector_thickness = 150*um;
-    _detector_number = 2;
+    _detector_number = 3;
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
     {
-        _detector_distance[i] = 100*(i)*mm;
+        // Disrtandce and thickness
+        _detector_distance_thickness[i] = std::make_pair(100*(i)*mm, 150*um);
+        // Timing 50um
     }
-    _detector_distance[1] = 100*mm;
-    _detector_distance[2] = 200*mm;
+    _detector_distance_thickness[1] = std::make_pair(100*mm, 150*um);
+    _detector_distance_thickness[2] = std::make_pair(200*mm, 150*um);
+
+
 
     //Messenger
     G4GenericMessenger *_messenger;
@@ -39,11 +41,11 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     // Cange number of detectors not working
     _messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
     _messenger->DeclareProperty("detector_size", _detector_size, "Detector size, /run/reinitializeGeometry to update");
-    _messenger->DeclareProperty("detector_thickness", _detector_thickness, "Detector thickness, /run/reinitializeGeometry to update");
+    //_messenger->DeclareProperty("detector_thickness", _detector_thickness, "Detector thickness, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_number", _detector_number, "Number of detectors");
     _messenger->DeclareProperty("Number", _number, "Select with detector you want to move with /ComptCamera/detector/detector_distance");
     // Messenge does NOT work with maps
-    _messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
+    //_messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
     _phantom_detector = false;
     _DefineMaterials();
@@ -71,9 +73,9 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     _ConstructWorld();
 
     // Loop over detectors and construct them
-    for (auto &detector : _detector_distance    )
+    for (auto &detector : _detector_distance_thickness)
     {
-        _ConstructDetector(detector.first, detector.second);
+        _ConstructDetector(detector.first, detector.second.first, detector.second.second);
     }
 
     if (_phantom_detector)
@@ -118,12 +120,12 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     }
 }
     
-void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance)
+void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, G4double distance, G4double thickness)
 {
     // Create detector solid, length arguments half of the actual length
     G4String name = "Detector" + std::to_string(detector_number);
 
-    G4Box* solid_detector = new G4Box(name, _detector_thickness/2, _detector_size/2, _detector_size/2); 
+    G4Box* solid_detector = new G4Box(name, thickness/2, _detector_size/2, _detector_size/2); 
     // Create detector logical volume
     _detector_map[detector_number] = new G4LogicalVolume(solid_detector, _detector_material, name);
     
@@ -142,7 +144,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance[1]/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance_thickness[1].first/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }

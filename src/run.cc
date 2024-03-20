@@ -50,6 +50,8 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("Time1");//13
     anManager->CreateNtupleDColumn("Time2");//14
     anManager->CreateNtupleDColumn("ComptonAngle"); //15
+    anManager->CreateNtupleDColumn("Elost1"); //16
+    anManager->CreateNtupleDColumn("Elost2"); //17
     anManager->FinishNtuple(1);
 
 

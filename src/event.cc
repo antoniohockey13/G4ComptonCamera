@@ -87,6 +87,8 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
                     anManager->FillNtupleDColumn(1, 13, (*hit_collection_lgad)[i]->GetTime()/ps);
                     anManager->FillNtupleDColumn(1, 14, (*hit_collection_lgad)[j]->GetTime()/ps);
                     anManager->FillNtupleDColumn(1, 15, (*hit_collection_lgad)[i]->GetComptonAngle());
+                    anManager->FillNtupleDColumn(1, 16, (*hit_collection_lgad)[i]->GetEnergyLost()/keV);
+                    anManager->FillNtupleDColumn(1, 17, (*hit_collection_lgad)[j]->GetEnergyLost()/keV);
                     anManager->AddNtupleRow(1);
                 }
             }    
