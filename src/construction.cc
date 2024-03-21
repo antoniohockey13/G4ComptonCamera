@@ -22,7 +22,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _world_depth = 354*mm;
 
     _detector_size = 300*mm;
-    _detector_number = 3;
+    _detector_number = 2;
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
     {
@@ -32,8 +32,6 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     }
     _detector_distance_thickness[1] = std::make_pair(100*mm, 150*um);
     _detector_distance_thickness[2] = std::make_pair(200*mm, 150*um);
-
-
 
     //Messenger
     G4GenericMessenger *_messenger;

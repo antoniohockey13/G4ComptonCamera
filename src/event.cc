@@ -66,10 +66,13 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         {
             for (size_t j = i; j < hit_collection_lgad->entries(); ++j)
             {
-                // Check if the particle is a photon, hit the second detector and the same track than the first detector hit
                 if (((*hit_collection_lgad)[j]->GetParticleID() == 22) & ((*hit_collection_lgad)[j]->GetDetectorNb() == 2) &
                    ((*hit_collection_lgad)[j]->GetTrackID() == (*hit_collection_lgad)[i]->GetTrackID()) &
                    ((*hit_collection_lgad)[j]->GetTime() > (*hit_collection_lgad)[i]->GetTime()))
+
+           
+                // Check if the particle is a photon, hit the second detector and the same track than the first detector hit
+            
                 {
                     anManager->FillNtupleIColumn(1, 0, event_id);
                     anManager->FillNtupleDColumn(1, 1, (*hit_collection_lgad)[i]->GetPos()[0]/mm);
@@ -90,6 +93,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
                     anManager->FillNtupleDColumn(1, 16, (*hit_collection_lgad)[i]->GetEnergyLost()/keV);
                     anManager->FillNtupleDColumn(1, 17, (*hit_collection_lgad)[j]->GetEnergyLost()/keV);
                     anManager->AddNtupleRow(1);
+                
                 }
             }    
         }
