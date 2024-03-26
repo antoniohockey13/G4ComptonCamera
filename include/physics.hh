@@ -8,6 +8,7 @@ class ComptCameraPhysicsList : public G4VModularPhysicsList
 public:
 	ComptCameraPhysicsList();
 	~ComptCameraPhysicsList();
+	void ConstructProcess();
 };
 
 #endif
