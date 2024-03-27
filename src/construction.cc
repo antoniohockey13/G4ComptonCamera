@@ -30,8 +30,8 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
         _detector_distance_thickness[i] = std::make_pair(100*(i)*mm, 150*um);
         // Timing 50um
     }
-    _detector_distance_thickness[1] = std::make_pair(100*mm, 150*um);
-    _detector_distance_thickness[2] = std::make_pair(200*mm, 800*um);
+    _detector_distance_thickness[1] = std::make_pair(100*mm, 50*um);
+    _detector_distance_thickness[2] = std::make_pair(200*mm, 100*um);
 
     //Messenger
     G4GenericMessenger *_messenger;
