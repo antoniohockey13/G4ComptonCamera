@@ -2,8 +2,13 @@
 
 #include "G4DecayPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
+
 #include "G4ComptonScattering.hh"
 #include "G4PhotoElectricEffect.hh"
+
+#include "G4eMultipleScattering.hh"
+#include "G4eIonisation.hh"	
+
 #include "G4ParticleDefinition.hh"
 #include "G4ProcessManager.hh"
 
@@ -29,6 +34,15 @@ void ComptCameraPhysicsList::ConstructProcess()
     // Add the processes to the process manager
     pmanager->AddDiscreteProcess(theComptonScattering);
     pmanager->AddDiscreteProcess(thePhotoElectricEffect);
+
+	// Get the process manager for the electron particle
+	G4ParticleDefinition* electron = G4Electron::ElectronDefinition();
+	pmanager = electron->GetProcessManager();
+
+	// Add the processes to the process manager
+	pmanager->AddProcess(new G4eMultipleScattering, -1, 1,1);
+	pmanager->AddProcess(new G4eIonisation,        -1, 2,2);
+
 }
 ComptCameraPhysicsList::~ComptCameraPhysicsList()
 {
