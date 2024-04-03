@@ -6,7 +6,6 @@
 #include "G4Colour.hh"
 #include "G4VisAttributes.hh"
 
-
 #include <iomanip>
 
 G4ThreadLocal G4Allocator<phantomHit>* phantomHitAllocator = nullptr;

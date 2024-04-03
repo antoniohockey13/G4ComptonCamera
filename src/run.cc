@@ -78,7 +78,7 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     std::string strRunID = std::to_string(runNumber);
     G4int thread_number = G4Threading::G4GetThreadId();
     std::string strThreadID = std::to_string(thread_number);
-    anManager->OpenFile("output" + strRunID + "-" + strThreadID + ".root");
+    anManager->OpenFile("output" + strRunID  + ".root");
 }
 
 

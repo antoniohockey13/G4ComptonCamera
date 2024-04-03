@@ -13,6 +13,7 @@
 #include "G4SystemOfUnits.hh" 
 #include "G4SDManager.hh" 
 #include "G4VSensitiveDetector.hh" 
+#include "G4NistManager.hh" 
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
@@ -21,7 +22,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _world_height = 562*mm;
     _world_depth = 354*mm;
 
-    _detector_size = 400*mm;
+    _detector_size = 300*mm;
     _detector_number = 2;
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
@@ -125,7 +126,6 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     
     // Create detector physical volume
     new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), _detector_map[detector_number], name, _logic_world, false, 0);
-    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 }
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
@@ -139,6 +139,6 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     
     // Create phantom detector physical volume
     new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance_thickness[1].first/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
-    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
+
 
 }

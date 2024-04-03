@@ -24,8 +24,8 @@ void ComptCameraPhysicsList::ConstructProcess()
 	G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
 	G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
 	// I should bias both same way to keep the ratio between them constant
-	theComptonScattering->SetCrossSectionBiasingFactor(100);
-	thePhotoElectricEffect->SetCrossSectionBiasingFactor(100);
+	theComptonScattering->SetCrossSectionBiasingFactor(10);
+	thePhotoElectricEffect->SetCrossSectionBiasingFactor(10);
 
     // Get the process manager for the gamma particle
     G4ParticleDefinition* gamma = G4Gamma::GammaDefinition();
