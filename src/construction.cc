@@ -30,8 +30,8 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
         _detector_distance_thickness[i] = std::make_pair(100*(i)*mm, 150*um);
         // Timing 50um
     }
-    _detector_distance_thickness[1] = std::make_pair(100*mm, 50*um);
-    _detector_distance_thickness[2] = std::make_pair(200*mm, 100*um);
+    _detector_distance_thickness[1] = std::make_pair(100*mm, 150*um);
+    _detector_distance_thickness[2] = std::make_pair(200*mm, 150*um);
 
     //Messenger
     G4GenericMessenger *_messenger;
@@ -59,10 +59,6 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
-//G4Material* SiC = new G4Material("SiC", 3.21 * g / cm3, 2);
-//SiC->AddElement(nist->FindOrBuildElement("Si"), 1);
-//SiC->AddElement(nist->FindOrBuildElement("C"), 1);
-//_detector_material = SiC;
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
