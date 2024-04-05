@@ -20,6 +20,8 @@
 #include "G4eBremsstrahlung.hh"
 #include "G4eplusAnnihilation.hh" 
 #include "G4ePairProduction.hh"
+#include "G4hMultipleScattering.hh"
+#include "G4LivermoreIonisationModel.hh"
 // Models
 #include "G4BetheHeitler5DModel.hh"
 #include "G4KleinNishinaModel.hh"
@@ -38,6 +40,8 @@
 #include "G4MscStepLimitType.hh"
 #include "G4Generator2BS.hh"
 #include "G4GammaGeneralProcess.hh"
+
+#include "G4NuclearStopping.hh"
 
 
 
@@ -61,7 +65,15 @@ void ComptCameraPhysicsList::ConstructProcess()
 	G4EmBuilder::PrepareEMPhysics();
 	G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 	G4EmParameters* param = G4EmParameters::Instance();
-
+	
+	// nuclear stopping
+	G4double nielEnergyLimit = 1*CLHEP::MeV;
+	G4NuclearStopping* pnuc = nullptr;
+	if(nielEnergyLimit > 0.) 
+	{
+		pnuc = new G4NuclearStopping();
+		pnuc->SetMaxKinEnergy(nielEnergyLimit);
+	}
 
 	G4double highEnergyLimit = param->MscEnergyLimit();
 
@@ -129,9 +141,10 @@ void ComptCameraPhysicsList::ConstructProcess()
 
 	//ionisation
 	G4eIonisation* eIoni = new G4eIonisation();
+	G4VEmModel* eIoniModel = new G4LivermoreIonisationModel();
 	eIoni->SetFluctModel(new G4UrbanFluctuation());
-	G4VEmModel* eIoniModel = new G4PenelopeIonisationModel();
-	eIoni->AddEmModel(0, eIoniModel);
+	eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
+	eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
 
 	//Bremsstrahlung
 	G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
@@ -145,7 +158,8 @@ void ComptCameraPhysicsList::ConstructProcess()
 
 	//Pair production
 	G4ePairProduction* ePairProduction = new G4ePairProduction();
-
+	
+	ph->RegisterProcess(msc, particle);
 	ph->RegisterProcess(eIoni, particle);
 	ph->RegisterProcess(eBrem, particle);
 	ph->RegisterProcess(ePairProduction, particle);
@@ -173,7 +187,7 @@ void ComptCameraPhysicsList::ConstructProcess()
 	eIoni->SetFluctModel(new G4UrbanFluctuation());
 	eIoniModel = new G4PenelopeIonisationModel();
 	eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
-	eIoni->AddEmModel(0, eIoniModel);
+	eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
 
 	//Bremsstrahlung
 	eBrem = new G4eBremsstrahlung();
@@ -185,6 +199,7 @@ void ComptCameraPhysicsList::ConstructProcess()
 	eBrem->SetEmModel(eBremModel2);
 	eBremModel1->SetHighEnergyLimit(CLHEP::GeV);
 
+	ph->RegisterProcess(msc, particle);
 	ph->RegisterProcess(eIoni, particle);
 	ph->RegisterProcess(eBrem, particle);
 	ph->RegisterProcess(ePairProduction, particle);
