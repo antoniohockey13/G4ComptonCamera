@@ -42,6 +42,9 @@
 #include "G4MscStepLimitType.hh"
 #include "G4Generator2BS.hh"
 #include "G4GammaGeneralProcess.hh"
+#include "G4LowEPPolarizedComptonModel.hh"
+#include "G4PhotoElectricAngularGeneratorPolarized.hh"
+#include "G4LivermorePolarizedRayleighModel.hh"
 
 #include "G4NuclearStopping.hh"
 
@@ -96,6 +99,7 @@ void ComptCameraPhysicsList::ConstructEM()
 	G4EmParameters* param = G4EmParameters::Instance();
 	G4double highEnergyLimit = param->MscEnergyLimit();
 
+
 	G4double nielEnergyLimit = param->MaxNIELEnergy();
 	G4NuclearStopping* pnuc = nullptr;
 	if(nielEnergyLimit > 0.0)
@@ -117,17 +121,31 @@ void ComptCameraPhysicsList::ConstructEM()
 		//theComptonScattering->SetCrossSectionBiasingFactor(10);
 		if (particleName == "gamma")
 		{
+			G4bool polar = param->EnablePolarisation();
+
 			//Photoelectric
 			G4PhotoElectricEffect* photoelectric = new G4PhotoElectricEffect();
 			G4VEmModel* photoelectricModel = new G4LivermorePhotoElectricModel();
 			photoelectric->SetEmModel(photoelectricModel);
+			if (polar)
+			{
+				photoelectricModel->SetAngularDistribution(new G4PhotoElectricAngularGeneratorPolarized());
+			}
 			ph->RegisterProcess(photoelectric, particle);
 		
 			//Compton
 			G4ComptonScattering* compton = new G4ComptonScattering();
 			G4VEmModel* comptonModel = new G4KleinNishinaModel();
 			compton->SetEmModel(comptonModel);
-			G4VEmModel* cModel = new G4LowEPComptonModel();
+			G4VEmModel* cModel = nullptr;
+			if (polar)
+			{
+				cModel = new G4LowEPPolarizedComptonModel();
+			}
+			else
+			{
+				cModel = new G4LowEPComptonModel();
+			}
 			cModel->SetHighEnergyLimit(20*CLHEP::MeV);
 			compton->AddEmModel(0, cModel);
 			ph->RegisterProcess(compton, particle);
@@ -138,10 +156,14 @@ void ComptCameraPhysicsList::ConstructEM()
 			gammaConversion->SetEmModel(gammaConversionModel);
 			ph->RegisterProcess(gammaConversion, particle);
 
+			//Rayleigh scattering
 			G4RayleighScattering* rayleigh = new G4RayleighScattering();
-			G4VEmModel* rayleighModel = new G4LivermoreRayleighModel();
-			rayleigh->SetEmModel(rayleighModel);
+			if (polar)
+			{
+				rayleigh->SetEmModel(new G4LivermorePolarizedRayleighModel());
+			}
 			ph->RegisterProcess(rayleigh, particle);
+
 		}
 		else if (particleName == "e-")
 		{
