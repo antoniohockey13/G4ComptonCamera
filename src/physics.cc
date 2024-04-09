@@ -70,6 +70,7 @@ ComptCameraPhysicsList::ComptCameraPhysicsList()
 	param->SetFluo(true);
 	param->SetUseICRU90Data(true);
 	param->SetMaxNIELEnergy(1*CLHEP::MeV);
+	//SetPhysicsType(bElectromagnetic);
 }
 
 void ComptCameraPhysicsList::ConstructBosons()
@@ -94,6 +95,14 @@ void ComptCameraPhysicsList::ConstructEM()
 	G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 	G4EmParameters* param = G4EmParameters::Instance();
 	G4double highEnergyLimit = param->MscEnergyLimit();
+
+	G4double nielEnergyLimit = param->MaxNIELEnergy();
+	G4NuclearStopping* pnuc = nullptr;
+	if(nielEnergyLimit > 0.0)
+	{
+		pnuc = new G4NuclearStopping();
+		pnuc->SetMaxKinEnergy(nielEnergyLimit);
+	}
 
 	auto particleIterator = GetParticleIterator();
 	particleIterator->reset();
@@ -142,7 +151,9 @@ void ComptCameraPhysicsList::ConstructEM()
 			G4WentzelVIModel* msc2 = new G4WentzelVIModel();
 			msc1->SetHighEnergyLimit(highEnergyLimit);
 			msc2->SetLowEnergyLimit(highEnergyLimit);
-			ConstructElectronMscProcess(msc1, msc2, particle);
+			msc->SetEmModel(msc1);
+			msc->SetEmModel(msc2);
+			ph->RegisterProcess(msc, particle);
 
 			//Coulomb scattering
 			G4eCoulombScatteringModel* ssm = new G4eCoulombScatteringModel(); 
@@ -155,10 +166,10 @@ void ComptCameraPhysicsList::ConstructEM()
 
 			//Ionisation
 			G4eIonisation* eIoni = new G4eIonisation();
-			G4VEmModel* eIoniModel = new G4PenelopeIonisationModel();
-			eIoni->SetFluctModel(ModelOfFluctuations());
+			G4VEmModel* eIoniModel = new G4LivermoreIonisationModel();
+			eIoni->SetFluctModel(new G4UrbanFluctuation());
 			eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
-			eIoni->AddEmModel(0, eIoniModel);
+			eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
 			ph->RegisterProcess(eIoni, particle);
 
 			//Bremsstrahlung
@@ -172,6 +183,10 @@ void ComptCameraPhysicsList::ConstructEM()
 			eBremModel1->SetHighEnergyLimit(CLHEP::GeV);
 			ph->RegisterProcess(eBrem, particle);
 
+			//Pair production
+			G4ePairProduction* ePairProduction = new G4ePairProduction();
+			ph->RegisterProcess(ePairProduction, particle);
+
 		}
 
 		else if (particleName =="e+")
@@ -182,7 +197,9 @@ void ComptCameraPhysicsList::ConstructEM()
 			G4WentzelVIModel* msc2 = new G4WentzelVIModel();
 			msc1->SetHighEnergyLimit(highEnergyLimit);
 			msc2->SetLowEnergyLimit(highEnergyLimit);
-			ConstructElectronMscProcess(msc1, msc2, particle);
+			msc->SetEmModel(msc1);
+			msc->SetEmModel(msc2);
+			ph->RegisterProcess(msc, particle);
 
 			//Coulomb scattering
 			G4eCoulombScatteringModel* ssm = new G4eCoulombScatteringModel(); 
@@ -195,10 +212,10 @@ void ComptCameraPhysicsList::ConstructEM()
 
 			//Ionisation
 			G4eIonisation* eIoni = new G4eIonisation();
+			eIoni->SetFluctModel(new G4UrbanFluctuation());
 			G4VEmModel* eIoniModel = new G4PenelopeIonisationModel();
-			eIoni->SetFluctModel(ModelOfFluctuations());
 			eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
-			eIoni->AddEmModel(0, eIoniModel);
+			eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
 			ph->RegisterProcess(eIoni, particle);
 
 			//Bremsstrahlung
@@ -226,65 +243,4 @@ void ComptCameraPhysicsList::ConstructProcess()
 
 ComptCameraPhysicsList::~ComptCameraPhysicsList()
 {
-}
-
-void ComptCameraPhysicsList::ConstructElectronMscProcess(G4VMscModel* msc1, G4VMscModel* msc2,
-														G4ParticleDefinition* particle)
-{
-	auto type = G4EmParameters::Instance()->TransportationWithMsc();
-	G4ProcessManager* procManager = particle->GetProcessManager();
-	auto plist = procManager->GetProcessList();
-	G4int ptype = (0 < plist->size()) ? (*plist)[0]->GetProcessSubType() : 0;
-	
-	if(type != G4TransportationWithMscType::fDisabled && ptype == TRANSPORTATION) 
-	{
-		// Remove default G4Transportation and replace with G4TransportationWithMsc.
-		procManager->RemoveProcess(0);
-		G4TransportationWithMs static G4VEmFluctuationModel* ModelOfFluctuations(G4bool isIon = false);c* transportWithMsc = new G4TransportationWithMsc(
-					G4TransportationWithMsc::ScatteringType::MultipleScattering);
-		
-		if(type == G4TransportationWithMscType::fMultipleSteps) 
-	{
-		transportWithMsc->SetMultipleSteps(true);
-    }
-	
-	transportWithMsc->AddMscModel(msc1);
-	if(msc2 != nullptr) 
-	{
-		transportWithMsc->AddMscModel(msc2);
-    }
-	
-	procManager->AddProcess(transportWithMsc, -1, 0, 0);
-	} 
-	
-	else
-	{
-		// Register as a separate process.
-		G4eMultipleScattering* msc = new G4eMultipleScattering;
-		msc->SetEmModel(msc1);
-		
-		if(msc2 != nullptr) static G4VEmFluctuationModel* ModelOfFluctuations(G4bool isIon = false);
-		{
-			msc->SetEmModel(msc2);
-		}
-		
-		G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
-		ph->RegisterProcess(msc, particle);
-	}
-}
-
-G4VEmFluctuationModel* ComptCameraPhysicsList::ModelOfFluctuations(G4bool isIon)
-{
-  G4VEmFluctuationModel* f = nullptr;
-  auto ftype = G4EmParameters::Instance()->FluctuationType();
-  if (ftype == fDummyFluctuation) {
-    f = new G4LossFluctuationDummy();
-  } else if (isIon) {
-    f = new G4IonFluctuations();
-  } else if (ftype == fUrbanFluctuation) {
-    f = new G4UrbanFluctuation();
-  } else {
-    f = new G4UniversalFluctuation();
-  }
-  return f;
 }
