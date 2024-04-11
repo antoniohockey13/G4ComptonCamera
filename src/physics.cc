@@ -131,6 +131,7 @@ void ComptCameraPhysicsList::ConstructEM()
 			{
 				photoelectricModel->SetAngularDistribution(new G4PhotoElectricAngularGeneratorPolarized());
 			}
+			//photoelectric->SetCrossSectionBiasingFactor(10);
 			ph->RegisterProcess(photoelectric, particle);
 		
 			//Compton
@@ -148,6 +149,7 @@ void ComptCameraPhysicsList::ConstructEM()
 			}
 			cModel->SetHighEnergyLimit(20*CLHEP::MeV);
 			compton->AddEmModel(0, cModel);
+			compton->SetCrossSectionBiasingFactor(10);
 			ph->RegisterProcess(compton, particle);
 
 			//Gamma conversion
