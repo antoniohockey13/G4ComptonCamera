@@ -110,7 +110,7 @@ hit1 = np.array([-141.0432, 87.994580, -109.7145])
 v1 = hit1-vertex1
 u1 = v1/np.linalg.norm(v1)
 theta1 = 0.9531211
-# plot_cone(theta1, u1, vertex1, hit1)
+plot_cone(theta1, u1, vertex1, hit1)
 
 # Cone 2
 vertex2 = np.array([-240.9422, 0, 0])
@@ -126,12 +126,12 @@ hit3 = np.array([-141.0645, -10.21931, 135.40849])
 v3 = hit3-vertex3
 u3 = v3/np.linalg.norm(v3)
 theta3 = 0.9366535
-# plot_cone(theta3, u3, vertex3, hit3)
+#plot_cone(theta3, u3, vertex3, hit3)
 
 
 
 
-
+"""
 # Find intersection
 tolerance = 25
 
@@ -166,3 +166,4 @@ for landa1 in np.linspace(-100, -90,50):
 intersection_points = np.array(intersection_points)
 print(np.mean(intersection_points, axis=0))
 print(tolerance)
+"""
