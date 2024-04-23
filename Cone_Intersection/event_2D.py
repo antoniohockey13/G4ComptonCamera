@@ -1,7 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 
-# Vectores de la base son d (eje x) y u1
 def cambio_base(v, u, d):
     """
     Cambio de base de coordenadas.
@@ -44,8 +43,7 @@ def rotate(phi, u, x):
     r_phi = np.array([[np.cos(phi)+u[0]**2*(1-np.cos(phi)), u[0]*u[1]*(1-np.cos(phi))-u[2]*np.sin(phi), u[0]*u[2]*(1-np.cos(phi))+u[1]*np.sin(phi)],
                         [u[1]*u[0]*(1-np.cos(phi))+u[2]*np.sin(phi), np.cos(phi)+u[1]**2*(1-np.cos(phi)), u[1]*u[2]*(1-np.cos(phi))-u[0]*np.sin(phi)],
                         [u[2]*u[0]*(1-np.cos(phi))-u[1]*np.sin(phi), u[2]*u[1]*(1-np.cos(phi))+u[0]*np.sin(phi), np.cos(phi)+u[2]**2*(1-np.cos(phi))]])
-    # r_phi = np.array([[np.cos(phi), -np.sin(phi)],
-    #                 [np.sin(phi), np.cos(phi)]])
+    
     return np.dot(r_phi, x)
 
 def Angle_Energy(E_1,E_2):
@@ -64,7 +62,6 @@ def Angle_Energy(E_1,E_2):
     float
         Compton angle in radians.
     """
-    print(E_1 + E_2)
     return np.arccos(1-511*E_1/(E_2*(E_1+E_2)))
 
 def Compute_variables_to_plot(hit, vertex, source_position):
@@ -89,6 +86,7 @@ def Compute_variables_to_plot(hit, vertex, source_position):
 
     source_vertex = vertex1- source_position
     d = source_vertex/np.linalg.norm(source_vertex)
+
     return vertex, hit, source_position, u, d, base
 
 
@@ -109,6 +107,7 @@ def plot_event(hit, vertex, source, theta, title=None):
     title : str
         Title of the plot.
     """
+
     vertex, hit, source_position, u, d, base = Compute_variables_to_plot(hit, vertex, source)
 
     # Cambio de base
@@ -130,7 +129,7 @@ def plot_event(hit, vertex, source, theta, title=None):
     # Rotar recta angulo theta respecto de vector normal al plano compton
     vertex_hit = []
     source_hit = []
-    lambda1 = np.linspace(-150, 200, 2)
+    lambda1 = np.linspace(-150, 200, 250)
     for l in lambda1:
         x = l*u
         x_v = x + vertex
@@ -144,6 +143,7 @@ def plot_event(hit, vertex, source, theta, title=None):
     
     vertex_hit = np.array(vertex_hit)
     source_hit = np.array(source_hit)
+
     ax.plot(vertex_hit[:,0], vertex_hit[:,1], 'r', label='Vertex-Hit')
     ax.plot(source_hit[:,0], source_hit[:,1], 'b', label='Source-Hit')
 
@@ -155,22 +155,19 @@ def plot_event(hit, vertex, source, theta, title=None):
     # Assuming photon propagates in straight line, compute minimum distance between source and source-hit line
     min_distance = np.linalg.norm(np.cross(source_hit[0]- source_hit[-1], source_hit[-1] - source_position_compton)) / np.linalg.norm(source_hit[0] - source_hit[-1])
     print(f"Minimum distance {min_distance}")
-
+    # Show min distance in plot
+    ax.text(-300, 100, f"Min distance: {min_distance:.8f}", fontsize=12)
     if title:
         plt.title(title)
     plt.show()
 
     return min_distance
 
-def distance_point_to_line(point, line_point1, line_point2):
-    """Compute the distance between a point and a line defined by two points."""
-    return np.linalg.norm(np.cross(line_point2 - line_point1, line_point1 - point)) / np.linalg.norm(line_point2 - line_point1)
-
-
 source_position = np.array([-682/2,0,0])
 
 distance_energy = {"Distance" : [],
                     "Energy" : []}
+
 # Event 334739
 vertex1 = np.array([-240.9564, 0, 0])
 hit1 = np.array([-141.0432, 87.994580, -109.7145])
@@ -246,8 +243,16 @@ min_distance = plot_event(hit5, vertex5, source_position, theta5_E, title="Event
 distance_energy["Distance"].append(min_distance)
 distance_energy["Energy"].append(70-(E1+E2))
 
+# Plot distance vs energy 
+distance = np.array(distance_energy["Distance"])
+energy = np.array(distance_energy["Energy"])
+# Linear fit
+m, b= np.polyfit(energy, distance, 1)
 
-plt.plot(distance_energy["Energy"], distance_energy["Distance"], 'o')
+e = np.linspace(0, np.max(energy), 100)
+plt.figure()
+plt.plot(energy, distance, 'o')
+plt.plot(e, m*e + b)
 plt.xlabel("Energy")
 plt.ylabel("Distance")
 plt.show()
