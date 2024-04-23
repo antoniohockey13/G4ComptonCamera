@@ -63,10 +63,10 @@ def cone_surface(landa, phi, theta, u, vertex):
 
 
 def plot_cone(theta, u, vertex, hit):
-    landa = np.linspace(-100, 100, 50)
-    landa1 = np.linspace(-105, -90, 75)
+    landa = np.linspace(-100, 100, 5)
+    landa1 = np.linspace(-99, -97, 75)
     landa = np.concatenate((landa, landa1))
-    phi = np.linspace(0, 2*np.pi, 50)
+    phi = np.linspace(3, 4, 50)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot(vertex[0], vertex[1], vertex[2], 'ro')
@@ -101,7 +101,8 @@ def plot_cone(theta, u, vertex, hit):
     ax.set_zlabel('Z')
     plt.show()
 
-
+def Angle_Energy(E_1,E_2):
+    return np.arccos(1-511*E_1/(E_2*(E_1+E_2)))
 
 # Plot 1 cone
 
@@ -109,15 +110,20 @@ vertex1 = np.array([-240.9564, 0, 0])
 hit1 = np.array([-141.0432, 87.994580, -109.7145])
 v1 = hit1-vertex1
 u1 = v1/np.linalg.norm(v1)
-theta1 = 0.9531211
-plot_cone(theta1, u1, vertex1, hit1)
+E1 = 4.4095097
+E2 = 65.590490
+theta1 = Angle_Energy(E1, E2)
+theta1_m = 0.9531211
+plot_cone(theta1_m, u1, vertex1, hit1)
 
 # Cone 2
 vertex2 = np.array([-240.9422, 0, 0])
 hit2 = np.array([-140.9891, -133.9434, -38.89468])
 v2 = hit2-vertex2
 u2 = v2/np.linalg.norm(v2)
-theta2 = 0.9489951
+E1 = 3.5831309
+E2 = 66.416869
+theta2 = Angle_Energy(E1,E2)
 # plot_cone(theta2, u2, vertex2, hit2)
 
 # Cone 3
@@ -125,7 +131,9 @@ vertex3 = np.array([-240.9378, 0, 0])
 hit3 = np.array([-141.0645, -10.21931, 135.40849])
 v3 = hit3-vertex3
 u3 = v3/np.linalg.norm(v3)
-theta3 = 0.9366535
+E1 = 3.8420938
+E2 = 66.157906
+theta3 = Angle_Energy(E1,E2)
 #plot_cone(theta3, u3, vertex3, hit3)
 
 
