@@ -273,6 +273,22 @@ def min_distance(hit, vertex, source, theta):
     min_distance = np.linalg.norm(np.cross(source_hit[0]- source_hit[-1], source_hit[-1] - source_position_compton)) / np.linalg.norm(source_hit[0] - source_hit[-1])
     return min_distance
 
+def mass(E1, E2, theta):
+    """
+    Compute the mass of the electron.
+
+    Parameters
+    ----------
+    E1 : float
+        Energy lost in first detector.
+    E2 : float
+        Energy lost in second detector.
+    theta : float
+        Compton angle in radians computed kinematic.
+    """
+    return (1-np.cos(theta))*E2*(E1+E2)/E1
+                    
+
 source_position = np.array([-682/2,0,0])
 
 vertex, hit, theta_m, E1, E2, event = extract_variables("Results/Validation/validation9.root")
@@ -296,6 +312,7 @@ event = np.delete(event, delete_index, 0)
 distance = []
 energy = []
 theta_E = []
+mass = []
 
 for i in range(len(E1)):
     theta = Angle_Energy(E1[i],E2[i], i)
@@ -305,10 +322,17 @@ for i in range(len(E1)):
         energy.append(70.0-(E1[i]+E2[i]))
         #energy.append(float(Decimal(70.0)-(Decimal(E1[i])+Decimal(E2[i]))))
 
-    plot_event(hit[i], vertex[i], source_position, theta_m[i], title=f"Event {event[i]}, kinematics theta, theta = {theta_m[i]}")
-    plot_event(hit[i], vertex[i], source_position, theta_E[i], title=f"Event {event[i]}, energy theta, theta = {theta_E[i]}, E1 = {E1[i]}, E2 = {E2[i]}")
+    # plot_event(hit[i], vertex[i], source_position, theta_m[i], title=f"Event {event[i]}, kinematics theta, theta = {theta_m[i]}")
+    # plot_event(hit[i], vertex[i], source_position, theta_E[i], title=f"Event {event[i]}, energy theta, theta = {theta_E[i]}, E1 = {E1[i]}, E2 = {E2[i]}")
+    mass.append(mass(E1[i], E2[i], theta_m[i]))
 
-
+#Plot mass histogram
+mass = np.array(mass)
+plt.figure()
+plt.hist(mass, bins=100, color='r', alpha=0.7)
+plt.xlabel("Mass/MeV")
+plt.ylabel("Counts")
+plt.show()
 
 distance = np.array(distance)
 energy = np.array(energy)
