@@ -1,5 +1,69 @@
+import ROOT
 import numpy as np 
 import matplotlib.pyplot as plt
+from decimal import Decimal
+import decimal
+decimal.getcontext().prec = 200
+
+def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
+    """
+    Extract the vertex coordinates from the tree.
+    
+    Parameters
+    ----------
+    file_name : str
+        Name of the ROOT file.
+    tree_name : str
+        Name of the tree in the ROOT file. Default is "ComptonHits".
+    
+    Returns
+    -------
+    numpy.ndarray
+        Numpy array containing the vertex coordinates (X1, Y1, Z1).
+    numpy.ndarray
+        Numpy array containing the hit coordinates (X2, Y2, Z2).
+    numpy.ndarray
+        Numpy array containing the compton angle.
+    numpy.ndarray
+        Numpy array containing the energy lost in the first detector.
+    numpy.ndarray   
+        Numpy array containing the energy lost in the second detector.
+    """
+    file = ROOT.TFile(file_name)
+    tree = file.Get(tree_name)
+
+    vertex = []
+    hit = []
+    theta_m = []
+    E_1 = []
+    E_2 = []
+    event = []
+    for i in range(tree.GetEntries()):
+        tree.GetEntry(i)
+        x_1 = tree.X1
+        y_1 = tree.Y1
+        z_1 = tree.Z1
+        vertex.append([x_1, y_1, z_1])
+
+        x_2 = tree.X2
+        y_2 = tree.Y2
+        z_2 = tree.Z2
+        hit.append([x_2, y_2, z_2])
+
+        theta_m.append(tree.ComptonAngle)
+        E_1.append(tree.Elost1)
+        E_2.append(tree.Elost2)
+        event.append(tree.Event)
+    
+    vertex = np.array(vertex)
+    hit = np.array(hit)
+    theta_m = np.array(theta_m)
+    E_1 = np.array(E_1)
+    E_2 = np.array(E_2)
+    event = np.array(event)
+
+    return vertex, hit, theta_m, E_1, E_2, event
+
 
 def cambio_base(v, u, d):
     """
@@ -46,7 +110,7 @@ def rotate(phi, u, x):
     
     return np.dot(r_phi, x)
 
-def Angle_Energy(E_1,E_2):
+def Angle_Energy(E_1,E_2, i):
     """
     Compute the compton angle
 
@@ -62,7 +126,14 @@ def Angle_Energy(E_1,E_2):
     float
         Compton angle in radians.
     """
-    return np.arccos(1-511*E_1/(E_2*(E_1+E_2)))
+    
+    try:
+        theta = np.arccos(1-510.99895000*E_1/(E_2*(E_1+E_2)))  
+    except RuntimeWarning:
+        theta = None
+        print(i, E_1, E_2)
+    return theta
+    
 
 def Compute_variables_to_plot(hit, vertex, source_position):
     """
@@ -84,7 +155,7 @@ def Compute_variables_to_plot(hit, vertex, source_position):
     base = np.array([0, u[1], u[2]])
     base = base/np.linalg.norm(base)
 
-    source_vertex = vertex1- source_position
+    source_vertex = vertex - source_position
     d = source_vertex/np.linalg.norm(source_vertex)
 
     return vertex, hit, source_position, u, d, base
@@ -129,7 +200,7 @@ def plot_event(hit, vertex, source, theta, title=None):
     # Rotar recta angulo theta respecto de vector normal al plano compton
     vertex_hit = []
     source_hit = []
-    lambda1 = np.linspace(-150, 200, 250)
+    lambda1 = np.linspace(-150, 200, 2)
     for l in lambda1:
         x = l*u
         x_v = x + vertex
@@ -152,107 +223,114 @@ def plot_event(hit, vertex, source, theta, title=None):
     ax.yaxis.set_label_text(f'base = {base}')
     plt.xlim(-400,-100)
     plt.ylim(-100,200)
-    # Assuming photon propagates in straight line, compute minimum distance between source and source-hit line
-    min_distance = np.linalg.norm(np.cross(source_hit[0]- source_hit[-1], source_hit[-1] - source_position_compton)) / np.linalg.norm(source_hit[0] - source_hit[-1])
-    print(f"Minimum distance {min_distance}")
-    # Show min distance in plot
-    ax.text(-300, 100, f"Min distance: {min_distance:.8f}", fontsize=12)
+
+    ax.text(-300, 100, f"Min distance: {min_distance(hit, vertex, source, theta):.8f}", fontsize=12)
     if title:
         plt.title(title)
-    plt.show()
+    plt.show()  
 
+def min_distance(hit, vertex, source, theta):
+    """
+    Compute the minimum distance between the line source-hit and the source.
+
+    Parameters
+    ----------
+    hit : numpy.array(x,y,z)
+        Hit position.
+    vertex : numpy.array(x,y,z)
+        Vertex position.
+    source : numpy.array(x,y,z)
+        Source position.
+    theta : float
+        Compton angle in radians.
+    """
+    vertex, hit, source_position, u, d, base = Compute_variables_to_plot(hit, vertex, source)
+
+    # Cambio de base
+    source_position_compton = cambio_base(source, base, d)
+
+    # Normal vector to the compton plane
+    normal = np.cross(base, d)
+
+    # Rotar recta 15.952385292692522 54.04761470730748angulo theta respecto de vector normal al plano compton
+    vertex_hit = []
+    source_hit = []
+    lambda1 = np.linspace(-150, 200, 2)
+    for l in lambda1:
+        x = l*u
+        x_v = x + vertex
+        x_compton = cambio_base(x_v, base, d)
+        vertex_hit.append(x_compton)
+            
+        x_rot = rotate(theta, normal, x)
+        x_rot = x_rot + vertex
+        x_rot_compton = cambio_base(x_rot, base, d) 
+        source_hit.append(x_rot_compton)
+    
+    vertex_hit = np.array(vertex_hit)
+    source_hit = np.array(source_hit)
+
+    min_distance = np.linalg.norm(np.cross(source_hit[0]- source_hit[-1], source_hit[-1] - source_position_compton)) / np.linalg.norm(source_hit[0] - source_hit[-1])
     return min_distance
 
 source_position = np.array([-682/2,0,0])
 
-distance_energy = {"Distance" : [],
-                    "Energy" : []}
+vertex, hit, theta_m, E1, E2, event = extract_variables("Results/Validation/validation9.root")
 
-# Event 334739
-vertex1 = np.array([-240.9564, 0, 0])
-hit1 = np.array([-141.0432, 87.994580, -109.7145])
+delete_index = []
+for ievent in range(len(event)):
+    if vertex[ievent][1]!= 0 or vertex[ievent][2]!= 0 or np.abs(70-(E1[ievent]+E2[ievent]))>1e-10:
+        delete_index.append(ievent)
+    elif (1-511*E1[ievent]/(E2[ievent]*(E1[ievent]+E2[ievent])))<-1:
+        delete_index.append(ievent)
+        print(event[ievent], E1[ievent], E2[ievent])
 
-theta1_m = 0.9531211
-E1 = 4.4095097
-E2 = 65.590490
-theta1_E = Angle_Energy(E1,E2)
+                    
+vertex = np.delete(vertex, delete_index, 0)
+hit = np.delete(hit, delete_index, 0)
+theta_m = np.delete(theta_m, delete_index, 0)
+E1 = np.delete(E1, delete_index, 0)
+E2 = np.delete(E2, delete_index, 0)
+event = np.delete(event, delete_index, 0)
 
-plot_event(hit1, vertex1, source_position, theta1_m, title="Event 334739, kinematics theta")
-min_distance = plot_event(hit1, vertex1, source_position, theta1_E, title="Event 334739, energy theta")
-distance_energy["Distance"].append(min_distance)
-distance_energy["Energy"].append(70-(E1+E2))
+distance = []
+energy = []
+theta_E = []
 
-# Event 774945
-vertex2 = np.array([-240.9378, 0, 0])
-hit2 = np.array([-141.0645, -10.21931, 135.40849])
+for i in range(len(E1)):
+    theta = Angle_Energy(E1[i],E2[i], i)
+    theta_E.append(theta)
+    if theta_E[i] is not None:
+        distance.append(min_distance(hit[i], vertex[i], source_position, theta_E[i]))
+        energy.append(70.0-(E1[i]+E2[i]))
+        #energy.append(float(Decimal(70.0)-(Decimal(E1[i])+Decimal(E2[i]))))
 
-theta2_m = 0.9366535
-E1 = 3.8420938
-E2 = 66.157906
-theta2_E = Angle_Energy(E1,E2)
-
-plot_event(hit2, vertex2, source_position, theta2_m, title="Event 774945, kinematics theta")
-min_distance = plot_event(hit2, vertex2, source_position, theta2_E, title="Event 774945, energy theta")
-
-distance_energy["Distance"].append(min_distance)
-distance_energy["Energy"].append(70-(E1+E2))
-
-
-# Event 1713126
-vertex3 = np.array([-240.9915, 0, 0])
-hit3 = np.array([-141.0205, -53.53393, -104.8608])
-
-theta3_m = 0.8668164
-E1 = 2.7505186
-E2 = 67.249481
-theta3_E = Angle_Energy(E1,E2)
-
-plot_event(hit3, vertex3, source_position, theta3_m, title="Event 1713126, kinematics theta")
-min_distance = plot_event(hit3, vertex3, source_position, theta3_E, title="Event 1713126, energy theta")
-distance_energy["Distance"].append(min_distance)
-distance_energy["Energy"].append(70-(E1+E2))
-
-# |E1+E2-70| < 
-# Event 36805102
-vertex4 = np.array([-241.0559,0,0])
-hit4 = np.array([-141.0087, 47.907277, -8.239250])
-
-theta4_m = 0.4522853
-E1 = 0.9374807
-E2 =  69.062519
-theta4_E = Angle_Energy(E1,E2)
-
-plot_event(hit4, vertex4, source_position, theta4_m, title="Event 36805102, kinematics theta")
-min_distance = plot_event(hit4, vertex4, source_position, theta4_E, title="Event 36805102, energy theta")
-distance_energy["Distance"].append(min_distance)
-distance_energy["Energy"].append(70-(E1+E2))
+    plot_event(hit[i], vertex[i], source_position, theta_m[i], title=f"Event {event[i]}, kinematics theta, theta = {theta_m[i]}")
+    plot_event(hit[i], vertex[i], source_position, theta_E[i], title=f"Event {event[i]}, energy theta, theta = {theta_E[i]}, E1 = {E1[i]}, E2 = {E2[i]}")
 
 
-# Event 48556354
 
-vertex5 = np.array([-241.0143,0,0])
-hit5 = np.array([-141.0231, 105.32865, 32.669562])
-
-theta5_m = 0.8342850
-E1 = 4.1300341
-E2 =  65.869965
-theta5_E = Angle_Energy(E1,E2)
-
-plot_event(hit5, vertex5, source_position, theta5_m, title="Event 48556354, kinematics theta")
-min_distance = plot_event(hit5, vertex5, source_position, theta5_E, title="Event 48556354, energy theta")
-distance_energy["Distance"].append(min_distance)
-distance_energy["Energy"].append(70-(E1+E2))
-
-# Plot distance vs energy 
-distance = np.array(distance_energy["Distance"])
-energy = np.array(distance_energy["Energy"])
+distance = np.array(distance)
+energy = np.array(energy)
 # Linear fit
 m, b= np.polyfit(energy, distance, 1)
-
-e = np.linspace(0, np.max(energy), 100)
+e = np.linspace(np.min(energy), np.max(energy), 100)
 plt.figure()
-plt.plot(energy, distance, 'o')
-plt.plot(e, m*e + b)
-plt.xlabel("Energy")
-plt.ylabel("Distance")
+plt.plot(energy, distance, 'o', c = 'r', label = 'Data')
+plt.plot(e, m*e + b, '-', c = 'b', label = f'Linear fit: y = {m:.2e}x + {b:.2e}')
+plt.xlabel("Energy 70-(E1+E2)/keV")
+plt.ylabel("Distance/mm")
+plt.legend(loc='best')
 plt.show()
+
+for i in range(len(energy)):
+    if energy[i] == np.min(energy):
+        print(i)
+        print(f"Distance {distance[i]}\n"
+              f"Energy {energy[i]}\n"
+              f"Theta {theta_E[i]}\n"
+              f"Event {event[i]}\n"
+              f"E1 {E1[i]}\n"
+              f"E2 {E2[i]}\n"
+              f"Esum {E1[i]+E2[i]}")
+        break
