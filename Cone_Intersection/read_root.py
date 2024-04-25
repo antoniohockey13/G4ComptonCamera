@@ -61,6 +61,48 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
     return vertex, hit, theta_m, E_1, E_2, event
 
 def select_events(vertex, hit, theta_m, E_1, E_2, event, mass, energy_tol = 1e-10):
+    """
+    Select events that satisfy the conditions:
+    - |70-(E1+E2)|<energy_tol
+    - 1-511*E1/(E2*(E1+E2))>-1
+    - Hit1 is in the (x,0,0)
+
+    Parameters
+    ----------
+    vertex : numpy.ndarray
+        Numpy array containing the vertex coordinates (X1, Y1, Z1).
+    hit : numpy.ndarray
+        Numpy array containing the hit coordinates (X2, Y2, Z2).
+    theta_m : numpy.ndarray
+        Numpy array containing the compton angle.
+    E_1 : numpy.ndarray
+        Numpy array containing the energy lost in the first detector.
+    E_2 : numpy.ndarray
+        Numpy array containing the energy lost in the second detector.
+    event : numpy.ndarray
+        Numpy array containing the event number.
+    mass : float
+        Mass of the electron.
+    energy_tol : float 
+        Tolerance for the energy lost in the detectors. Default is 1e-10.
+    
+    Returns
+    -------
+    numpy.ndarray
+        Numpy array containing the vertex coordinates (X1, Y1, Z1).
+    numpy.ndarray
+        Numpy array containing the hit coordinates (X2, Y2, Z2).
+    numpy.ndarray
+        Numpy array containing the compton angle computed kinematically.
+    numpy.ndarray
+        Numpy array containing the energy lost in the first detector.
+    numpy.ndarray
+        Numpy array containing the energy lost in the second detector.
+    numpy.ndarray
+        Numpy array containing the event number.
+    numpy.ndarray
+        Numpy array containing the compton angle computed with energies.
+    """
     delete_index = []
     for ievent in range(len(event)):
         if vertex[ievent][1]!= 0 or vertex[ievent][2]!= 0 or np.abs(70-(E_1[ievent]+E_2[ievent]))>energy_tol:
