@@ -1,68 +1,11 @@
 import ROOT
 import numpy as np 
 import matplotlib.pyplot as plt
-from decimal import Decimal
-import decimal
-decimal.getcontext().prec = 200
+import read_root
 
-def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
-    """
-    Extract the vertex coordinates from the tree.
-    
-    Parameters
-    ----------
-    file_name : str
-        Name of the ROOT file.
-    tree_name : str
-        Name of the tree in the ROOT file. Default is "ComptonHits".
-    
-    Returns
-    -------
-    numpy.ndarray
-        Numpy array containing the vertex coordinates (X1, Y1, Z1).
-    numpy.ndarray
-        Numpy array containing the hit coordinates (X2, Y2, Z2).
-    numpy.ndarray
-        Numpy array containing the compton angle.
-    numpy.ndarray
-        Numpy array containing the energy lost in the first detector.
-    numpy.ndarray   
-        Numpy array containing the energy lost in the second detector.
-    """
-    file = ROOT.TFile(file_name)
-    tree = file.Get(tree_name)
-
-    vertex = []
-    hit = []
-    theta_m = []
-    E_1 = []
-    E_2 = []
-    event = []
-    for i in range(tree.GetEntries()):
-        tree.GetEntry(i)
-        x_1 = tree.X1
-        y_1 = tree.Y1
-        z_1 = tree.Z1
-        vertex.append([x_1, y_1, z_1])
-
-        x_2 = tree.X2
-        y_2 = tree.Y2
-        z_2 = tree.Z2
-        hit.append([x_2, y_2, z_2])
-
-        theta_m.append(tree.ComptonAngle)
-        E_1.append(tree.Elost1)
-        E_2.append(tree.Elost2)
-        event.append(tree.Event)
-    
-    vertex = np.array(vertex)
-    hit = np.array(hit)
-    theta_m = np.array(theta_m)
-    E_1 = np.array(E_1)
-    E_2 = np.array(E_2)
-    event = np.array(event)
-
-    return vertex, hit, theta_m, E_1, E_2, event
+# Constants
+M_ELECTRON = 510.99895000
+source_position = np.array([-682/2,0,0])
 
 
 def cambio_base(v, u, d):
@@ -110,29 +53,6 @@ def rotate(phi, u, x):
     
     return np.dot(r_phi, x)
 
-def Angle_Energy(E_1,E_2, i):
-    """
-    Compute the compton angle
-
-    Parameters
-    ----------
-    E_1 : float
-        Energy lost in first detector.
-    E_2 : float
-        Energy lost in second detector.
-    
-    Returns
-    -------
-    float
-        Compton angle in radians.
-    """
-    
-    try:
-        theta = np.arccos(1-510.99895000*E_1/(E_2*(E_1+E_2)))  
-    except RuntimeWarning:
-        theta = None
-        print(i, E_1, E_2)
-    return theta
     
 
 def Compute_variables_to_plot(hit, vertex, source_position):
@@ -289,48 +209,33 @@ def mass(E1, E2, theta):
     return (1-np.cos(theta))*E2*(E1+E2)/E1
                     
 
-source_position = np.array([-682/2,0,0])
 
-vertex, hit, theta_m, E1, E2, event = extract_variables("Results/Validation/validation9.root")
 
-delete_index = []
-for ievent in range(len(event)):
-    if vertex[ievent][1]!= 0 or vertex[ievent][2]!= 0 or np.abs(70-(E1[ievent]+E2[ievent]))>1e-10:
-        delete_index.append(ievent)
-    elif (1-511*E1[ievent]/(E2[ievent]*(E1[ievent]+E2[ievent])))<-1:
-        delete_index.append(ievent)
-        print(event[ievent], E1[ievent], E2[ievent])
-
-                    
-vertex = np.delete(vertex, delete_index, 0)
-hit = np.delete(hit, delete_index, 0)
-theta_m = np.delete(theta_m, delete_index, 0)
-E1 = np.delete(E1, delete_index, 0)
-E2 = np.delete(E2, delete_index, 0)
-event = np.delete(event, delete_index, 0)
+vertex, hit, theta_m, E1, E2, event = read_root.extract_variables("Results/Validation/validation9.root")
+vertex, hit, theta_m, E1, E2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E1, E2, event, M_ELECTRON, energy_tol=1e-10)
 
 distance = []
 energy = []
-theta_E = []
-mass = []
+masa = []
 
 for i in range(len(E1)):
-    theta = Angle_Energy(E1[i],E2[i], i)
-    theta_E.append(theta)
     if theta_E[i] is not None:
         distance.append(min_distance(hit[i], vertex[i], source_position, theta_E[i]))
         energy.append(70.0-(E1[i]+E2[i]))
-        #energy.append(float(Decimal(70.0)-(Decimal(E1[i])+Decimal(E2[i]))))
+        masa.append(mass(E1[i], E2[i], theta_m[i]))
 
-    # plot_event(hit[i], vertex[i], source_position, theta_m[i], title=f"Event {event[i]}, kinematics theta, theta = {theta_m[i]}")
-    # plot_event(hit[i], vertex[i], source_position, theta_E[i], title=f"Event {event[i]}, energy theta, theta = {theta_E[i]}, E1 = {E1[i]}, E2 = {E2[i]}")
-    mass.append(mass(E1[i], E2[i], theta_m[i]))
-
+i = 0
+plot_event(hit[i], vertex[i], source_position, theta_m[i], title=f"Event {event[i]}, kinematics theta, theta = {theta_m[i]}")
+plot_event(hit[i], vertex[i], source_position, theta_E[i], title=f"Event {event[i]}, energy theta, theta = {theta_E[i]}, E1 = {E1[i]}, E2 = {E2[i]}")
+    
 #Plot mass histogram
-mass = np.array(mass)
+masa = np.array(masa)
 plt.figure()
-plt.hist(mass, bins=100, color='r', alpha=0.7)
-plt.xlabel("Mass/MeV")
+plt.hist(masa, bins=100, color='r', alpha=0.7)
+plt.axvline(x=M_ELECTRON, color='k', linestyle='--', label='Electron mass')
+plt.legend(loc='best')
+plt.yscale('log')
+plt.xlabel("Mass/KeV")
 plt.ylabel("Counts")
 plt.show()
 
@@ -347,14 +252,11 @@ plt.ylabel("Distance/mm")
 plt.legend(loc='best')
 plt.show()
 
-for i in range(len(energy)):
-    if energy[i] == np.min(energy):
-        print(i)
-        print(f"Distance {distance[i]}\n"
-              f"Energy {energy[i]}\n"
-              f"Theta {theta_E[i]}\n"
-              f"Event {event[i]}\n"
-              f"E1 {E1[i]}\n"
-              f"E2 {E2[i]}\n"
-              f"Esum {E1[i]+E2[i]}")
-        break
+
+# Plot mass vs distance
+plt.figure()
+plt.plot(masa, distance, 'o', c = 'r')
+plt.axvline(x=M_ELECTRON, color='k', linestyle='--', label='Electron mass')
+plt.xlabel("Mass/keV")
+plt.ylabel("Distance/mm")
+plt.show()
