@@ -54,16 +54,23 @@ def min_distance(vertex, hit, theta, source):
     float
         Minimum distance.
     """
+
     point = vertex-hit
-    point_rot = rotate(theta, np.array([0,1,0]), point)
+    r = np.array([0,1,0])
+    # Rotate in a perpendicular vector
+    point_rot = rotate(theta, np.cross(point, r), point)
 
     min_dist = np.inf
     phi = np.linspace(0, 2*np.pi, 100)
+    phi = np.append(phi, np.linspace(1.13488889, 1.13747475, 10)) # best_phi for event 0
+    phi = np.append(phi, np.linspace(2.67777421, 2.68033851, 10)) # best_phi for event 1
     for p in phi:
         point_rot_phi = rotate(p, point, point_rot) + vertex
         dist = np.linalg.norm(np.cross(point_rot_phi, source))/np.linalg.norm(point_rot_phi)
         if dist < min_dist:
             min_dist = dist
+            best_phi = p
+    print(f"Best phi: {best_phi}")
     return min_dist
     
 
@@ -96,9 +103,13 @@ def plot_cone(vertex, hit, theta_m, distance):
     # Plot the photon trajectory
     ax.plot([vertex[0], hit[0]], [vertex[1], hit[1]], [vertex[2], hit[2]], c='k', label='Photon trajectory')
     point = vertex-hit
-    point_rot = rotate(theta_m, np.array([0,1,0]), point)
-
+    r = np.array([0,1,0])
+    # Rotate in a perpendicular vector
+    point_rot = rotate(theta_m, np.cross(point, r), point)
+    
     phi = np.linspace(0, 2*np.pi, 100)
+    phi = np.append(phi, np.linspace(1.13488889, 1.13747475, 10)) # best_phi for event 0
+    phi = np.append(phi, np.linspace(2.67777421, 2.68033851, 10)) # best_phi for event 1
     for p in phi:
         point_rot_phi = rotate(p, point, point_rot) + vertex
         ax.plot([point_rot_phi[0], vertex[0]], [point_rot_phi[1], vertex[1]], [point_rot_phi[2], vertex[2]], c='y')
@@ -111,11 +122,14 @@ def plot_cone(vertex, hit, theta_m, distance):
 vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation9.root")
 vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
-distance_m = []
-distance_E = []
-for i in range(len(E_1)):
-    distance_m.append(min_distance(vertex[i], hit[i], theta_m[i], SOURCE_POSITION))
-    distance_E.append(min_distance(vertex[i], hit[i], theta_E[i], SOURCE_POSITION))
+# distance_m = []
+# distance_E = []
+# for i in range(len(E_1)):
+#     distance_m.append(min_distance(vertex[i], hit[i], theta_m[i], SOURCE_POSITION))
+#     distance_E.append(min_distance(vertex[i], hit[i], theta_E[i], SOURCE_POSITION))
 
-plot_cone(vertex[0], hit[0], theta_m[0], distance_m[0])
-plot_cone(vertex[0], hit[0], theta_E[0], distance_E[0])
+plot_cone(vertex[0], hit[0], theta_m[0], min_distance(vertex[0], hit[0], theta_m[0], SOURCE_POSITION))
+plot_cone(vertex[0], hit[0], theta_E[0], min_distance(vertex[0], hit[0], theta_E[0], SOURCE_POSITION))
+
+plot_cone(vertex[1], hit[1], theta_m[1], min_distance(vertex[1], hit[1], theta_m[1], SOURCE_POSITION))
+plot_cone(vertex[1], hit[1], theta_E[1], min_distance(vertex[1], hit[1], theta_E[1], SOURCE_POSITION))
