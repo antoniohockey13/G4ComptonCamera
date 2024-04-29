@@ -211,7 +211,7 @@ def mass(E1, E2, theta):
 
 
 
-vertex, hit, theta_m, E1, E2, event = read_root.extract_variables("Results/Validation/validation9.root")
+vertex, hit, theta_m, E1, E2, event = read_root.extract_variables("Results/Validation/validation12.root")
 vertex, hit, theta_m, E1, E2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E1, E2, event, M_ELECTRON, energy_tol=1e-10)
 
 distance = []

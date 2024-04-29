@@ -119,7 +119,7 @@ def plot_cone(vertex, hit, theta_m, distance):
     plt.show()
 
 
-vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation9.root")
+vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root")
 vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
 # distance_m = []
