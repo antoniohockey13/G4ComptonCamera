@@ -172,7 +172,7 @@ def min_distance(hit, vertex, source, theta):
     # Normal vector to the compton plane
     normal = np.cross(base, d)
 
-    # Rotar recta 15.952385292692522 54.04761470730748angulo theta respecto de vector normal al plano compton
+    # Rotar recta angulo theta respecto de vector normal al plano compton
     vertex_hit = []
     source_hit = []
     lambda1 = np.linspace(-150, 200, 2)
