@@ -1,0 +1,97 @@
+**Information we have:**
+- Cone:  x = lambda*R(phi, u)*R(theta,u*(0, 1, 0))*u + v
+	- u --> hit-vertex
+	- v --> vertex
+	- theta --> Compton angle
+	- phi --> Parameter
+	- lambda --> Parameter
+
+- voxel: define by 9 planes:
+	- x >
+	- x <
+	- y >
+	- y <
+	- z >
+	- z <
+
+--------------------------------------------------------------
+
+**Pseudocode**
+
+def select_voxel(cones,  voxels):
+	intersection = np.zeros(len(voxels)) # Array with number of cones intersecting voxel 1 in position 1 ...
+	for icone in cones:
+		for ivoxel in voxels:
+			if (check_if_cone_in_voxel(icone, ivoxel)):
+				intersection[ivoxel] += 1
+
+	voxel_selected = []
+	for i in intersection:
+		if intersection[i]> % *len(cones):
+			voxel_selected.append[ivoxel]
+	return voxel_selected 
+
+space_limits = {
+		"x>" :
+		"x<" :
+		"y>" :
+		"y<" :
+		"z>" :
+		"z<" :
+		}
+
+def voxelise_space(space_limits, voxel_number_side):
+	"""
+	space limits are assumed to be cubic and voxelisation will be done into cubic voxels
+	"""
+	len_x = (space_limits["x<"] - space_limits["x>"])/voxel_number_side
+	len_y = (space_limits["y<"] - space_limits["y>"])/voxel_number_side
+	len_z = (space_limits["z<"] - space_limits["z>"])/voxel_number_side
+	
+	voxels = {
+		"Number" : []
+		"x>" : []
+                "x<" : []
+                "y>" : []
+                "y<" : []
+                "z>" : []
+                "z<" : []
+		}
+	numb = 0
+	for ix in range(voxel_number_side):
+		for iy in range(voxel_number_side):
+			for iz in range(voxel_number_side):
+				# Append voxel
+				voxels["Number].append(numb)
+				voxels["x>"].append(space_limits["x>"] + len_x*ix)
+				voxels["x<"].append(space_limits["x>"] + len_x*(ix+1))
+				voxels["y>"].append(space_limits["y>"] + len_y*iy)
+				voxels["y<"].append(space_limits["y>"] + len_y*(iy+1))
+				voxels["z>"].append(space_limits["z>"] + len_z*iz)
+				voxels["z<"].append(space_limits["z>"] + len_z*(iz+1))
+				# Add 1 to number
+				numb +=1
+	return voxels 
+
+def check_if_cone_in_voxel(cone, voxel):
+	# Find intersection points between voxels limits and cone
+	for ix in voxel["x>"]:
+		for iy in voxel["y>"]:
+			solve (cono, x = [ix, iy]) # obtain phi and lambda
+			z = # compute z
+			if z> voxel["z>"] and z<["z<"]:
+				return True
+			else: 
+				return False
+
+
+def cono (lambda, phi):
+	"""
+	theta, u and v are known.
+	theta = compton angle
+	u = hit-vertex
+	v = vertex
+	x = pto
+	"""
+	return lambda*rotate(phi)*rotate(theta)*u+v-x	
+
