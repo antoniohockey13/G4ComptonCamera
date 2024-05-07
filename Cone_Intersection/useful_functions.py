@@ -1,5 +1,5 @@
 import numpy as np
-
+import sympy as sp
 def Compute_variables_to_plot(hit, vertex, source_position):
     """
     Compute the variables to plot the event in the compton plane.
@@ -65,10 +65,20 @@ def rotate(phi, u, x):
     numpy.array
         Rotated vector.
     """
-    if np.linalg.norm(u) != 1:
-        u = u/np.linalg.norm(u)
-    r_phi = np.array([[np.cos(phi)+u[0]**2*(1-np.cos(phi)), u[0]*u[1]*(1-np.cos(phi))-u[2]*np.sin(phi), u[0]*u[2]*(1-np.cos(phi))+u[1]*np.sin(phi)],
-                        [u[1]*u[0]*(1-np.cos(phi))+u[2]*np.sin(phi), np.cos(phi)+u[1]**2*(1-np.cos(phi)), u[1]*u[2]*(1-np.cos(phi))-u[0]*np.sin(phi)],
-                        [u[2]*u[0]*(1-np.cos(phi))-u[1]*np.sin(phi), u[2]*u[1]*(1-np.cos(phi))+u[0]*np.sin(phi), np.cos(phi)+u[2]**2*(1-np.cos(phi))]])
-    
-    return np.dot(r_phi, x)
+    if isinstance(phi, float):
+        if np.linalg.norm(u) != 1:
+            u = u/np.linalg.norm(u)
+        r_phi = np.array([[np.cos(phi)+u[0]**2*(1-np.cos(phi)), u[0]*u[1]*(1-np.cos(phi))-u[2]*np.sin(phi), u[0]*u[2]*(1-np.cos(phi))+u[1]*np.sin(phi)],
+                            [u[1]*u[0]*(1-np.cos(phi))+u[2]*np.sin(phi), np.cos(phi)+u[1]**2*(1-np.cos(phi)), u[1]*u[2]*(1-np.cos(phi))-u[0]*np.sin(phi)],
+                            [u[2]*u[0]*(1-np.cos(phi))-u[1]*np.sin(phi), u[2]*u[1]*(1-np.cos(phi))+u[0]*np.sin(phi), np.cos(phi)+u[2]**2*(1-np.cos(phi))]])
+        
+        return np.dot(r_phi, x)
+
+    elif isinstance(phi, sp.Expr):
+        if np.linalg.norm(u) != 1:
+            u = u/np.linalg.norm(u)
+        r_phi = sp.Matrix([[sp.cos(phi) + u[0]**2 * (1 - sp.cos(phi)), u[0] * u[1] * (1 - sp.cos(phi)) - u[2] * sp.sin(phi), u[0] * u[2] * (1 - sp.cos(phi)) + u[1] * sp.sin(phi)],
+                          [u[1] * u[0] * (1 - sp.cos(phi)) + u[2] * sp.sin(phi), sp.cos(phi) + u[1]**2 * (1 - sp.cos(phi)), u[1] * u[2] * (1 - sp.cos(phi)) - u[0] * sp.sin(phi)],
+                          [u[2] * u[0] * (1 - sp.cos(phi)) - u[1] * sp.sin(phi), u[2] * u[1] * (1 - sp.cos(phi)) + u[0] * sp.sin(phi), sp.cos(phi) + u[2]**2 * (1 - sp.cos(phi))]])
+        x = sp.Matrix(x)
+        return r_phi * x

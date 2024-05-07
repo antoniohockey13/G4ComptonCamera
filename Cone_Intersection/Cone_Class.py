@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sympy as sp
 import read_root
 import useful_functions as uf
 
@@ -139,7 +140,7 @@ class Cone:
         ax.set_zlabel('Z')
 
         # Plot the source, vertex, hit
-        ax.scatter(SOURCE_POSITION[0], SOURCE_POSITION[1], SOURCE_POSITION[2], c='r', marker='o', label='Source')
+        # ax.scatter(SOURCE_POSITION[0], SOURCE_POSITION[1], SOURCE_POSITION[2], c='r', marker='o', label='Source')
         ax.scatter(self.vertex[0], self.vertex[1], self.vertex[2], c='b', marker='o', label='Vertex')
         ax.scatter(self.hit[0], self.hit[1], self.hit[2], c='g', marker='o', label='Hit')
 
@@ -150,18 +151,23 @@ class Cone:
         # Rotate in a perpendicular vector
 
         point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
-        
+        point_rop_plot = point_rot + self.vertex
+        # ax.plot([point_rop_plot[0], self.vertex[0]], [point_rop_plot[1], self.vertex[1]], [point_rop_plot[2], self.vertex[2]], c='r', label='Cone')
+
         phi = np.linspace(0, 2*np.pi, 100)
 
         for p in phi:
             point_rot_phi = uf.rotate(p, point, point_rot) + self.vertex
-            ax.plot([point_rot_phi[0], self.vertex[0]], [point_rot_phi[1], self.vertex[1]], [point_rot_phi[2], self.vertex[2]], c='y')
+            if p == 0.:
+                ax.plot([point_rot_phi[0], self.vertex[0]], [point_rot_phi[1], self.vertex[1]], [point_rot_phi[2], self.vertex[2]], c='y', label='Cone')
+            else:
+                ax.plot([point_rot_phi[0], self.vertex[0]], [point_rot_phi[1], self.vertex[1]], [point_rot_phi[2], self.vertex[2]], c='y')
 
         plt.legend(loc='best')
         if title:
             plt.title(title)
-        else:
-            plt.title(f"Event {self.event}")
+        # else:
+        #     plt.title(f"Event {self.event}")
         plt.show()  
 
     def min_distance(self):
@@ -189,19 +195,37 @@ class Cone:
                 min_dist = dist
         self.min_distance = min_dist
         return min_dist
+    
+    def cone_equation(self):
+        """
+        Compute the equation of the cone in the form of a parametric equation.
+        it uses the sympy library to compute the equation.
 
+        Returns
+        -------
+        sympy expression
+            The equation of the cone.
+        """
+        landa = sp.symbols('lambda')
+        phi = sp.symbols('phi')
 
+        point = self.vertex-self.hit
+        r = np.array([0,1,0])
+        # Rotate in a perpendicular vector
 
+        point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
+        point_rot_phi = uf.rotate(phi, point, point_rot)
 
+        return landa*point_rot_phi + sp.Matrix(self.vertex)
 
-vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root")
+vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
 vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
 cones = []
 for i in range(len(E_1)):
     if theta_E[i] is not None:
         cones.append(Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i]))
-cones[0].plot_event_2d()
-cones[0].plot_cone_3d_lines()
-print(cones[0].min_distance())
+# cones[0].plot_event_2d()
+# cones[0].plot_cone_3d_lines()
+# sp.pprint(cones[0].cone_equation())
 

@@ -19,7 +19,7 @@
 **Pseudocode**
 
 def select_voxel(cones,  voxels):
-	intersection = np.zeros(len(voxels)) # Array with number of cones intersecting voxel 1 in position 1 ...
+	intersection = np.zeros(len(voxels)) # Array with number of cones intersecting voxel 0 in position 0 ...
 	for icone in cones:
 		for ivoxel in voxels:
 			if (check_if_cone_in_voxel(icone, ivoxel)):
@@ -27,7 +27,7 @@ def select_voxel(cones,  voxels):
 
 	voxel_selected = []
 	for i in intersection:
-		if intersection[i]> % *len(cones):
+		if intersection[i]> %*len(cones):
 			voxel_selected.append[ivoxel]
 	return voxel_selected 
 
@@ -77,7 +77,7 @@ def check_if_cone_in_voxel(cone, voxel):
 	# Find intersection points between voxels limits and cone
 	for ix in voxel["x>"]:
 		for iy in voxel["y>"]:
-			solve (cono, x = [ix, iy]) # obtain phi and lambda
+			solve(cono, x = [ix, iy]) # obtain phi and lambda
 			z = # compute z
 			if z> voxel["z>"] and z<["z<"]:
 				return True
@@ -94,4 +94,21 @@ def cono (lambda, phi):
 	x = pto
 	"""
 	return lambda*rotate(phi)*rotate(theta)*u+v-x	
+-----------------------------------------------------------------------
+I studied one case and once you multiply both rotation matrix without knowing phi it is obtained that 
 
+ x              n1 cos(phi) + n2 sin(phi) + n3
+[y] = lambda *[ n4 cos(phi) + n5 sin(phi) + n6 ]+ v
+ z              n7 cos(phi) + n8 sin(phi) + n9
+
+So if we could compute those n1-n9 in a general way then it should be possible to solve x and y lines obtaining phi and lambda and then just insert that into z so a z value is obtained. This way we can check what voxel the cone surface is.
+
+
+That matrix is obtained performing 2 rotation, first one the compton angle R(theta) and then the phi rotation R(phi)
+
+
+R(theta) can be performed with the function rotate already implemented in python. 
+
+
+Then it is just needed to obtain the numbers with sins and cosines to multiply them with that matrix
+Done with sympy.

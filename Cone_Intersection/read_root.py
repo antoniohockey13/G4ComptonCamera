@@ -1,7 +1,7 @@
 import ROOT
 import numpy as np 
 
-def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
+def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_partially: bool = False):
     """
     Extract the vertex coordinates from the tree.
     
@@ -11,6 +11,8 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
         Name of the ROOT file.
     tree_name : str
         Name of the tree in the ROOT file. Default is "ComptonHits".
+    read_partially : bool
+        If True, read only the first 30000 entries of the tree. Default is False.
     
     Returns
     -------
@@ -34,7 +36,11 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits"):
     E_1 = []
     E_2 = []
     event = []
-    for i in range(tree.GetEntries()):
+    if read_partially:
+        len = 3000
+    else:
+        len = tree.GetEntries()
+    for i in range(len):
         tree.GetEntry(i)
         x_1 = tree.X1
         y_1 = tree.Y1
