@@ -37,7 +37,7 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
     E_2 = []
     event = []
     if read_partially:
-        len = 3000
+        len = 1000
     else:
         len = tree.GetEntries()
     for i in range(len):

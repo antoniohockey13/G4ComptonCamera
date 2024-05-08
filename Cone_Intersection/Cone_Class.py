@@ -43,6 +43,7 @@ class Cone:
         self.angle_with_axis = self.angle_with_axis()
 
         self.event = event
+        self.cone_eq = self.cone_equation()
 
     def aperture_angle(self):
         """
@@ -215,9 +216,52 @@ class Cone:
 
         point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
         point_rot_phi = uf.rotate(phi, point, point_rot)
-
+        
         return landa*point_rot_phi + sp.Matrix(self.vertex)
 
+    def cone_intersect_voxel(self, voxel):
+        """
+        Compute the intersection of a cone with a voxel.
+
+        Parameters
+        ----------
+        voxel : np.ndarray
+            Array containing the voxel information.
+
+        Returns
+        -------
+        bool
+            True if the cone intersects the voxel, False otherwise.
+        """
+        eq = self.cone_eq
+        eq_x = eq[0]
+        eq_y = eq[1]
+        eq_z = eq[2]
+
+        eq_x = sp.Eq(eq_x, voxel["x>"])
+        eq_y = sp.Eq(eq_y, voxel["y>"])
+        out = sp.solvers.solve([eq_x, eq_y], dict=True)
+        for i in range(len(out)):
+            landa = out[i][sp.symbols('lambda')]
+            phi = out[i][sp.symbols('phi')]
+            z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+            # Check if z_i complex number
+            print(f"z_i = {z_i}\n voxel[z>] = {voxel['z>']}\n voxel[z<] = {voxel['z<']}")
+            if not z_i.is_real:
+                print("Complex number")
+                print(z_i)
+                print(out[i])
+                print(voxel)
+                print(eq_x)
+                print(eq_y)
+                print(self.event)
+                return False
+            elif z_i > voxel["z>"] and z_i < voxel["z<"]:
+                print("Cone intersected")
+                return True
+        return False
+
+            
 vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
 vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
@@ -228,4 +272,3 @@ for i in range(len(E_1)):
 # cones[0].plot_event_2d()
 # cones[0].plot_cone_3d_lines()
 # sp.pprint(cones[0].cone_equation())
-
