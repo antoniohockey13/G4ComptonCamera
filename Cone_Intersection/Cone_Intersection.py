@@ -21,7 +21,7 @@ class ConeIntersection:
     def remove_cone(self, cone):
         self.cones.remove(cone)
     
-    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side):
+    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side, tol = 10):
         """
         Compute the intersection of the cones with the voxels. It is needed an initial guess
         
@@ -41,13 +41,44 @@ class ConeIntersection:
             Greater limit in z coordinate.
         voxel_number_side : int
             Number of voxels in each side.
+        tol : float
+            Tolerance in the voxelisation.
         """
-        self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side)
-        print(self.voxels)
-        best_voxel =  self.select_voxel()
-        selected_voxel =  {}
-        for i in best_voxel:
-            selected_voxel[i] = self.voxels[i]
+        continue_search = True
+        cont = 0
+        while continue_search:
+            self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side)
+            print(f"Number of cones studied: {len(self.cones)}") #43
+            print(cont)
+            cont += 1
+            best_voxel =  self.select_voxel()
+            print(best_voxel)
+            selected_voxel =  {}
+            new_x_lower = []
+            new_x_greater = []
+            new_y_lower = []
+            new_y_greater = []
+            new_z_lower = []
+            new_z_greater = []
+
+            for i in best_voxel:
+                selected_voxel[i] = self.voxels[i]
+                new_x_lower.append(self.voxels[i]["x>"])
+                new_x_greater.append(self.voxels[i]["x<"])
+                new_y_lower.append(self.voxels[i]["y>"])
+                new_y_greater.append(self.voxels[i]["y<"])
+                new_z_lower.append(self.voxels[i]["z>"])
+                new_z_greater.append(self.voxels[i]["z<"])
+            
+            x_lower = np.min(new_x_lower)
+            x_greater = np.max(new_x_greater)
+            y_lower = np.min(new_y_lower)
+            y_greater = np.max(new_y_greater)
+            z_lower = np.min(new_z_lower)
+            z_greater = np.max(new_z_greater)
+            print(f"x = {x_greater} - {x_lower}\n y = {y_greater} - {y_lower}\n z = {z_greater} - {z_lower}")
+            if (x_greater - x_lower) < tol and (y_greater - y_lower) < tol and (z_greater - z_lower) < tol:
+                continue_search = False            
         return selected_voxel
 
     def voxelise_space(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side):
@@ -116,9 +147,7 @@ class ConeIntersection:
         for cone in self.cones:
             for i, ivox in (self.voxels.items()):
                 if cone.cone_intersect_voxel(ivox):
-                    print("Cone intersected")
                     intersection[i] += 1
-        print(intersection)
 
         voxel_selected = []
         for i in range(len(intersection)):
@@ -139,4 +168,4 @@ for i in range(len(E_1)):
     if theta_E[i] is not None:
         cone = Cone_Class.Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i])
         cones.add_cone(cone)
-print(cones.compute_intersection(-682/2-100, -682/2+100, -100, 100, -100, 100, 2))
+print(cones.compute_intersection(-682/2-5, -682/2+5, -5, 5, -5, 5, 2))

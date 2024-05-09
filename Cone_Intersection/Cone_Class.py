@@ -246,18 +246,17 @@ class Cone:
             phi = out[i][sp.symbols('phi')]
             z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
             # Check if z_i complex number
-            print(f"z_i = {z_i}\n voxel[z>] = {voxel['z>']}\n voxel[z<] = {voxel['z<']}")
             if not z_i.is_real:
-                print("Complex number")
-                print(z_i)
-                print(out[i])
-                print(voxel)
-                print(eq_x)
-                print(eq_y)
-                print(self.event)
+                # print("Complex number")
+                # print(z_i)
+                # print(out[i])
+                # print(voxel)
+                # print(eq_x)
+                # print(eq_y)
+                # print(self.event)
                 return False
             elif z_i > voxel["z>"] and z_i < voxel["z<"]:
-                print("Cone intersected")
+
                 return True
         return False
 
