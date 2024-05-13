@@ -58,6 +58,15 @@ class Cone:
             theta = None
         return theta
     
+    def get_event(self):
+        """
+        Returns
+        -------
+        int
+            The event number.
+        """
+        return self.event
+    
     def angle_with_axis(self):
         """
         Returns
@@ -213,8 +222,8 @@ class Cone:
         point = self.vertex-self.hit
         r = np.array([0,1,0])
         # Rotate in a perpendicular vector
-
-        point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
+        point_rot = uf.rotate(self.kinematic_angle, np.cross(point, r), point)
+        # point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
         point_rot_phi = uf.rotate(phi, point, point_rot)
         
         return landa*point_rot_phi + sp.Matrix(self.vertex)
@@ -238,13 +247,14 @@ class Cone:
         eq_y = eq[1]
         eq_z = eq[2]
 
-        eq_x = sp.Eq(eq_x, voxel["x>"])
-        eq_y = sp.Eq(eq_y, voxel["y>"])
-        out = sp.solvers.solve([eq_x, eq_y], dict=True)
+        eq_x_comp = sp.Eq(eq_x, voxel["x>"])
+        eq_y_comp = sp.Eq(eq_y, voxel["y>"])
+        out = sp.solvers.solve([eq_x_comp, eq_y_comp], dict=True)
         for i in range(len(out)):
             landa = out[i][sp.symbols('lambda')]
             phi = out[i][sp.symbols('phi')]
             z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+
             # Check if z_i complex number
             if not z_i.is_real:
                 # print("Complex number")
@@ -256,18 +266,41 @@ class Cone:
                 # print(self.event)
                 return False
             elif z_i > voxel["z>"] and z_i < voxel["z<"]:
-
                 return True
+            else:
+                eq_z_comp = sp.Eq(eq_z, voxel["z>"])
+                out = sp.solvers.solve([eq_y_comp, eq_z_comp], dict=True)
+                for i in range(len(out)):
+                    landa = out[i][sp.symbols('lambda')]
+                    phi = out[i][sp.symbols('phi')]
+                    x_i = eq_x.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+
+                    if not x_i.is_real:
+                        return False
+                    elif x_i > voxel["x>"] and x_i < voxel["x<"]:
+                        return True
+                    else:
+                        eq_z_comp = sp.Eq(eq_z, voxel["z<"])
+                        out = sp.solvers.solve([eq_x_comp, eq_z_comp], dict=True)
+                        for i in range(len(out)):
+                            landa = out[i][sp.symbols('lambda')]
+                            phi = out[i][sp.symbols('phi')]
+                            y_i = eq_y.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+                            if not y_i.is_real:
+                                return False
+                            if y_i > voxel["y>"] and y_i < voxel["y<"]:
+                                return True
+
         return False
 
             
-vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
-vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
+# vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
+# vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
-cones = []
-for i in range(len(E_1)):
-    if theta_E[i] is not None:
-        cones.append(Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i]))
+# cones = []
+# for i in range(len(E_1)):
+#     if theta_E[i] is not None:
+#         cones.append(Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i]))
 # cones[0].plot_event_2d()
 # cones[0].plot_cone_3d_lines()
 # sp.pprint(cones[0].cone_equation())

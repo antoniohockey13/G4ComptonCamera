@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 import read_root
 
 import Cone_Class
@@ -18,10 +19,7 @@ class ConeIntersection:
     def add_cone(self, cone):
         self.cones.append(cone)
 
-    def remove_cone(self, cone):
-        self.cones.remove(cone)
-    
-    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side, tol = 10):
+    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side, tol = 1e-3):
         """
         Compute the intersection of the cones with the voxels. It is needed an initial guess
         
@@ -53,6 +51,7 @@ class ConeIntersection:
             cont += 1
             best_voxel =  self.select_voxel()
             print(best_voxel)
+    
             selected_voxel =  {}
             new_x_lower = []
             new_x_greater = []
@@ -62,6 +61,7 @@ class ConeIntersection:
             new_z_greater = []
 
             for i in best_voxel:
+                print(self.voxels[i])
                 selected_voxel[i] = self.voxels[i]
                 new_x_lower.append(self.voxels[i]["x>"])
                 new_x_greater.append(self.voxels[i]["x<"])
@@ -69,6 +69,7 @@ class ConeIntersection:
                 new_y_greater.append(self.voxels[i]["y<"])
                 new_z_lower.append(self.voxels[i]["z>"])
                 new_z_greater.append(self.voxels[i]["z<"])
+
             
             x_lower = np.min(new_x_lower)
             x_greater = np.max(new_x_greater)
@@ -144,11 +145,11 @@ class ConeIntersection:
             Number of the voxel.
         """
         intersection = np.zeros(len(self.voxels.keys()))
-        for cone in self.cones:
+        for cone in tqdm(self.cones):
             for i, ivox in (self.voxels.items()):
                 if cone.cone_intersect_voxel(ivox):
                     intersection[i] += 1
-
+        print(intersection)     
         voxel_selected = []
         for i in range(len(intersection)):
             if intersection[i] > percentage*len(self.cones):
@@ -160,7 +161,7 @@ class ConeIntersection:
         return voxel_selected
 
 
-vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
+vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=False)
 vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
 
 cones = ConeIntersection()
@@ -168,4 +169,4 @@ for i in range(len(E_1)):
     if theta_E[i] is not None:
         cone = Cone_Class.Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i])
         cones.add_cone(cone)
-print(cones.compute_intersection(-682/2-5, -682/2+5, -5, 5, -5, 5, 2))
+print(cones.compute_intersection(-682/2-5, -682/2+6, -5, 6, -6, 5, 2))
