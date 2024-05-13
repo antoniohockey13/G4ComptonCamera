@@ -1,5 +1,12 @@
 import ROOT
 import numpy as np 
+# Units
+mm = 1
+keV = 1
+# Constants
+M_ELECTRON = 510.99895000*keV
+SOURCE_POSITION = np.array([-682/2*mm, 0*mm, 0*mm])
+
 
 def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_partially: bool = False):
     """
@@ -33,29 +40,37 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
     vertex = []
     hit = []
     theta_m = []
+    theta_E = []
     E_1 = []
     E_2 = []
     event = []
-    if read_partially:
-        len = 100
-    else:
-        len = tree.GetEntries()
+    reco_events = 0    
+    len = tree.GetEntries()
     for i in range(len):
         tree.GetEntry(i)
         x_1 = tree.X1
         y_1 = tree.Y1
         z_1 = tree.Z1
-        vertex.append([x_1, y_1, z_1])
-
+    
         x_2 = tree.X2
         y_2 = tree.Y2
         z_2 = tree.Z2
-        hit.append([x_2, y_2, z_2])
-
-        theta_m.append(tree.ComptonAngle)
-        E_1.append(tree.Elost1)
-        E_2.append(tree.Elost2)
+        
+        ret = select_events([x_1, y_1, z_1], [x_2, y_2, z_2], tree.ComptonAngle, tree.Elost1, tree.Elost2, energy_tol=1e-10)
+        if ret is None:
+            continue
+        reco_events += 1
+        ivertex, ihit, itheta_m, iE_1, iE_2, itheta_E = ret
+        vertex.append(ivertex)
+        hit.append(ihit)
+        theta_m.append(itheta_m)
+        E_1.append(iE_1)
+        E_2.append(iE_2)
         event.append(tree.Event)
+        theta_E.append(itheta_E)
+        if read_partially and reco_events >= 4:
+            break
+
     
     vertex = np.array(vertex)
     hit = np.array(hit)
@@ -63,10 +78,11 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
     E_1 = np.array(E_1)
     E_2 = np.array(E_2)
     event = np.array(event)
+    theta_E = np.array(theta_E)
 
-    return vertex, hit, theta_m, E_1, E_2, event
+    return vertex, hit, theta_m, E_1, E_2, event, theta_E
 
-def select_events(vertex, hit, theta_m, E_1, E_2, event, mass, energy_tol = 1e-10):
+def select_events(vertex, hit, theta_m, E_1, E_2, energy_tol = 1e-10):
     """
     Select events that satisfy the conditions:
     - |70-(E1+E2)|<energy_tol
@@ -85,10 +101,6 @@ def select_events(vertex, hit, theta_m, E_1, E_2, event, mass, energy_tol = 1e-1
         Numpy array containing the energy lost in the first detector.
     E_2 : numpy.ndarray
         Numpy array containing the energy lost in the second detector.
-    event : numpy.ndarray
-        Numpy array containing the event number.
-    mass : float
-        Mass of the electron.
     energy_tol : float 
         Tolerance for the energy lost in the detectors. Default is 1e-10.
     
@@ -109,25 +121,15 @@ def select_events(vertex, hit, theta_m, E_1, E_2, event, mass, energy_tol = 1e-1
     numpy.ndarray
         Numpy array containing the compton angle computed with energies.
     """
-    delete_index = []
-    for ievent in range(len(event)):
-        if vertex[ievent][1]!= 0 or vertex[ievent][2]!= 0 or np.abs(70-(E_1[ievent]+E_2[ievent]))>energy_tol:
-            delete_index.append(ievent)
-        elif (1-511*E_1[ievent]/(E_2[ievent]*(E_1[ievent]+E_2[ievent])))<-1:
-            delete_index.append(ievent)
-                
-    vertex = np.delete(vertex, delete_index, 0)
-    hit = np.delete(hit, delete_index, 0)
-    theta_m = np.delete(theta_m, delete_index, 0)
-    E_1 = np.delete(E_1, delete_index, 0)
-    E_2 = np.delete(E_2, delete_index, 0)
-    event = np.delete(event, delete_index, 0)
+    if vertex[1]!= 0 or vertex[2]!= 0 or np.abs(70-(E_1+E_2))>energy_tol:
+            return None
+    elif (1-511*E_1/(E_2*(E_1+E_2)))<-1:
+        return None                
+    
+    
+    theta_E = Angle_Energy(E_1,E_2, M_ELECTRON)
 
-    theta_E = []
-    for i in range(len(E_1)):
-        theta = Angle_Energy(E_1[i],E_2[i], mass)
-        theta_E.append(theta)
-    return vertex, hit, theta_m, E_1, E_2, event, theta_E
+    return vertex, hit, theta_m, E_1, E_2, theta_E
     
 
 def Angle_Energy(E_1,E_2, mass):

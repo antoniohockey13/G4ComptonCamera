@@ -138,16 +138,17 @@ class Cone:
             plt.title(f"Event {self.event} in the compton plane")
         plt.show()  
 
-    def plot_cone_3d_lines(self, title = None):
+    def plot_cone_3d_lines(self,  ax = None, title = None):
         """
         Plot the photon trajectory in 3D.
 
         """
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('Z')
 
         # Plot the source, vertex, hit
         # ax.scatter(SOURCE_POSITION[0], SOURCE_POSITION[1], SOURCE_POSITION[2], c='r', marker='o', label='Source')
@@ -178,7 +179,8 @@ class Cone:
             plt.title(title)
         # else:
         #     plt.title(f"Event {self.event}")
-        plt.show()  
+        if ax is None:
+            plt.show()  
 
     def min_distance(self):
         """
@@ -292,15 +294,78 @@ class Cone:
                                 return True
 
         return False
+    
+    def reconstruct_z(self, x, y):
 
-            
-# vertex, hit, theta_m, E_1, E_2, event = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
-# vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.select_events(vertex, hit, theta_m, E_1, E_2, event, M_ELECTRON, energy_tol=1e-10)
+        eq = self.cone_eq
+        eq_x = eq[0]
+        eq_y = eq[1]
+        eq_z = eq[2]
+
+        eq_x_comp = sp.Eq(eq_x, x)
+        eq_y_comp = sp.Eq(eq_y, y)
+        out = sp.solvers.solve([eq_x_comp, eq_y_comp], dict=True)
+        sol = []
+        for i in range(len(out)):
+            landa = out[i][sp.symbols('lambda')]
+            phi = out[i][sp.symbols('phi')]
+            z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+            if z_i.is_real:
+                sol.append(z_i)
+        return sol
+    def reconstruct_x(self, y, z):
+
+        eq = self.cone_eq
+        eq_x = eq[0]
+        eq_y = eq[1]
+        eq_z = eq[2]
+
+        eq_y_comp = sp.Eq(eq_y, y)
+        eq_z_comp = sp.Eq(eq_z, z)
+        out = sp.solvers.solve([eq_y_comp, eq_z_comp], dict=True)
+        print(out)
+        sol = []
+        for i in range(len(out)):
+            landa = out[i][sp.symbols('lambda')]
+            if landa == 0:
+                continue
+            phi = out[i][sp.symbols('phi')]
+            x_i = eq_x.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+            if x_i.is_real:
+                sol.append(x_i)
+        return sol
+    
+    def check_simulated_source_pos(self):
+        """
+        Check if the source position is inside the cone.
+
+        Returns
+        -------
+        bool
+            True if the source position is inside the cone, False otherwise.
+        """
+        eq = self.cone_eq
+        eq_x = eq[0]
+        eq_y = eq[1]
+        eq_z = eq[2]
+
+        eq_x_comp = sp.Eq(eq_x, SOURCE_POSITION[0])
+        eq_y_comp = sp.Eq(eq_y, SOURCE_POSITION[1])
+        out = sp.solvers.solve([eq_x_comp, eq_y_comp], dict=True)
+        for i in range(len(out)):
+            landa = out[i][sp.symbols('lambda')]
+            phi = out[i][sp.symbols('phi')]
+            z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+
+            if z_i.is_real and z_i-SOURCE_POSITION[2]<1e-10:
+                return True
+        return False
+
+# vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
 
 # cones = []
 # for i in range(len(E_1)):
-#     if theta_E[i] is not None:
-#         cones.append(Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i]))
+    # cones.append(Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i]))
 # cones[0].plot_event_2d()
 # cones[0].plot_cone_3d_lines()
 # sp.pprint(cones[0].cone_equation())
