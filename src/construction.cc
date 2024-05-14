@@ -22,7 +22,8 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _world_height = 562*mm;
     _world_depth = 354*mm;
 
-    _detector_size = 300*mm;
+    _detector_size_y = 300*mm;
+    _detector_size_z = 200*mm;
     _detector_number = 2;
     //Define map with distances
     for (G4int i = 1; i < _detector_number; i++)
@@ -37,9 +38,9 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     //Messenger
     G4GenericMessenger *_messenger;
     _number = 1;
-    // Cange number of detectors not working
+    // Change number of detectors not working
     _messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
-    _messenger->DeclareProperty("detector_size", _detector_size, "Detector size, /run/reinitializeGeometry to update");
+    // _messenger->DeclareProperty("detector_size", _detector_size, "Detector size, /run/reinitializeGeometry to update");
     //_messenger->DeclareProperty("detector_thickness", _detector_thickness, "Detector thickness, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_number", _detector_number, "Number of detectors");
     _messenger->DeclareProperty("Number", _number, "Select with detector you want to move with /ComptCamera/detector/detector_distance");
@@ -120,7 +121,7 @@ void ComptCameraDetectorConstruction::_ConstructDetector(G4int detector_number, 
     // Create detector solid, length arguments half of the actual length
     G4String name = "Detector" + std::to_string(detector_number);
 
-    G4Box* solid_detector = new G4Box(name, thickness/2, _detector_size/2, _detector_size/2); 
+    G4Box* solid_detector = new G4Box(name, thickness/2, _detector_size_y/2, _detector_size_z/2); 
     // Create detector logical volume
     _detector_map[detector_number] = new G4LogicalVolume(solid_detector, _detector_material, name);
     

@@ -56,6 +56,7 @@ class ConeIntersection:
         """
         continue_search = True
         cont = 0
+        cont_volume = 0
         old_volume = np.inf
         while continue_search:
             # Voxelise the space
@@ -111,10 +112,19 @@ class ConeIntersection:
             new_z_greater = np.max(new_z_greater)
             print(f"x = {new_x_greater} - {new_x_lower}\n y = {new_y_greater} - {new_y_lower}\n z = {new_z_greater} - {new_z_lower}")
             new_volume = (new_x_greater - new_x_lower)*(new_y_greater - new_y_lower)*(new_z_greater - new_z_lower)
+            print(f"Old volume {old_volume}\n New volume {new_volume}")
+            if  (old_volume - new_volume) <= tol:
+                cont_volume += 1
+                print(f"Delta volume {old_volume - new_volume}")
 
-            if  old_volume - new_volume <= tol:
-                continue_search = False
-            
+                if cont_volume == 2:
+                    continue_search = False
+                else:
+                    voxel_number_size_x = (voxel_number_size_x-1)*2+1
+                    voxel_number_size_y = (voxel_number_size_y-1)*2+1
+                    voxel_number_size_z = (voxel_number_size_z-1)*2+1
+            else:
+                cont_volume = 0
             old_volume = new_volume
 
               
@@ -294,4 +304,4 @@ for i in range(len(E_1)):
 
 det1_position = vertex[0]
 
-print(cones.compute_intersection(SOURCE_POSITION[0]-50, det1_position[0], -150, 150, -150, 150, voxel_number_size_x = 4, voxel_number_size_y = 4, voxel_number_size_z = 4))
+print(cones.compute_intersection(SOURCE_POSITION[0]-50, det1_position[0], -150, 150, -150, 150, voxel_number_size_x = 5, voxel_number_size_y = 5, voxel_number_size_z = 5))

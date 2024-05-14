@@ -5,7 +5,12 @@
 #include "G4ParticleTable.hh"
 
 ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
-{
+{   
+    // Define angle
+    // alpha angle with y axis
+    G4double alpha = 0.5;
+    // phi angle with z axis
+    G4double phi = 0;
     // Get world width from detector construction
     ComptCameraDetectorConstruction detectorConstruction;
     _world_width = detectorConstruction.GetWorldWidth();
@@ -14,7 +19,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     _particle_gun = new G4ParticleGun(1); 
     // Position and momentum
     G4ThreeVector pos = G4ThreeVector(-_world_width/2, 0.0, 0.0);
-    G4ThreeVector mom = G4ThreeVector(1.0, 0.0, 0.0);
+    G4ThreeVector mom = G4ThreeVector(cos(phi)*cos(alpha), sin(alpha)*cos(phi), cos(alpha)*sin(phi));
     _particle_gun->SetParticlePosition(pos);
     _particle_gun->SetParticleMomentumDirection(mom);
     

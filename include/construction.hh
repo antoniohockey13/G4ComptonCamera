@@ -43,7 +43,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     G4double _world_depth; 
     
     // Detector size in x and y axis
-    G4double _detector_size; 
+    G4double _detector_size_y, _detector_size_z; 
 
     // Phantom detector
     G4bool _phantom_detector;
