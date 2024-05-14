@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sympy as sp
 from tqdm import tqdm
 import read_root
 
@@ -20,7 +21,13 @@ class ConeIntersection:
     def add_cone(self, cone):
         self.cones.append(cone)
 
-    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side, tol = 1e-3):
+    def get_voxels(self):
+        return self.voxels
+    
+    def remove_voxels(self):
+        self.voxels = {}
+
+    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z, tol = 1e-3):
         """
         Compute the intersection of the cones with the voxels. It is needed an initial guess
         
@@ -38,23 +45,30 @@ class ConeIntersection:
             Lower limit in z coordinate.
         z_greater : float
             Greater limit in z coordinate.
-        voxel_number_side : int
-            Number of voxels in each side.
+        voxel_number_side_x : int
+            Number of voxels in x side.
+        voxel_number_side_y : int
+            Number of voxels in y side.
+        voxel_number_side_z : int
+            Number of voxels in z side.        
         tol : float
             Tolerance in the voxelisation.
         """
         continue_search = True
         cont = 0
-
+        old_volume = np.inf
         while continue_search:
-            self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side)
-            self.plot_voxels_and_cone()
-            print(f"Number of cones studied: {len(self.cones)}") #43
+            # Voxelise the space
+            x, y, z = self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z)
+
+            print(f"Number of cones studied: {len(self.cones)}")
             print(cont)
             cont += 1
-            best_voxel =  self.select_voxel()
+            # Select the voxel with the highest number of cones
+            best_voxel =  self.select_voxel(x, y, z)
             print(best_voxel)
-    
+
+            # Compute new limits of the space
             selected_voxel =  {}
             new_x_lower = []
             new_x_greater = []
@@ -62,7 +76,7 @@ class ConeIntersection:
             new_y_greater = []
             new_z_lower = []
             new_z_greater = []
-
+            
             for i in best_voxel:
                 print(self.voxels[i])
                 selected_voxel[i] = self.voxels[i]
@@ -73,24 +87,41 @@ class ConeIntersection:
                 new_z_lower.append(self.voxels[i]["z>"])
                 new_z_greater.append(self.voxels[i]["z<"])
 
-            if x_lower == np.min(new_x_lower) and x_greater == np.max(new_x_greater) and y_lower == np.min(new_y_lower) and y_greater == np.max(new_y_greater) and z_lower == np.min(new_z_lower) and z_greater == np.max(new_z_greater):
+            # All voxels equally intersected
+            if len(best_voxel) == len(self.voxels):
+                # Increasing limits this way we assure that if some side is set as 1 so no voxelization is needed it stays the same way.
+                # Also change the division number no always multiple of 2 so the voxelization is not always the same
+                voxel_number_size_x = (voxel_number_size_x-1)*2+1
+                voxel_number_size_y = (voxel_number_size_y-1)*2+1
+                voxel_number_size_z = (voxel_number_size_z-1)*2+1
+                print("All voxels equally intersected")
+            # Some voxels are discarded but the limits stay the same
+            elif x_lower == np.min(new_x_lower) and x_greater == np.max(new_x_greater) and y_lower == np.min(new_y_lower) and y_greater == np.max(new_y_greater) and z_lower == np.min(new_z_lower) and z_greater == np.max(new_z_greater):
+                print(" Some voxel discard but bigger limits stay the same")
+                voxel_number_size_x = (voxel_number_size_x-1)*2+1
+                voxel_number_size_y = (voxel_number_size_y-1)*2+1
+                voxel_number_size_z = (voxel_number_size_z-1)*2+1
+
+            
+            new_x_lower = np.min(new_x_lower)
+            new_x_greater = np.max(new_x_greater)
+            new_y_lower = np.min(new_y_lower)
+            new_y_greater = np.max(new_y_greater)
+            new_z_lower = np.min(new_z_lower)
+            new_z_greater = np.max(new_z_greater)
+            print(f"x = {new_x_greater} - {new_x_lower}\n y = {new_y_greater} - {new_y_lower}\n z = {new_z_greater} - {new_z_lower}")
+            new_volume = (new_x_greater - new_x_lower)*(new_y_greater - new_y_lower)*(new_z_greater - new_z_lower)
+
+            if  old_volume - new_volume <= tol:
                 continue_search = False
             
-            x_lower = np.min(new_x_lower)
-            x_greater = np.max(new_x_greater)
-            y_lower = np.min(new_y_lower)
-            y_greater = np.max(new_y_greater)
-            z_lower = np.min(new_z_lower)
-            z_greater = np.max(new_z_greater)
-            print(f"x = {x_greater} - {x_lower}\n y = {y_greater} - {y_lower}\n z = {z_greater} - {z_lower}")
-            if (x_greater - x_lower) < tol and (y_greater - y_lower) < tol and (z_greater - z_lower) < tol:
-                continue_search = False      
+            old_volume = new_volume
+
               
         return selected_voxel
 
-    def voxelise_space(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side):
+    def voxelise_space(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_side_x, voxel_number_side_y, voxel_number_side_z):
         """
-
         Voxelise the space in x, y, z coordinates.
 
         Parameters
@@ -107,35 +138,62 @@ class ConeIntersection:
             Lower limit in z coordinate.
         z_greater : float
             Greater limit in z coordinate.
-        voxel_number_side : int
-            Number of voxels in each side.        
+        voxel_number_side_x : int
+            Number of voxels in each side in x coordinate.
+        voxel_number_side_y : int
+            Number of voxels in each side in y coordinate.
+        voxel_number_side_z : int
+            Number of voxels in each side in z coordinate.         
         Returns
         -------
         numpy.array
-            Array containing the voxelised space.
+            Array containing the x coordinates of the voxels.
+        numpy.array
+            Array containing the y coordinates of the voxels.
+        numpy.array
+            Array containing the z coordinates of the voxels.
         """
-        len_x = (x_greater - x_lower)/voxel_number_side
-        len_y = (y_greater - y_lower)/voxel_number_side
-        len_z = (z_greater - z_lower)/voxel_number_side
+        # To store the x, y, z values of the voxels limits
+        x_used = []
+        y_used = []
+        z_used = []
+        # Length of the voxels
+        len_x = (x_greater - x_lower)/voxel_number_side_x
+        len_y = (y_greater - y_lower)/voxel_number_side_y
+        len_z = (z_greater - z_lower)/voxel_number_side_z
         voxels = {}
         num = 0
-        for ix in range(voxel_number_side):
+        for ix in range(voxel_number_side_x):
             x1 = x_lower + ix*len_x
             x2 = x_lower + (ix+1)*len_x
-            for iy in range(voxel_number_side):
+            if x1 not in x_used:
+                x_used.append(x1)
+            if x2 not in x_used:
+                x_used.append(x2)
+            for iy in range(voxel_number_side_y):
                 y1 = y_lower + iy*len_y
                 y2 = y_lower + (iy+1)*len_y
-                for iz in range(voxel_number_side):
+                if y1 not in y_used:
+                    y_used.append(y1)
+                if y2 not in y_used:
+                    y_used.append(y2)
+                for iz in range(voxel_number_side_z):
+                    z1 = z_lower + iz*len_z
+                    z2 = z_lower + (iz+1)*len_z
+                    if z1 not in z_used:
+                        z_used.append(z1)
+                    if z2 not in z_used:
+                        z_used.append(z2)
                     voxels[num] = {
                         "x>": x1,
                         "x<": x2, 
                         "y>": y1,
                         "y<": y2,
-                        "z>": z_lower + iz*len_z,
-                        "z<": z_lower + (iz+1)*len_z,}
+                        "z>": z1,
+                        "z<": z2}
                     num += 1
-        self.voxels = voxels
-        return voxels
+        self.voxels = voxels 
+        return np.array(x_used), np.array(y_used), np.array(z_used)
     
 
     def plot_voxels_and_cone(self):
@@ -166,99 +224,74 @@ class ConeIntersection:
         ax.set_zlabel('Z')
         plt.show()
     
-    def select_voxel(self, percentage = 0.9):
+    def select_voxel(self, x, y, z):
         """
         Select the voxel with the highest number of cones.
         
         Parameters
         ----------
-        percentage : float
-            Percentage of cones that the voxel must contain.
+        x : numpy.array
+            Array containing the x coordinates of the voxels.
+        y : numpy.array
+            Array containing the y coordinates of the voxels.
+        z : numpy.array
+            Array containing the z coordinates of the voxels.
+
         Returns
         -------
-        int
-            Number of the voxel.
+        list
+            List containing the index of the voxels with the highest number of cones.
         """
+        # Initialize the intersection array
         intersection = np.zeros(len(self.voxels.keys()))
-        xy_used = []
+        # Loop over the cones
         for cone in tqdm(self.cones):
-            # print("New Cone")
-            for i, ivox in (self.voxels.items()):
-                x = ivox["x>"]
-                y = ivox["y>"]
-                if (x, y) not in xy_used:
-                    # print("New xy")
-                    xy_used.append((x, y))
-                    z_reco = cone.reconstruct_z(x, y)
-                    for z in z_reco:
-                        # print(f"z={z}")
+            # print("Cone equation")
+            # sp.pprint(cone.cone_equation())
+            # Initialize the array to check if the voxel has been already added
+            vox_added = np.zeros(len(self.voxels.keys()))
+            for ix in x:
+                for iy in y:
+                    # print("x", ix, "y", iy)
+                    # Fixing x-y to obtain z
+                    z_reco = cone.reconstruct_z(ix, iy)
+                    for iz_reco in z_reco:
+                        # print("z", iz_reco)
+                        # Loop over the voxels
                         for i, ivox in (self.voxels.items()):
-                            if ivox["x>"] == x and ivox["y>"] == y:
-                                if ivox["z>"] <= z and ivox["z<"] >= z:
+                            # print("Voxel" ,ivox)
+                            if (ivox["x>"] == ix or ivox["x<"] == ix) and (ivox["y>"] == iy or ivox["y<"] == iy) and ivox["z>"] <= iz_reco and ivox["z<"] >= iz_reco:
+                                # check if the voxel has been already added
+                                if vox_added[i] == 0:
+                                    vox_added[i] = 1
                                     intersection[i] += 1
-                                    # print(f"Intersection in {i}")
-            xy_used = []
-        print(intersection)     
-        voxel_selected = []
-        for i in range(len(intersection)):
-            if intersection[i] > percentage*len(self.cones):
-                voxel_selected.append(i)
-        if len(voxel_selected) == 0:
-            max_value = np.max(intersection)
-            voxel_selected = [i for i, val in enumerate(intersection) if val == max_value]
-
-        return voxel_selected
-    
-    def select_voxel_x(self, percentage = 0.9):
-        """
-        Select the voxel with the highest number of cones.
-        
-        Parameters
-        ----------
-        percentage : float
-            Percentage of cones that the voxel must contain.
-        Returns
-        -------
-        int
-            Number of the voxel.
-        """
-        intersection = np.zeros(len(self.voxels.keys()))
-        yz_used = []
-        for cone in tqdm(self.cones):
-            # print("New Cone")
-            for i, ivox in (self.voxels.items()):
-                y = ivox["y>"]
-                z = ivox["z>"]
-                if (y, z) not in yz_used:
-                    # print("New xy")
-                    yz_used.append((y, z))
-                    x_reco = cone.reconstruct_x(y, z)
-                    for x in x_reco:
-                        # print(f"z={z}")
+                # Fixing x-z to obtain y
+                for iz in z:
+                    # print("x", ix, "z", iz)
+                    y_reco = cone.reconstruct_y(ix, iz)
+                    for iy_reco in y_reco:
+                        # print("y", iy_reco)
                         for i, ivox in (self.voxels.items()):
-                            if ivox["y>"] == y and ivox["z>"] == z:
-                                if ivox["x>"] <= x and ivox["x<"] >= x:
+                            if (ivox["x>"] == ix or ivox["x<"] == ix) and (ivox["z>"] == iz or ivox["z<"] == iz) and ivox["y>"] <= iy_reco and ivox["y<"] >= iy_reco:
+                                if vox_added[i] == 0:
+                                    vox_added[i] = 1
                                     intersection[i] += 1
-                                    # print(f"Intersection in {i}")
-            yz_used = []
-        print(intersection)     
-        voxel_selected = []
-        for i in range(len(intersection)):
-            if intersection[i] > percentage*len(self.cones):
-                voxel_selected.append(i)
-        if len(voxel_selected) == 0:
-            max_value = np.max(intersection)
-            voxel_selected = [i for i, val in enumerate(intersection) if val == max_value]
+        print(intersection)
 
+        max_value = np.max(intersection)
+        voxel_selected = [i for i, val in enumerate(intersection) if val == max_value]
         return voxel_selected
-
-
-vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
 
 cones = ConeIntersection()
+vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
+
+
 for i in range(len(E_1)):
     if theta_E[i] is not None:
         cone = Cone_Class.Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i])
         cones.add_cone(cone)
-        print(f"Cone Nº  {i} correct source:  {cone.check_simulated_source_pos()}")
-print(cones.compute_intersection(-682/2-5, -682/2+5, -5, 5, -6, 6, 2))
+        # print(f"Cone Nº  {i} correct source:  {cone.check_simulated_source_pos()}")
+
+det1_position = vertex[0]
+
+print(cones.compute_intersection(SOURCE_POSITION[0]-50, det1_position[0], -150, 150, -150, 150, voxel_number_size_x = 4, voxel_number_size_y = 4, voxel_number_size_z = 4))

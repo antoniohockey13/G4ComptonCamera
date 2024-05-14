@@ -308,31 +308,31 @@ class Cone:
         sol = []
         for i in range(len(out)):
             landa = out[i][sp.symbols('lambda')]
-            phi = out[i][sp.symbols('phi')]
-            z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
-            if z_i.is_real:
-                sol.append(z_i)
+            if landa != 0:
+                phi = out[i][sp.symbols('phi')]
+                z_i = eq_z.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+                if z_i.is_real:
+                    sol.append(z_i)
         return sol
-    def reconstruct_x(self, y, z):
+    
+    def reconstruct_y(self, x, z):
 
         eq = self.cone_eq
         eq_x = eq[0]
         eq_y = eq[1]
         eq_z = eq[2]
 
-        eq_y_comp = sp.Eq(eq_y, y)
+        eq_x_comp = sp.Eq(eq_x, x)
         eq_z_comp = sp.Eq(eq_z, z)
-        out = sp.solvers.solve([eq_y_comp, eq_z_comp], dict=True)
-        print(out)
+        out = sp.solvers.solve([eq_x_comp, eq_z_comp], dict=True)
         sol = []
         for i in range(len(out)):
             landa = out[i][sp.symbols('lambda')]
-            if landa == 0:
-                continue
-            phi = out[i][sp.symbols('phi')]
-            x_i = eq_x.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
-            if x_i.is_real:
-                sol.append(x_i)
+            if landa != 0:
+                phi = out[i][sp.symbols('phi')]
+                y_i = eq_y.subs(sp.symbols('lambda'), landa).subs(sp.symbols('phi'), phi).evalf()
+                if y_i.is_real:
+                    sol.append(y_i)
         return sol
     
     def check_simulated_source_pos(self):
