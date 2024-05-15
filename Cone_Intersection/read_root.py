@@ -68,7 +68,7 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
         E_2.append(iE_2)
         event.append(tree.Event)
         theta_E.append(itheta_E)
-        if read_partially and reco_events >= 4:
+        if read_partially and reco_events >= 6:
             break
 
     
@@ -121,8 +121,8 @@ def select_events(vertex, hit, theta_m, E_1, E_2, energy_tol = 1e-10):
     numpy.ndarray
         Numpy array containing the compton angle computed with energies.
     """
-    if vertex[1]!= 0 or vertex[2]!= 0 or np.abs(70-(E_1+E_2))>energy_tol:
-            return None
+    if np.abs(70-(E_1+E_2))>energy_tol:
+        return None
     elif (1-511*E_1/(E_2*(E_1+E_2)))<-1:
         return None                
     

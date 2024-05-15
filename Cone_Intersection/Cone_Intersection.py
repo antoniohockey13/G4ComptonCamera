@@ -63,6 +63,7 @@ class ConeIntersection:
             x, y, z = self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z)
 
             print(f"Number of cones studied: {len(self.cones)}")
+            print(f"Number of voxels in x: {voxel_number_size_x}\nNumber of voxels in y: {voxel_number_size_y}\nNumber of voxels in z: {voxel_number_size_z}")
             print(cont)
             cont += 1
             # Select the voxel with the highest number of cones
@@ -89,20 +90,19 @@ class ConeIntersection:
                 new_z_greater.append(self.voxels[i]["z<"])
 
             # All voxels equally intersected
-            if len(best_voxel) == len(self.voxels):
-                # Increasing limits this way we assure that if some side is set as 1 so no voxelization is needed it stays the same way.
-                # Also change the division number no always multiple of 2 so the voxelization is not always the same
-                voxel_number_size_x = (voxel_number_size_x-1)*2+1
-                voxel_number_size_y = (voxel_number_size_y-1)*2+1
-                voxel_number_size_z = (voxel_number_size_z-1)*2+1
-                print("All voxels equally intersected")
-            # Some voxels are discarded but the limits stay the same
-            elif x_lower == np.min(new_x_lower) and x_greater == np.max(new_x_greater) and y_lower == np.min(new_y_lower) and y_greater == np.max(new_y_greater) and z_lower == np.min(new_z_lower) and z_greater == np.max(new_z_greater):
-                print(" Some voxel discard but bigger limits stay the same")
-                voxel_number_size_x = (voxel_number_size_x-1)*2+1
-                voxel_number_size_y = (voxel_number_size_y-1)*2+1
-                voxel_number_size_z = (voxel_number_size_z-1)*2+1
-
+            # if len(best_voxel) == len(self.voxels):
+            #     # Increasing limits this way we assure that if some side is set as 1 so no voxelization is needed it stays the same way.
+            #     # Also change the division number no always multiple of 2 so the voxelization is not always the same
+            #     voxel_number_size_x = (voxel_number_size_x-1)*2+1
+            #     voxel_number_size_y = (voxel_number_size_y-1)*2+1
+            #     voxel_number_size_z = (voxel_number_size_z-1)*2+1
+            #     print("All voxels equally intersected")
+            # # Some voxels are discarded but the limits stay the same
+            # elif x_lower == np.min(new_x_lower) and x_greater == np.max(new_x_greater) and y_lower == np.min(new_y_lower) and y_greater == np.max(new_y_greater) and z_lower == np.min(new_z_lower) and z_greater == np.max(new_z_greater):
+            #     print(" Some voxel discard but bigger limits stay the same")
+            #     voxel_number_size_x = (voxel_number_size_x-1)*2+1
+            #     voxel_number_size_y = (voxel_number_size_y-1)*2+1
+            #     voxel_number_size_z = (voxel_number_size_z-1)*2+1
             
             new_x_lower = np.min(new_x_lower)
             new_x_greater = np.max(new_x_greater)
@@ -113,9 +113,10 @@ class ConeIntersection:
             print(f"x = {new_x_greater} - {new_x_lower}\n y = {new_y_greater} - {new_y_lower}\n z = {new_z_greater} - {new_z_lower}")
             new_volume = (new_x_greater - new_x_lower)*(new_y_greater - new_y_lower)*(new_z_greater - new_z_lower)
             print(f"Old volume {old_volume}\n New volume {new_volume}")
+            print(f"Delta volume {old_volume - new_volume}")
+            
             if  (old_volume - new_volume) <= tol:
                 cont_volume += 1
-                print(f"Delta volume {old_volume - new_volume}")
 
                 if cont_volume == 2:
                     continue_search = False
@@ -256,20 +257,15 @@ class ConeIntersection:
         intersection = np.zeros(len(self.voxels.keys()))
         # Loop over the cones
         for cone in tqdm(self.cones):
-            # print("Cone equation")
-            # sp.pprint(cone.cone_equation())
             # Initialize the array to check if the voxel has been already added
             vox_added = np.zeros(len(self.voxels.keys()))
             for ix in x:
                 for iy in y:
-                    # print("x", ix, "y", iy)
                     # Fixing x-y to obtain z
                     z_reco = cone.reconstruct_z(ix, iy)
                     for iz_reco in z_reco:
-                        # print("z", iz_reco)
                         # Loop over the voxels
                         for i, ivox in (self.voxels.items()):
-                            # print("Voxel" ,ivox)
                             if (ivox["x>"] == ix or ivox["x<"] == ix) and (ivox["y>"] == iy or ivox["y<"] == iy) and ivox["z>"] <= iz_reco and ivox["z<"] >= iz_reco:
                                 # check if the voxel has been already added
                                 if vox_added[i] == 0:
@@ -277,10 +273,8 @@ class ConeIntersection:
                                     intersection[i] += 1
                 # Fixing x-z to obtain y
                 for iz in z:
-                    # print("x", ix, "z", iz)
                     y_reco = cone.reconstruct_y(ix, iz)
                     for iy_reco in y_reco:
-                        # print("y", iy_reco)
                         for i, ivox in (self.voxels.items()):
                             if (ivox["x>"] == ix or ivox["x<"] == ix) and (ivox["z>"] == iz or ivox["z<"] == iz) and ivox["y>"] <= iy_reco and ivox["y<"] >= iy_reco:
                                 if vox_added[i] == 0:
@@ -293,8 +287,7 @@ class ConeIntersection:
         return voxel_selected
 
 cones = ConeIntersection()
-vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
-
+vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/check_reco_alpha.root", read_partially=True)
 
 for i in range(len(E_1)):
     if theta_E[i] is not None:

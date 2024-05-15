@@ -8,9 +8,9 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
 {   
     // Define angle
     // alpha angle with y axis
-    G4double alpha = 0.5;
+    G4double alpha = 0;
     // phi angle with z axis
-    G4double phi = 0;
+    G4double phi = 0.4;
     // Get world width from detector construction
     ComptCameraDetectorConstruction detectorConstruction;
     _world_width = detectorConstruction.GetWorldWidth();
