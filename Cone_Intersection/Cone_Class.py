@@ -224,8 +224,10 @@ class Cone:
         point = self.vertex-self.hit
         r = np.array([0,1,0])
         # Rotate in a perpendicular vector
-        point_rot = uf.rotate(self.kinematic_angle, np.cross(point, r), point)
-        # point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
+        # Using the kinematic angle
+        # point_rot = uf.rotate(self.kinematic_angle, np.cross(point, r), point)
+        # Using the compton angle
+        point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
         point_rot_phi = uf.rotate(phi, point, point_rot)
         
         return landa*point_rot_phi + sp.Matrix(self.vertex)
@@ -359,6 +361,8 @@ class Cone:
 
             if z_i.is_real and z_i-SOURCE_POSITION[2]<1e-10:
                 return True
+            elif z_i.is_real:
+                print(f"Distance to the source is {z_i-SOURCE_POSITION[2]}")
         return False
 
 # vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)

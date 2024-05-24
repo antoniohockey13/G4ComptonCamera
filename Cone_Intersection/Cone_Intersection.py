@@ -58,6 +58,10 @@ class ConeIntersection:
         cont = 0
         cont_volume = 0
         old_volume = np.inf
+        initial_voxel_number_size_x = voxel_number_size_x
+        initial_voxel_number_size_y = voxel_number_size_y
+        initial_voxel_number_size_z = voxel_number_size_z
+
         while continue_search:
             # Voxelise the space
             x, y, z = self.voxelise_space(x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z)
@@ -114,7 +118,7 @@ class ConeIntersection:
             new_volume = (new_x_greater - new_x_lower)*(new_y_greater - new_y_lower)*(new_z_greater - new_z_lower)
             print(f"Old volume {old_volume}\n New volume {new_volume}")
             print(f"Delta volume {old_volume - new_volume}")
-            
+
             if  (old_volume - new_volume) <= tol:
                 cont_volume += 1
 
@@ -126,8 +130,22 @@ class ConeIntersection:
                     voxel_number_size_z = (voxel_number_size_z-1)*2+1
             else:
                 cont_volume = 0
-            old_volume = new_volume
+            # Avoid no limit increasing voxel number
+            if voxel_number_size_x > 30:
+                voxel_number_size_x = initial_voxel_number_size_x
+            if voxel_number_size_y > 30:
+                voxel_number_size_y = initial_voxel_number_size_y
+            if voxel_number_size_z > 30:
+                voxel_number_size_z = initial_voxel_number_size_z
 
+            old_volume = new_volume
+            x_lower = new_x_lower
+            x_greater = new_x_greater   
+            y_lower = new_y_lower
+            y_greater = new_y_greater
+            z_lower = new_z_lower
+            z_greater = new_z_greater
+            self.remove_voxels()
               
         return selected_voxel
 
@@ -283,18 +301,21 @@ class ConeIntersection:
         print(intersection)
 
         max_value = np.max(intersection)
+        if max_value != len(self.cones):
+            print("Warning: No voxel intersected by all cones. Selecting the one with the highest number of cones.")
+
         voxel_selected = [i for i, val in enumerate(intersection) if val == max_value]
         return voxel_selected
 
 cones = ConeIntersection()
-vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/check_reco_alpha.root", read_partially=True)
+vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/check_reco_divergente.root", read_partially=True)
 
 for i in range(len(E_1)):
     if theta_E[i] is not None:
         cone = Cone_Class.Cone(vertex[i], hit[i], E_1[i], E_2[i], theta_m[i], event[i])
         cones.add_cone(cone)
-        # print(f"Cone Nº  {i} correct source:  {cone.check_simulated_source_pos()}")
+        print(f"Cone Nº  {i} correct source:  {cone.check_simulated_source_pos()}")
 
 det1_position = vertex[0]
 
-print(cones.compute_intersection(SOURCE_POSITION[0]-50, det1_position[0], -150, 150, -150, 150, voxel_number_size_x = 5, voxel_number_size_y = 5, voxel_number_size_z = 5))
+print(cones.compute_intersection(SOURCE_POSITION[0]-50, SOURCE_POSITION[0]+50, -150, 150, -100, 100, voxel_number_size_x = 4, voxel_number_size_y = 5, voxel_number_size_z = 5))

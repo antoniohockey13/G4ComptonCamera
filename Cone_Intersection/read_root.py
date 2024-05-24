@@ -68,7 +68,7 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
         E_2.append(iE_2)
         event.append(tree.Event)
         theta_E.append(itheta_E)
-        if read_partially and reco_events >= 6:
+        if read_partially and reco_events >= 50:
             break
 
     
@@ -87,7 +87,7 @@ def select_events(vertex, hit, theta_m, E_1, E_2, energy_tol = 1e-10):
     Select events that satisfy the conditions:
     - |70-(E1+E2)|<energy_tol
     - 1-511*E1/(E2*(E1+E2))>-1
-    - Hit1 is in the (x,0,0)
+
 
     Parameters
     ----------
