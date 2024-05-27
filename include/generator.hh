@@ -9,15 +9,15 @@ class G4Event;
 
 class ComptCameraPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
-public:
-	ComptCameraPrimaryGenerator();
-	~ComptCameraPrimaryGenerator();
+	public:
+		ComptCameraPrimaryGenerator();
+		~ComptCameraPrimaryGenerator();
 
-	virtual void GeneratePrimaries(G4Event *);
+		virtual void GeneratePrimaries(G4Event *) override;
 
-private:
-	G4GeneralParticleSource *_general_particle_source = nullptr;
-	G4double _world_width;
+	private:
+		G4GeneralParticleSource *_general_particle_source;
+		G4double _world_width;
 };
 
 #endif

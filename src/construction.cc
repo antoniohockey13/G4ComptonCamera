@@ -17,10 +17,12 @@
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 {
     // Define world size including walls 
-    _world_width = 682*mm;
-    _world_height = 562*mm;
-    _world_depth = 354*mm;
-
+    //_world_width = 682*mm;
+    //_world_height = 562*mm;
+    //_world_depth = 354*mm;
+    _world_width = 68*mm;
+    _world_height = 56*mm;
+    _world_depth = 35*mm;
     // Define detector size
     _detector_size = 1*mm;
     // Timing 50um, 150um
@@ -33,17 +35,16 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 
     //Define map with distances
     
-    _detector_distance = 100*mm;
+    _detector_distance = 10*mm;
 
 
     //Space between subdetectors
     _spacing = 0.1*mm;
 
-    //Messenger
-    G4GenericMessenger *_messenger;
     _number = 1;
+    //Messenger
     // Cange number of detectors not working
-    _messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
+    G4GenericMessenger *_messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
     _messenger->DeclareProperty("detector_size", _detector_size, "Detector size, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_thickness", _detector_thickness, "Detector thickness, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_number", _detector_number, "Number of detectors");
@@ -178,7 +179,7 @@ void ComptCameraDetectorConstruction::_ConstructDetectorsGrid(G4int y_nb_detecto
 }
 void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
 {
-    G4Box* solid_pcb = new G4Box("PCB", 3*mm, _world_height/2, _world_depth/2); 
+    G4Box* solid_pcb = new G4Box("PCB", 3*mm, 20/2*mm, 20/2*mm); 
     // Create PCB logical volume
     G4LogicalVolume* logic_pcb = new G4LogicalVolume(solid_pcb, _pcb_material, "PCB");
     // Create PCB physical volume
