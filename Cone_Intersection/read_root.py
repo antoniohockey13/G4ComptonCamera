@@ -68,7 +68,7 @@ def extract_variables(file_name: str, tree_name: str = "ComptonHits", read_parti
         E_2.append(iE_2)
         event.append(tree.Event)
         theta_E.append(itheta_E)
-        if read_partially and reco_events >= 50:
+        if read_partially and reco_events >= 6:
             break
 
     

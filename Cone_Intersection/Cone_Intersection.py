@@ -27,7 +27,7 @@ class ConeIntersection:
     def remove_voxels(self):
         self.voxels = {}
 
-    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z, tol = 1e-3):
+    def compute_intersection(self, x_lower, x_greater, y_lower, y_greater, z_lower, z_greater, voxel_number_size_x, voxel_number_size_y, voxel_number_size_z, tol = 1):
         """
         Compute the intersection of the cones with the voxels. It is needed an initial guess
         
@@ -318,4 +318,4 @@ for i in range(len(E_1)):
 
 det1_position = vertex[0]
 
-print(cones.compute_intersection(SOURCE_POSITION[0]-50, SOURCE_POSITION[0]+50, -150, 150, -100, 100, voxel_number_size_x = 4, voxel_number_size_y = 5, voxel_number_size_z = 5))
+print(cones.compute_intersection(SOURCE_POSITION[0]-50, SOURCE_POSITION[0]+50, -150, 150, -100, 100, voxel_number_size_x = 5, voxel_number_size_y = 5, voxel_number_size_z = 5))

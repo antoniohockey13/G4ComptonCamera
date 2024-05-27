@@ -225,9 +225,9 @@ class Cone:
         r = np.array([0,1,0])
         # Rotate in a perpendicular vector
         # Using the kinematic angle
-        # point_rot = uf.rotate(self.kinematic_angle, np.cross(point, r), point)
+        point_rot = uf.rotate(self.kinematic_angle, np.cross(point, r), point)
         # Using the compton angle
-        point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
+        # point_rot = uf.rotate(self.compton_angle, np.cross(point, r), point)
         point_rot_phi = uf.rotate(phi, point, point_rot)
         
         return landa*point_rot_phi + sp.Matrix(self.vertex)
