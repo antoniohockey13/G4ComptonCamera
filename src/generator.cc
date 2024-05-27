@@ -2,7 +2,7 @@
 #include "construction.hh"
 
 #include "G4SystemOfUnits.hh"
-#include "G4ParticleTable.hh"
+#include "G4GeneralParticleSource.hh"
 
 ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
 {
@@ -10,26 +10,15 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     ComptCameraDetectorConstruction detectorConstruction;
     _world_width = detectorConstruction.GetWorldWidth();
     // Define particle gun
-    // Number of particles per event
-    _particle_gun = new G4ParticleGun(1); 
-    // Position and momentum
-    G4ThreeVector pos = G4ThreeVector(-_world_width/2, 0.0, 0.0);
-    G4ThreeVector mom = G4ThreeVector(1.0, 0.0, 0.0);
-    _particle_gun->SetParticlePosition(pos);
-    _particle_gun->SetParticleMomentumDirection(mom);
+    _general_particle_source = new G4GeneralParticleSource();
     
-    // Particle type 
-    _particle_gun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
-    // Particle energy
-    _particle_gun->SetParticleEnergy(70* keV);
-}
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
 {
-    delete _particle_gun;
+    delete _general_particle_source;
 }
 
 void ComptCameraPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
-    _particle_gun->GeneratePrimaryVertex(anEvent);
+    _general_particle_source->GeneratePrimaryVertex(anEvent);
 }

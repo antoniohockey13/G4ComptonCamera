@@ -32,7 +32,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     virtual void ConstructSDandField();
 
     // Distance between source and detectors
-    std::map<G4int, G4double> _detector_distance;
+    G4int _detector_distance;
     // Number of detectors in y and z axis
     G4int _y_nb_detector;
     G4int _z_nb_detector;

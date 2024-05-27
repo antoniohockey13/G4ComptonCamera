@@ -14,7 +14,7 @@ public:
 	virtual void GeneratePrimaries(G4Event *);
 
 private:
-	G4ParticleGun *_particle_gun;
+	G4ParticleSource *_general_particle_source = nullptr;
 	G4double _world_width;
 };
 
