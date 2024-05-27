@@ -11,7 +11,10 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     _world_width = detectorConstruction.GetWorldWidth();
     // Define particle gun
     _general_particle_source = new G4GeneralParticleSource();
+    _general_particle_source->SetParticlePosition(G4ThreeVector(-_world_width/2, 0, 0));
+    _general_particle_source->Type->"Source";
     
+}
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
 {

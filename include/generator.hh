@@ -2,8 +2,10 @@
 #define GENERATOR_HH
 
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "G4ParticleGun.hh"
+#include "globals.hh"
 
+class G4GeneralParticleSource;
+class G4Event;
 
 class ComptCameraPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
@@ -14,7 +16,7 @@ public:
 	virtual void GeneratePrimaries(G4Event *);
 
 private:
-	G4ParticleSource *_general_particle_source = nullptr;
+	G4GeneralParticleSource *_general_particle_source = nullptr;
 	G4double _world_width;
 };
 
