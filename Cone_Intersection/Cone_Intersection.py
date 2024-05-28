@@ -308,7 +308,7 @@ class ConeIntersection:
         return voxel_selected
 
 cones = ConeIntersection()
-vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/check_reco_divergente.root", read_partially=True)
+vertex, hit, theta_m, E_1, E_2, event, theta_E = read_root.extract_variables("Results/Validation/validation12.root", read_partially=True)
 
 for i in range(len(E_1)):
     if theta_E[i] is not None:
