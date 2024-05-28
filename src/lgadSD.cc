@@ -23,6 +23,7 @@ void lgadSD::Initialize(G4HCofThisEvent* hit_collection_lgad)
 
 G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
+G4cout << "----------------------------ProcessHits-------------------" << G4endl;
     // Only lower than because energy is always positive
     if (aStep->GetTotalEnergyDeposit() <1e-10) 
     {

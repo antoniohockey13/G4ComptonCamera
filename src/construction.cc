@@ -35,8 +35,9 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 
     //Define map with distances
     
-    _detector_distance = 10*mm;
-
+    _detector_distance = 15*mm;
+    // Define PCB thickness
+    _pcb_thickness = 3*mm;
 
     //Space between subdetectors
     _spacing = 0.1*mm;
@@ -52,7 +53,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     // Messenge does NOT work with maps
     //_messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
-    _phantom_detector = false;
+    _phantom_detector = true;
 
     _DefineMaterials();
 }
@@ -88,7 +89,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     // Loop over detectors and construct them
 
     _ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
-    _ConstructPCB(_detector_distance+_detector_thickness);
+    _ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
 
 
     if (_phantom_detector)
@@ -179,7 +180,7 @@ void ComptCameraDetectorConstruction::_ConstructDetectorsGrid(G4int y_nb_detecto
 }
 void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
 {
-    G4Box* solid_pcb = new G4Box("PCB", 3*mm, 20/2*mm, 20/2*mm); 
+    G4Box* solid_pcb = new G4Box("PCB", _pcb_thickness, 20/2*mm, 20/2*mm); 
     // Create PCB logical volume
     G4LogicalVolume* logic_pcb = new G4LogicalVolume(solid_pcb, _pcb_material, "PCB");
     // Create PCB physical volume

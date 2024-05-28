@@ -30,7 +30,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ComptonAngle"); //19
     anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->FinishNtuple(0); 
-
+/* No needed with only one detector
     anManager->CreateNtuple("ComptonHits", "Compton events hits");
     anManager->CreateNtupleIColumn("Event"); //0
     anManager->CreateNtupleDColumn("X1"); //1
@@ -49,7 +49,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("Time2");//14
     anManager->CreateNtupleDColumn("ComptonAngle"); //15
     anManager->FinishNtuple(1);
-
+*/
 
 
     anManager->CreateNtuple("PhantomHits", "Phantom Hits");

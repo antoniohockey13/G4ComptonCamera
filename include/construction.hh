@@ -51,7 +51,10 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     G4double _detector_thickness;
     // Space between subdetectors
     G4double _spacing;
+    // PCB thickness
+    G4double _pcb_thickness;
     // Phantom detector
     G4bool _phantom_detector;
+
 };
 #endif

@@ -57,7 +57,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0, 20, (*hit_collection_lgad)[i]->GetStepLength()/mm);
         anManager->AddNtupleRow(0);
     }
-
+/* No needed with only one detector
     // Compton hits, photon hit both detectors
     for (size_t i = 0; i < hit_collection_lgad->entries(); ++i)
     {
@@ -93,7 +93,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         }
         
     }
-
+*/
     //Get hit_collection phantom
     const G4int phantomID = G4SDManager::GetSDMpointer()->GetCollectionID("phantomHitsCollection");    
     if(phantomID != -1)
