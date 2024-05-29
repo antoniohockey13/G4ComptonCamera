@@ -3,8 +3,7 @@
 
 #include "G4UserSteppingAction.hh"
 #include "G4Step.hh"
-#include "construction.hh"
-#include "event.hh"
+
 
 class ComptCameraDetectorConstruction;
 

@@ -1,20 +1,19 @@
 #ifndef LGADSD_HH
 #define LGADSD_HH
-//Copy from example B2a
-#include "G4VSensitiveDetector.hh"
+
 #include "lgadhit.hh"
 
-#include "G4RunManager.hh"
-#include "G4AnalysisManager.hh"
+#include "G4VSensitiveDetector.hh"
+
 
 class G4Step;
 class G4HCofThisEvent;
 
-class LGADSD: public G4VSensitiveDetector
+class lgadSD: public G4VSensitiveDetector
 {
     public:
-        LGADSD(const G4String& name, const G4String& hitsCollectionName);
-        ~LGADSD() override = default;
+        lgadSD(const G4String& name, const G4String& hitsCollectionName);
+        ~lgadSD() override = default;
     
     // Methods from base class
     void Initialize(G4HCofThisEvent* hitCollection) override;
@@ -22,10 +21,10 @@ class LGADSD: public G4VSensitiveDetector
     void EndOfEvent(G4HCofThisEvent* hitCollection) override;
 
     // Get hits collection
-    LGADHitsCollection* GetHitsCollection() const { return _hits_collection;}; 
+    lgadHitsCollection* GetHitsCollection() const { return _hits_collection_lgad;}; 
 
     private:
-        LGADHitsCollection* _hits_collection = nullptr;
+        lgadHitsCollection* _hits_collection_lgad = nullptr;
 };
 
 #endif

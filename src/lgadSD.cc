@@ -1,64 +1,61 @@
 #include "lgadSD.hh"
-// Copy from example B2a
+
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4SDManager.hh"
-#include "G4ios.hh"
-#include "G4SystemOfUnits.hh"
+#include "G4RunManager.hh"
 
-
-LGADSD::LGADSD(const G4String& name, const G4String& hitsCollectionName)
+lgadSD::lgadSD(const G4String& name, const G4String& hitsCollectionName)
     : G4VSensitiveDetector(name)
     {
         collectionName.insert(hitsCollectionName);
     }
 
-void LGADSD::Initialize(G4HCofThisEvent* hit_collection)
+void lgadSD::Initialize(G4HCofThisEvent* hit_collection_lgad)
 {
     // Create hits collection
-    _hits_collection = new LGADHitsCollection(SensitiveDetectorName, collectionName[0]);
+    _hits_collection_lgad = new lgadHitsCollection(SensitiveDetectorName, collectionName[0]);
 
     // Add this collection in hit_collection
     G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
-    hit_collection->AddHitsCollection( hcID, _hits_collection );
+    hit_collection_lgad->AddHitsCollection(hcID, _hits_collection_lgad);
 }
 
-G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    // Exaple B2a
-    // energy deposits
-    G4double _e_dep = aStep->GetTotalEnergyDeposit();
-    if (_e_dep==0.)
+    // Only lower than because energy is always positive
+    if (aStep->GetTotalEnergyDeposit() <1e-10) 
     {
         return false;
     }
-    auto _new_hit = new LGADHit;
+    auto _new_hit = new lgadHit();
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
-    _new_hit->SetEdep(_e_dep);
-    _new_hit->SetPos (aStep->GetPreStepPoint()->GetPosition());
-    _new_hit->SetMom (aStep->GetPreStepPoint()->GetMomentum());
-    _new_hit->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
+    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition());
+    _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum());
+    _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum());
+    _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime());
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
     _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
-    _new_hit->SetKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
     _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy());
+    _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
-    _hits_collection->insert(_new_hit);
+    _new_hit->SetStepLength(aStep->GetStepLength());
+    _hits_collection_lgad->insert(_new_hit);
     
     //_new_hit->Print();
     return true;
 }
 
-void LGADSD::EndOfEvent(G4HCofThisEvent*)
+void lgadSD::EndOfEvent(G4HCofThisEvent*)
 {
     if (verboseLevel>1) 
     {
-        std::size_t nofHits = _hits_collection->entries();
+        std::size_t nofHits = _hits_collection_lgad->entries();
         G4cout << G4endl
             << "-------->Hits Collection: in this event they are " << nofHits
             << " hits in the tracker chambers: " << G4endl;
-        for ( std::size_t i=0; i<nofHits; i++ ) (*_hits_collection)[i]->Print();
+        for ( std::size_t i=0; i<nofHits; i++ ) (*_hits_collection_lgad)[i]->Print();
     }
 }

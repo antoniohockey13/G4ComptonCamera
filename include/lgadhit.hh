@@ -1,23 +1,22 @@
 #ifndef LGADHIT_HH
 #define LGADHIT_HH
 
-// Copy from example B2a
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
 
-class LGADHit : public G4VHit
+class lgadHit : public G4VHit
 {
     public:
-        LGADHit() = default;
-        LGADHit(const LGADHit&) = default;
-        ~LGADHit() override = default;
+        lgadHit() = default;
+        lgadHit(const lgadHit&) = default;
+        ~lgadHit() override = default;
 
         //operators
-        LGADHit& operator=(const LGADHit&) = default;
-        G4bool operator==(const LGADHit&) const;
+        lgadHit& operator=(const lgadHit&) = default;
+        G4bool operator==(const lgadHit&) const;
 
         inline void* operator new(size_t);
         inline void operator delete(void*);
@@ -29,15 +28,16 @@ class LGADHit : public G4VHit
         void SetTrackID(G4int track_id) { _track_id = track_id;};
         //Transform name of the from DetectorX to int(X)
         void SetDetectorNb(G4String detector_name) { _detector_nb = std::stoi(detector_name.erase(0,8));};
-        void SetEdep(G4double e_dep) { _e_dep = e_dep;};
         void SetPos(G4ThreeVector pos) { _pos = pos;};
-        void SetMom(G4ThreeVector mom) { _mom = mom;};
+        void SetPreMom(G4ThreeVector pre_mom) { _pre_mom = pre_mom;};
+        void SetPostMom(G4ThreeVector post_mom) { _post_mom = post_mom;};
         void SetParticleID(G4int particle_id) { _particle_id = particle_id;};
         void SetParentID(G4int parent_id) { _parent_id = parent_id;};
         void SetTime(G4double time) { _time = time;};
-        void SetKineticEnergy(G4double kinetic_energy) { _kinetic_energy = kinetic_energy;};
-        void SetPostKineticEnergy(G4double kinetic_energy) { _post_kinetic_energy = kinetic_energy;};
+        void SetPostKineticEnergy(G4double post_kinetic_energy) { _post_kinetic_energy = post_kinetic_energy;};
+        void SetPreKineticEnergy(G4double pre_kinetic_energy) { _pre_kinetic_energy = pre_kinetic_energy;};
         void SetProcessName(G4String process_name) { _process_name = process_name;};
+        void SetStepLength(G4double step_length) { _step_length = step_length;};
 
         //getters
         G4int GetTrackID() const { return _track_id;};
@@ -45,12 +45,15 @@ class LGADHit : public G4VHit
         G4int GetParentID() const { return _parent_id;};
         G4int GetDetectorNb() const { return _detector_nb;};
         G4double GetTime() const { return _time;};
-        G4double GetEdep() const { return _e_dep;};
         G4ThreeVector GetPos() const { return _pos;};
-        G4ThreeVector GetMom() const { return _mom;};
-        G4double GetKineticEnergy() const { return _kinetic_energy;};
+        G4ThreeVector GetPreMom() const { return _pre_mom;};
+        G4ThreeVector GetPostMom() const { return _post_mom;};
+        G4double GetPreKineticEnergy() const { return _pre_kinetic_energy;};
         G4double GetPostKineticEnergy() const { return _post_kinetic_energy;};
+        G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
+        G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
         G4String GetProcessName() const { return _process_name;};
+        G4double GetStepLength() const { return _step_length;};
 
     private:
         G4int _track_id;
@@ -59,31 +62,31 @@ class LGADHit : public G4VHit
         G4int _detector_nb;
         G4double _time;
         G4double _e_dep;
-        G4double _kinetic_energy;
+        G4double _pre_kinetic_energy;
         G4double _post_kinetic_energy;
         G4ThreeVector _pos;
-        G4ThreeVector _mom;
+        G4ThreeVector _pre_mom;
+        G4ThreeVector _post_mom;
         G4String _process_name;
+        G4double _step_length;
 };
 
 
-using LGADHitsCollection = G4THitsCollection<LGADHit>;
-extern G4ThreadLocal G4Allocator<LGADHit>* LGADHitAllocator;
+using lgadHitsCollection = G4THitsCollection<lgadHit>;
+extern G4ThreadLocal G4Allocator<lgadHit>* lgadHitAllocator;
 
-inline void* LGADHit::operator new(size_t) 
+inline void* lgadHit::operator new(size_t) 
 {
-    if (!LGADHitAllocator)
+    if (!lgadHitAllocator)
     {
-        LGADHitAllocator = new G4Allocator<LGADHit>;
+        lgadHitAllocator = new G4Allocator<lgadHit>;
     }
-    return (void*)LGADHitAllocator->MallocSingle();
+    return (void*)lgadHitAllocator->MallocSingle();
 }
 
-//
-
-inline void LGADHit::operator delete(void* hit)
+inline void lgadHit::operator delete(void* hit)
 {
-    LGADHitAllocator->FreeSingle((LGADHit*) hit);
+    lgadHitAllocator->FreeSingle((lgadHit*) hit);
 }
 
 #endif

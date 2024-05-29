@@ -1,33 +1,8 @@
 #ifndef CONSTRUCTION_HH
 #define CONSTRUCTION_HH
 
-#include "globals.hh" 
-// #include "tls.hh"
-// for detector construction
 #include "G4VUserDetectorConstruction.hh" 
-// for physical volumes
-#include "G4VPhysicalVolume.hh" 
- // for logical volumes
-#include "G4LogicalVolume.hh"
-// for box geometry
-#include "G4Box.hh" 
-// for placement of volumes
-#include "G4PVPlacement.hh" 
-// for NIST materials
 #include "G4NistManager.hh" 
-// for units
-#include "G4SystemOfUnits.hh" 
-// for UI commands
-#include "G4GenericMessenger.hh"
-// for sensitive detector manager 
-#include "G4SDManager.hh" 
-// for sensitive detector
-#include "G4VSensitiveDetector.hh" 
- // for visualization manager
-#include "G4VisManager.hh" 
-// for detector class
-#include "lgadSD.hh" 
-
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -36,6 +11,8 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         ~ComptCameraDetectorConstruction();
         // Get world width
         G4double GetWorldWidth() {return _world_width;}
+        G4bool GetPhantomDetector() {return _phantom_detector;}
+
         G4VPhysicalVolume* Construct() override;
 
     private:
@@ -43,13 +20,15 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4Material *_world_material, *_detector_material;
 
         void _DefineMaterials();
-        void _ConstructDetector(G4LogicalVolume* world, 
+        void _ConstructWorld();
+        void _ConstructDetector(G4LogicalVolume * logic_world,
                 G4int const _detector_number, 
-                G4double const _detector_distance);
-        virtual void ConstructSDandField();
+                G4double const _detector_distance, 
+                G4double const _detector_thickness);
+        virtual void ConstructSDandField(G4LogicalVolume* logic_world);
 
         // Distance between source and detectors
-        std::map<G4int, G4double> _detector_distance;
+        std::map<G4int, std::pair<G4double, G4double>> _detector_distance_thickness;
         G4int _detector_number;   
         G4int _number;
         // World dimension in x axis, width
@@ -60,11 +39,14 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4double _world_depth; 
         
         // Detector size in x and y axis
-        G4double _detector_size; 
+        G4double _detector_size_y; 
         // Detector thickness in z axiss
-        G4double _detector_thickness;
+        G4double _detector_size_z;
 
         // Messenger
         G4GenericMessenger *_messenger;
+        
+        // Phantom detector
+        G4bool _phantom_detector;
 };
 #endif

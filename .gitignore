@@ -6,4 +6,9 @@ Makefile
 .vscode
 build
 .ipynb_checkpoints
+Pictures
+.Trash*
 sim
+*.root
+__pycache__
+
