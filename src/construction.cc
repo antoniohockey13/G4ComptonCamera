@@ -40,9 +40,10 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 {
     G4NistManager* nist = G4NistManager::Instance();
     // World material is air
-    _world_material = nist->FindOrBuildMaterial("G4_AIR");
+    _world_material = nist->FindOrBuildMaterial("G4_Galactic");
     // Detector material is silicon (LGAD detectors)
     _target_material = nist->FindOrBuildMaterial("G4_W");
+    _detector_material = nist->FindOrBuildMaterial("G4_Si");
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
@@ -60,7 +61,7 @@ void ComptCameraDetectorConstruction::_ConstructWorld()
     // Create world solid, length arguments half of the actual length
     G4Box* solid_world = new G4Box("World", _world_width/2, _world_height/2, _world_depth/2); 
     // Create world logical volume
-        _logic_world = new G4LogicalVolume(solid_world, _world_material, "World"); 
+    _logic_world = new G4LogicalVolume(solid_world, _world_material, "World"); 
     // Create world physical volume
     _phys_world = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0); 
 }
@@ -83,7 +84,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector(G4double size, G
 
     G4Box* solid_phantom_detector = new G4Box(name, thickness/2, size/2, size/2); 
     // Create phantom detector logical volume
-    _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
+    _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _detector_material, name);
     
     // Create phantom detector physical volume
     new G4PVPlacement(0, G4ThreeVector(distance, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);

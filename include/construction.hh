@@ -19,7 +19,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
       
       G4LogicalVolume *_logic_world, *_logic_phantom_detector;
       G4VPhysicalVolume *_phys_world;
-      G4Material *_world_material, *_target_material;
+      G4Material *_world_material, *_target_material, *_detector_material;
     
 
     void _DefineMaterials();
