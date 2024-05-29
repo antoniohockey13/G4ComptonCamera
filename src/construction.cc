@@ -14,6 +14,7 @@
 #include "G4SDManager.hh" 
 #include "G4VSensitiveDetector.hh" 
 #include "G4NistManager.hh" 
+#include "G4VisAttributes.hh"
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _logic_world(nullptr),
@@ -41,7 +42,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     
     _detector_distance = 15*mm;
     // Define PCB thickness
-    _pcb_thickness = 3*mm;
+    _pcb_thickness = 1*mm;
 
     //Space between subdetectors
     _spacing = 0.1*mm;
@@ -59,7 +60,6 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
 
     _phantom_detector = true;
 
-G4cout << " ---> HIKA4" << G4endl;
     _DefineMaterials();
 }
 
@@ -77,6 +77,7 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     G4NistManager* nist = G4NistManager::Instance();
     // World material is air
     _world_material = nist->FindOrBuildMaterial("G4_AIR");
+
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
     //Epoxy material
@@ -114,6 +115,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::_ConstructWorld()
     G4Box* solid_world = new G4Box("World", _world_width/2, _world_height/2, _world_depth/2); 
     // Create world logical volume
     _logic_world = new G4LogicalVolume(solid_world, _world_material, "World"); 
+    _logic_world->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
 
     // Create world physical volume
     return new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0); 
@@ -151,6 +153,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
     // Create phantom detector logical volume
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
+    _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
     
     // Create phantom detector physical volume
     new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
@@ -180,6 +183,7 @@ void ComptCameraDetectorConstruction::_ConstructDetectorsGrid(G4int y_nb_detecto
 
             // Create detector logical volume
             _detector_map[name] = new G4LogicalVolume(solid_detector, _detector_material, name);
+            _detector_map[name]->SetVisAttributes( G4Color(1.0, 0.8, 0., 0.9) );
 
             // Create detector physical volume
             new G4PVPlacement(0, G4ThreeVector(xPos, yPos, zPos), _detector_map[name], name, _logic_world, false, 0);
@@ -192,6 +196,7 @@ void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
     G4Box* solid_pcb = new G4Box("PCB", _pcb_thickness, 20/2*mm, 20/2*mm); 
     // Create PCB logical volume
     G4LogicalVolume* logic_pcb = new G4LogicalVolume(solid_pcb, _pcb_material, "PCB");
+    logic_pcb->SetVisAttributes( G4Color(4./255, 99/255., 7/255.) );
     // Create PCB physical volume
     new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), logic_pcb, "PCB", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
