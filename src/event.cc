@@ -106,6 +106,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
     //Get hit_collection phantom
     if(_is_phantom)
     {
+
         const G4int phantomID = G4SDManager::GetSDMpointer()->GetCollectionID("phantomHitsCollection");
         phantomHitsCollection* hit_collection_phantom = static_cast<phantomHitsCollection*>(event->GetHCofThisEvent()->GetHC(phantomID));
 
@@ -119,7 +120,10 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
             anManager->FillNtupleDColumn(2, 5, (*hit_collection_phantom)[i]->GetMom()[1]/keV);
             anManager->FillNtupleDColumn(2, 6, (*hit_collection_phantom)[i]->GetMom()[2]/keV);
             anManager->FillNtupleDColumn(2, 7, (*hit_collection_phantom)[i]->GetEnergyLost()/keV);
-            anManager->FillNtupleIColumn(2, 8, (*hit_collection_phantom)[i]->GetParticleID());
+            anManager->FillNtupleDColumn(2, 8, (*hit_collection_phantom)[i]->GetKineticEnergy()/keV);
+            anManager->FillNtupleIColumn(2, 9, (*hit_collection_phantom)[i]->GetParticleID());
+            anManager->FillNtupleSColumn(2, 10, (*hit_collection_phantom)[i]->GetProcessName());
+            anManager->FillNtupleIColumn(2, 9, (*hit_collection_phantom)[i]->GetParticleID());
             anManager->AddNtupleRow(2);
         }
     }

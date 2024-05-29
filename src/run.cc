@@ -6,6 +6,7 @@ ComptCameraRunAction::ComptCameraRunAction()
 {
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
 
+    G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     anManager->SetNtupleMerging(true);
 
     // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes
@@ -63,7 +64,9 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumY"); //5
     anManager->CreateNtupleDColumn("MomentumZ"); //6
     anManager->CreateNtupleDColumn("ELost"); //7
-    anManager->CreateNtupleIColumn("ParticleID"); //8
+    anManager->CreateNtupleDColumn("KineticEnergy"); //8
+    anManager->CreateNtupleIColumn("ParticleID"); //9
+    anManager->CreateNtupleSColumn("ProcessName"); //10
     anManager->FinishNtuple(2); 
 
 }
@@ -75,9 +78,9 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     G4int runNumber = run->GetRunID();
     std::string strRunID = std::to_string(runNumber);
-    G4int thread_number = G4Threading::G4GetThreadId();
-    std::string strThreadID = std::to_string(thread_number);
-    anManager->OpenFile("output" + strRunID  + ".root");
+    anManager->SetFileName("output_run" + strRunID  + ".root");
+
+    anManager->OpenFile();
 }
 
 
