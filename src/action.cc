@@ -5,12 +5,19 @@
 #include "stepping.hh"
 
 
-ComptCameraActionInitialization::ComptCameraActionInitialization()
+ComptCameraActionInitialization::ComptCameraActionInitialization(bool is_phantom_present) :
+    _is_phantom_present(is_phantom_present)
 {
 }
 
 ComptCameraActionInitialization::~ComptCameraActionInitialization()
 {
+}
+
+void ComptCameraActionInitialization::BuildForMaster() const
+{
+	ComptCameraRunAction *runAction = new ComptCameraRunAction();
+	SetUserAction(runAction);
 }
 
 void ComptCameraActionInitialization::Build() const
@@ -21,17 +28,13 @@ void ComptCameraActionInitialization::Build() const
 	ComptCameraRunAction *runAction = new ComptCameraRunAction();
 	SetUserAction(runAction);
 
-	ComptCameraEventAction *eventAction = new ComptCameraEventAction(runAction);
+	ComptCameraEventAction *eventAction = new ComptCameraEventAction(_is_phantom_present);
 	SetUserAction(eventAction);
 	
-	ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
-	SetUserAction(steppingAction); 
+        // XXX -- Why is needed?
+	//ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
+	//SetUserAction(steppingAction); 
 }
 
 
-void ComptCameraActionInitialization::BuildForMaster() const
-{
-	ComptCameraRunAction *runAction = new ComptCameraRunAction();
-	SetUserAction(runAction);
-}
 

@@ -36,7 +36,7 @@ void lgadHit::Print()
 {
     G4cout
     << "  trackID: " << _track_id << " Detector Nb: " << _detector_nb
-    << "Edep: "
+    << " Edep: "
     << std::setw(7) << G4BestUnit(_e_dep,"Energy")
     << " Position: "
     << std::setw(7) << G4BestUnit( _pos,"Length")

@@ -13,13 +13,17 @@
 #include "G4SystemOfUnits.hh" 
 #include "G4SDManager.hh" 
 #include "G4VSensitiveDetector.hh" 
+#include "G4NistManager.hh" 
 
-ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
+ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
+    _logic_world(nullptr),
+    _logic_phantom_detector(nullptr),
+    _world_material(nullptr),
+    _detector_material(nullptr),
+    _pcb_material(nullptr),
+    _messenger(nullptr)
 {
     // Define world size including walls 
-    //_world_width = 682*mm;
-    //_world_height = 562*mm;
-    //_world_depth = 354*mm;
     _world_width = 68*mm;
     _world_height = 56*mm;
     _world_depth = 35*mm;
@@ -45,7 +49,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
     _number = 1;
     //Messenger
     // Cange number of detectors not working
-    G4GenericMessenger *_messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
+    _messenger = new G4GenericMessenger(this, "/ComptCamera/detector/", "Detector control");
     _messenger->DeclareProperty("detector_size", _detector_size, "Detector size, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_thickness", _detector_thickness, "Detector thickness, /run/reinitializeGeometry to update");
     _messenger->DeclareProperty("detector_number", _detector_number, "Number of detectors");
@@ -55,11 +59,17 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction()
 
     _phantom_detector = true;
 
+G4cout << " ---> HIKA4" << G4endl;
     _DefineMaterials();
 }
 
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
 {
+    if( _messenger != nullptr )
+    {
+        delete _messenger;
+        _messenger = nullptr;
+    }
 }
 
 void ComptCameraDetectorConstruction::_DefineMaterials()
@@ -83,35 +93,34 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
 {
-    // Construct world
-    _ConstructWorld();
-
-    // Loop over detectors and construct them
+    // Construct world and phantom detector
+    auto * phys_vol =_ConstructWorld();
 
     _ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
     _ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
-
-
-    if (_phantom_detector)
+    
+    if(_phantom_detector)
     {
         _ConstructPhantomDetector();
     }
+    
 
-    return _phys_world;
+    return phys_vol;
 }
 
-void ComptCameraDetectorConstruction::_ConstructWorld()
+G4VPhysicalVolume* ComptCameraDetectorConstruction::_ConstructWorld()
 {
     // Create world solid, length arguments half of the actual length
     G4Box* solid_world = new G4Box("World", _world_width/2, _world_height/2, _world_depth/2); 
     // Create world logical volume
     _logic_world = new G4LogicalVolume(solid_world, _world_material, "World"); 
+
     // Create world physical volume
-    _phys_world = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0); 
+    return new G4PVPlacement(0, G4ThreeVector(0, 0, 0), _logic_world, "World", 0, false, 0); 
+
 }
 
 // Set sensitive detector to logical volume
-
 void ComptCameraDetectorConstruction::ConstructSDandField()
 {
     // Copy from example B2a
@@ -125,7 +134,7 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         detector.second->SetSensitiveDetector(algadSD);
     }
 
-    if (_phantom_detector)
+    if( _phantom_detector )
     {
         G4String phantomSDname = "/phantomSD";
         auto aphantomSD = new phantomSD(phantomSDname, "phantomHitsCollection");
@@ -133,7 +142,6 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         _logic_phantom_detector->SetSensitiveDetector(aphantomSD);
     }
 }
-
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
 {   
@@ -178,6 +186,7 @@ void ComptCameraDetectorConstruction::_ConstructDetectorsGrid(G4int y_nb_detecto
         }
     }
 }
+
 void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
 {
     G4Box* solid_pcb = new G4Box("PCB", _pcb_thickness, 20/2*mm, 20/2*mm); 
