@@ -9,7 +9,8 @@
 #include "G4SDManager.hh"
 
 
-ComptCameraEventAction::ComptCameraEventAction(ComptCameraRunAction *)
+ComptCameraEventAction::ComptCameraEventAction(bool is_phantom) :
+    _is_phantom(is_phantom)
 {
 }
 
@@ -103,9 +104,9 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
     }
 
     //Get hit_collection phantom
-    const G4int phantomID = G4SDManager::GetSDMpointer()->GetCollectionID("phantomHitsCollection");    
-    if(phantomID != -1)
+    if(_is_phantom)
     {
+        const G4int phantomID = G4SDManager::GetSDMpointer()->GetCollectionID("phantomHitsCollection");
         phantomHitsCollection* hit_collection_phantom = static_cast<phantomHitsCollection*>(event->GetHCofThisEvent()->GetHC(phantomID));
 
         for (size_t i = 0; i < hit_collection_phantom->entries(); ++i)

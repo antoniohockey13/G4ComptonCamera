@@ -18,9 +18,10 @@ int main(int argc, char** argv)
     auto* runManager = G4RunManagerFactory::CreateRunManager();
     
     runManager->SetNumberOfThreads(3);
-    runManager->SetUserInitialization(new ComptCameraDetectorConstruction());
+    auto * detector = new ComptCameraDetectorConstruction();
+    runManager->SetUserInitialization(detector);
     runManager->SetUserInitialization(new ComptCameraPhysicsList());
-    runManager->SetUserInitialization(new ComptCameraActionInitialization());
+    runManager->SetUserInitialization(new ComptCameraActionInitialization(detector->IsPhantomDetector()));
     
     runManager->Initialize();	
     

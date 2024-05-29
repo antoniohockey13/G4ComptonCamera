@@ -5,12 +5,19 @@
 
 class ComptCameraActionInitialization : public G4VUserActionInitialization
 {
-public:
-	ComptCameraActionInitialization();
-	~ComptCameraActionInitialization();
+    public:
+        ComptCameraActionInitialization(bool is_phantom_present);
+        ComptCameraActionInitialization() = delete;
 
-	virtual void Build() const;
-	virtual void BuildForMaster() const;
+        ~ComptCameraActionInitialization();
+        
+        virtual void Build() const override;
+        virtual void BuildForMaster() const override;
+
+    private:
+        // Whether the phantom SD is included (needed by the Event action)
+        bool _is_phantom_present;
+
 };
 
 #endif

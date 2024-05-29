@@ -53,6 +53,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _phantom_detector = false;
     _DefineMaterials();
 }
+
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
 {
     if( _messenger != nullptr )
@@ -85,7 +86,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
         _ConstructDetector(logic_world, detector.first, detector.second.first, detector.second.second);
     }
 
-    if (_phantom_detector)
+    if(_phantom_detector)
     {
         _ConstructPhantomDetector(logic_world);
     }
@@ -109,7 +110,7 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         detector.second->SetSensitiveDetector(algadSD);
     }
 
-    if (_phantom_detector)
+    if( _phantom_detector )
     {
         G4String phantomSDname = "/phantomSD";
         auto aphantomSD = new phantomSD(phantomSDname, "phantomHitsCollection");
