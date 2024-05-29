@@ -13,7 +13,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         ~ComptCameraDetectorConstruction();
         // Get world width
         G4double GetWorldWidth() {return _world_width;}
-        G4bool GetPhantomDetector() {return _phantom_detector;}
+        G4bool IsPhantomDetector() {return _phantom_detector;}
 
         G4VPhysicalVolume* Construct() override;
 
