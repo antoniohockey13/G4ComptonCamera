@@ -4,6 +4,8 @@
 /gps/particle e-
 /gps/ene/mono 35 keV
 
+/process/em/setSecBiasing eBrem World 10000 100 MeV
+
 /run/printProgress 10000
 
 /random/setSeeds 1039348 6582264
