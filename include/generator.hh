@@ -17,7 +17,7 @@ class ComptCameraPrimaryGenerator : public G4VUserPrimaryGeneratorAction
 
 	private:
 		G4GeneralParticleSource *_general_particle_source;
-		G4double _world_width;
+		G4double _world_height;
 };
 
 #endif

@@ -9,35 +9,27 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
   public:
     ComptCameraDetectorConstruction();
     // Get world width
-    G4double GetWorldWidth() {return _world_width;}
-    G4bool GetPhantomDetector() {return _phantom_detector;}
+    G4double GetWorldHeight() {return _world_height;}
 
     ~ComptCameraDetectorConstruction();
     
     virtual G4VPhysicalVolume* Construct();
 
     private:
-      std::map<G4String, G4LogicalVolume*> _detector_map;
       
       G4LogicalVolume *_logic_world, *_logic_phantom_detector;
       G4VPhysicalVolume *_phys_world;
-      G4Material *_world_material, *_detector_material, *_pcb_material;
+      G4Material *_world_material, *_target_material;
     
 
     void _DefineMaterials();
     void _ConstructWorld();
-    void _ConstructDetectorsGrid(G4int y_nb_detector, G4int z_nb_detector, G4int const _detector_number, G4double const _detector_distance);
-    void _ConstructPhantomDetector();
-    void _ConstructPCB(G4double const _detector_distance);
+    void _ConstructPhantomDetector(G4double detector_size, G4double detector_thickness, G4double detector_distance);
+    void _ConstructTarget(G4double angle);
     virtual void ConstructSDandField();
 
     // Distance between source and detectors
     G4int _detector_distance;
-    // Number of detectors in y and z axis
-    G4int _y_nb_detector;
-    G4int _z_nb_detector;
-    G4int _detector_number;   
-    G4int _number;
     // World dimension in x axis, width
     G4double _world_width;
     // World dimension in y axis, height 
@@ -49,12 +41,8 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     G4double _detector_size; 
     // Detector thickness in z axiss
     G4double _detector_thickness;
-    // Space between subdetectors
-    G4double _spacing;
-    // PCB thickness
-    G4double _pcb_thickness;
-    // Phantom detector
-    G4bool _phantom_detector;
+    // Angle of the target
+    G4double _angle;
 
 };
 #endif
