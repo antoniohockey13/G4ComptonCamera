@@ -1,0 +1,10 @@
+# Source definition  for W anode
+/gps/pos/centre -31. 0 10 mm
+/gps/direction 0 0 -1
+/gps/particle e-
+/gps/ene/mono 35 keV
+
+/run/printProgress 10000
+
+/random/setSeeds 1039348 6582264
+/run/beamOn 500000

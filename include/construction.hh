@@ -24,12 +24,14 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4Material *_world_material;
         G4Material *_detector_material;
         G4Material *_pcb_material;
+        G4Material *_tungsten;
 
         void _DefineMaterials();
         G4VPhysicalVolume* _ConstructWorld();
         void _ConstructDetectorsGrid(G4int y_nb_detector, G4int z_nb_detector, G4int const _detector_number, G4double const _detector_distance);
         void _ConstructPCB(G4double const _detector_distance);
         void _ConstructPhantomDetector();
+        void _ConstructTungstenAnode();
         virtual void ConstructSDandField() override;
 
         // Distance between source and detectors

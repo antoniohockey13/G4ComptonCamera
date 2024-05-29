@@ -9,6 +9,7 @@
 #include "G4VPhysicalVolume.hh" 
 #include "G4LogicalVolume.hh"
 #include "G4Box.hh" 
+#include "G4CutTubs.hh" 
 #include "G4PVPlacement.hh" 
 #include "G4SystemOfUnits.hh" 
 #include "G4SDManager.hh" 
@@ -22,6 +23,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _world_material(nullptr),
     _detector_material(nullptr),
     _pcb_material(nullptr),
+    _tungsten(nullptr),
     _messenger(nullptr)
 {
     // Define world size including walls 
@@ -81,15 +83,18 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
     //Epoxy material
-    G4Material* _epoxy = new G4Material("Epoxy", 1.3 * CLHEP::g / CLHEP::cm3, 3);
-    _epoxy->AddElement(nist->FindOrBuildElement("H"), 44);
-    _epoxy->AddElement(nist->FindOrBuildElement("C"), 15);
-    _epoxy->AddElement(nist->FindOrBuildElement("O"), 7);
+    G4Material* epoxy = new G4Material("Epoxy", 1.3 * CLHEP::g / CLHEP::cm3, 3);
+    epoxy->AddElement(nist->FindOrBuildElement("H"), 44);
+    epoxy->AddElement(nist->FindOrBuildElement("C"), 15);
+    epoxy->AddElement(nist->FindOrBuildElement("O"), 7);
     //PCB material
     _pcb_material = new G4Material("PCB", 1.7 * CLHEP::g / CLHEP::cm3, 3);    
     _pcb_material->AddMaterial(nist->FindOrBuildMaterial("G4_SILICON_DIOXIDE"), 0.773);
-    _pcb_material->AddMaterial(_epoxy, 0.147);
+    _pcb_material->AddMaterial(epoxy, 0.147);
     _pcb_material->AddElement(nist->FindOrBuildElement("Cl"), 0.08);
+
+    // Anode
+    _tungsten = nist->FindOrBuildMaterial("G4_W");
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
@@ -97,8 +102,9 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     // Construct world and phantom detector
     auto * phys_vol =_ConstructWorld();
 
-    _ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
-    _ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
+    //_ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
+    //_ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
+    _ConstructTungstenAnode();
     
     if(_phantom_detector)
     {
@@ -143,6 +149,32 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         G4SDManager::GetSDMpointer()->AddNewDetector(aphantomSD);
         _logic_phantom_detector->SetSensitiveDetector(aphantomSD);
     }
+}
+
+void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
+{
+    // Cut vectors: 
+    G4ThreeVector lowNorm(0, -std::sin(12*deg), -std::cos(12*deg));
+    G4ThreeVector highNorm(0, std::sin(12*deg), std::cos(12*deg));
+
+    const G4double dZ = 2*mm;
+    G4CutTubs * anode_w = new G4CutTubs("Anode", 
+            0., 
+            10/2*mm, 
+            dZ/2.*mm,
+            0,
+            360.0*deg,
+            lowNorm,
+            highNorm);
+
+    G4LogicalVolume* logic_anode_w = new G4LogicalVolume(anode_w, _tungsten, "Anode");
+    logic_anode_w->SetVisAttributes( G4Color(0.3, 0.534, 0.3, 0.7) );
+
+    G4RotationMatrix* rot = new G4RotationMatrix;
+    rot->rotateX(90*deg);
+    rot->rotateY(90*deg);
+
+    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
 }
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
