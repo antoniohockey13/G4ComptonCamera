@@ -32,17 +32,18 @@ G4bool LGADSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {
         return false;
     }
-    auto _new_hit = new LGADHit();
+    auto _new_hit = new LGADHit;
     _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
-    _new_hit->SetEdep(_e_dep/keV);
-    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition()/mm);
-    _new_hit->SetMom (aStep->GetPostStepPoint()->GetMomentum()/keV);
-    _new_hit->SetTime(aStep->GetPostStepPoint()->GetGlobalTime()/ps);
+    _new_hit->SetEdep(_e_dep);
+    _new_hit->SetPos (aStep->GetPreStepPoint()->GetPosition());
+    _new_hit->SetMom (aStep->GetPreStepPoint()->GetMomentum());
+    _new_hit->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
     _new_hit->SetParentID(aStep->GetTrack()->GetParentID());
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
-    _new_hit->SetKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy()/keV);
+    _new_hit->SetKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
+    _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy());
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
     _hits_collection->insert(_new_hit);
     

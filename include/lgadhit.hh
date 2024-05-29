@@ -36,6 +36,7 @@ class LGADHit : public G4VHit
         void SetParentID(G4int parent_id) { _parent_id = parent_id;};
         void SetTime(G4double time) { _time = time;};
         void SetKineticEnergy(G4double kinetic_energy) { _kinetic_energy = kinetic_energy;};
+        void SetPostKineticEnergy(G4double kinetic_energy) { _post_kinetic_energy = kinetic_energy;};
         void SetProcessName(G4String process_name) { _process_name = process_name;};
 
         //getters
@@ -48,6 +49,7 @@ class LGADHit : public G4VHit
         G4ThreeVector GetPos() const { return _pos;};
         G4ThreeVector GetMom() const { return _mom;};
         G4double GetKineticEnergy() const { return _kinetic_energy;};
+        G4double GetPostKineticEnergy() const { return _post_kinetic_energy;};
         G4String GetProcessName() const { return _process_name;};
 
     private:
@@ -58,6 +60,7 @@ class LGADHit : public G4VHit
         G4double _time;
         G4double _e_dep;
         G4double _kinetic_energy;
+        G4double _post_kinetic_energy;
         G4ThreeVector _pos;
         G4ThreeVector _mom;
         G4String _process_name;
