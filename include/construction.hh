@@ -4,6 +4,8 @@
 #include "G4VUserDetectorConstruction.hh" 
 #include "G4NistManager.hh" 
 
+class G4GenericMessenger;
+
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
     public:
@@ -17,15 +19,17 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 
     private:
         std::map<G4int, G4LogicalVolume*> _detector_map;
+        G4LogicalVolume * _logic_phantom_detector;
         G4Material *_world_material, *_detector_material;
 
         void _DefineMaterials();
         void _ConstructWorld();
         void _ConstructDetector(G4LogicalVolume * logic_world,
-                G4int const _detector_number, 
-                G4double const _detector_distance, 
-                G4double const _detector_thickness);
-        virtual void ConstructSDandField(G4LogicalVolume* logic_world);
+                G4int detector_number, 
+                G4double distance,
+                G4double thickness);
+        void _ConstructPhantomDetector(G4LogicalVolume* logic_world);
+        virtual void ConstructSDandField() override;
 
         // Distance between source and detectors
         std::map<G4int, std::pair<G4double, G4double>> _detector_distance_thickness;

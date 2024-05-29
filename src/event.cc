@@ -12,8 +12,10 @@
 ComptCameraEventAction::ComptCameraEventAction(ComptCameraRunAction *)
 {
 }
+
 ComptCameraEventAction::~ComptCameraEventAction()
-{}
+{
+}
 
 void ComptCameraEventAction::BeginOfEventAction(const G4Event *)
 {

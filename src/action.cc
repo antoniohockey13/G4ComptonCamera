@@ -13,6 +13,12 @@ ComptCameraActionInitialization::~ComptCameraActionInitialization()
 {
 }
 
+void ComptCameraActionInitialization::BuildForMaster() const
+{
+	ComptCameraRunAction *runAction = new ComptCameraRunAction();
+	SetUserAction(runAction);
+}
+
 void ComptCameraActionInitialization::Build() const
 {
 	ComptCameraPrimaryGenerator *generator = new ComptCameraPrimaryGenerator();
@@ -25,14 +31,9 @@ void ComptCameraActionInitialization::Build() const
 	SetUserAction(eventAction);
 	
         // XXX -- Why is needed?
-	ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
-	SetUserAction(steppingAction); 
+	//ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
+	//SetUserAction(steppingAction); 
 }
 
 
-void ComptCameraActionInitialization::BuildForMaster() const
-{
-	ComptCameraRunAction *runAction = new ComptCameraRunAction();
-	SetUserAction(runAction);
-}
 

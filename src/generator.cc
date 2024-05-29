@@ -46,7 +46,11 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
 {
-    delete _particle_gun;
+    if( _particle_gun != nullptr ) 
+    {
+        delete _particle_gun;
+        _particle_gun = nullptr;
+    }
 }
 
 void ComptCameraPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)

@@ -16,6 +16,7 @@
 #include "G4NistManager.hh" 
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
+    _logic_phantom_detector(nullptr),
     _world_material(nullptr),
     _detector_material(nullptr),
     _messenger(nullptr)
@@ -54,6 +55,11 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
 }
 ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
 {
+    if( _messenger != nullptr )
+    {
+        delete _messenger;
+        _messenger = nullptr;
+    }
 }
 
 void ComptCameraDetectorConstruction::_DefineMaterials()
@@ -76,7 +82,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     // Loop over detectors and construct them
     for (auto &detector : _detector_distance_thickness)
     {
-        _ConstructDetector(logic_world, detector.first, detector.second);
+        _ConstructDetector(logic_world, detector.first, detector.second.first, detector.second.second);
     }
 
     if (_phantom_detector)
@@ -112,7 +118,7 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     }
 }
     
-void ComptCameraDetectorConstruction::_ConstructDetector(G4LogicalVolume * logic_world, G4int detector_number, G4double distance)
+void ComptCameraDetectorConstruction::_ConstructDetector(G4LogicalVolume * logic_world, G4int detector_number, G4double distance, G4double thickness)
 {
     // Create detector solid, length arguments half of the actual length
     G4String name = "Detector" + std::to_string(detector_number);
@@ -133,9 +139,9 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector(G4LogicalVolume 
 
     G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
     // Create phantom detector logical volume
-    G4LogicalVolume* logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
+    _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance_thickness[1].first/2, 0, 0), logic_phantom_detector, name, logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance_thickness[1].first/2, 0, 0), _logic_phantom_detector, name, logic_world, false, 0);
 
 }
