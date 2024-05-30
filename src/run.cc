@@ -6,7 +6,6 @@ ComptCameraRunAction::ComptCameraRunAction()
 {
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
 
-    G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     anManager->SetNtupleMerging(true);
 
     // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes

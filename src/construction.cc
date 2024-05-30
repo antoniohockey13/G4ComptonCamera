@@ -27,7 +27,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _messenger(nullptr)
 {
     // Define world size including walls 
-    _world_width = 68*mm;
+    _world_width = 48*mm; //68
     _world_height = 56*mm;
     _world_depth = 35*mm;
     // Define detector size
@@ -182,7 +182,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     // Create phantom detector
     G4String name = "PhantomDetector";
 
-    G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
+    G4Box* solid_phantom_detector = new G4Box(name, 1*mm, 1*mm, 1*mm); 
     // Create phantom detector logical volume
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
