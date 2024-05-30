@@ -10,4 +10,5 @@ Pictures
 .Trash*
 sim
 *.root
-*.py
+__pycache__
+

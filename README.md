@@ -4,7 +4,7 @@
 
 ## Code structure
 
-Two main folders ``include`` and ``src``:
+Two main folders ``include`` and ``src`` for the geant4 simulation:
 In headers all *.hh files.
 In Source all *.cc files.
 
@@ -25,10 +25,21 @@ It processes the hit of the sensitive material of the LGAD detectors. It stores 
 -lgadSD :
 It creates the sensitive part of the LGAD detectors
 
+-phantomHit :
+It processes tge hit in a phantom detector situated close to the source and which detectes without interacting every particle emitted by the source.
+
+-phantomSD : 
+Handle the senitive part of the phantom detector.
+
 -physics :
 Includes the main physical processes simulated.
 
 -run:
 It stores the wanted data of each run in a root file.
 
--stepping:
+Other folders for the result analysis:
+-``Results\Absorber_Thickness``: Jupyter notebook analysing the optimal thickness.
+
+-``Results\Validation``: checks different general magnitudes with different files to analyse the simulation results and choose the optimal one.
+
+-``Cone_Intersection`` : compute the reconstruction of each event and handle the source position result

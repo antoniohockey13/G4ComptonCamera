@@ -23,16 +23,16 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetPosDist()->SetPosRot2(G4ThreeVector(0, 0, 1));
     current_source->GetPosDist()->SetRadius(1*mm);
 
-    current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));
-
-
-
-    
+    current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));    
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
 {
-    delete _general_particle_source;
+    if( _general_particle_source != nullptr ) 
+    {
+        delete _general_particle_source;
+        _general_particle_source = nullptr;
+    }
 }
 
 void ComptCameraPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
