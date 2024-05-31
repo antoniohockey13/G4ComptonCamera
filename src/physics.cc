@@ -48,6 +48,10 @@
 #include "G4UAtomicDeexcitation.hh"
 #include "G4NuclearStopping.hh"
 
+#include "G4MuonPlus.hh"
+#include "G4MuonMinus.hh"	
+#include "G4Proton.hh"
+
 
 
 ComptCameraPhysicsList::ComptCameraPhysicsList()
@@ -85,6 +89,9 @@ void ComptCameraPhysicsList::ConstructLeptons()
 {
 	G4Electron::ElectronDefinition();
 	G4Positron::PositronDefinition();
+	G4MuonPlus::MuonPlusDefinition();
+	G4MuonMinus::MuonMinusDefinition();
+	G4Proton::ProtonDefinition();
 }
 
 void ComptCameraPhysicsList::ConstructParticle()
@@ -169,33 +176,33 @@ void ComptCameraPhysicsList::ConstructEM()
 		}
 		else if (particleName == "e-")
 		{
-			// // Msc
-			// G4eMultipleScattering* msc = new G4eMultipleScattering();
-			// G4GoudsmitSaundersonMscModel* msc1 = new G4GoudsmitSaundersonMscModel();
-			// G4WentzelVIModel* msc2 = new G4WentzelVIModel();
-			// msc1->SetHighEnergyLimit(highEnergyLimit);
-			// msc2->SetLowEnergyLimit(highEnergyLimit);
-			// msc->SetEmModel(msc1);
-			// msc->SetEmModel(msc2);
-			// ph->RegisterProcess(msc, particle);
+			// Msc
+			G4eMultipleScattering* msc = new G4eMultipleScattering();
+			G4GoudsmitSaundersonMscModel* msc1 = new G4GoudsmitSaundersonMscModel();
+			G4WentzelVIModel* msc2 = new G4WentzelVIModel();
+			msc1->SetHighEnergyLimit(highEnergyLimit);
+			msc2->SetLowEnergyLimit(highEnergyLimit);
+			msc->SetEmModel(msc1);
+			msc->SetEmModel(msc2);
+			ph->RegisterProcess(msc, particle);
 
-			// //Coulomb scattering
-			// G4eCoulombScatteringModel* ssm = new G4eCoulombScatteringModel(); 
-  			// G4CoulombScattering* ss = new G4CoulombScattering();
-  			// ss->SetEmModel(ssm); 
-  			// ss->SetMinKinEnergy(highEnergyLimit);
-  			// ssm->SetLowEnergyLimit(highEnergyLimit);
-  			// ssm->SetActivationLowEnergyLimit(highEnergyLimit);
-			// ph->RegisterProcess(ss, particle);
+			//Coulomb scattering
+			G4eCoulombScatteringModel* ssm = new G4eCoulombScatteringModel(); 
+  			G4CoulombScattering* ss = new G4CoulombScattering();
+  			ss->SetEmModel(ssm); 
+  			ss->SetMinKinEnergy(highEnergyLimit);
+  			ssm->SetLowEnergyLimit(highEnergyLimit);
+  			ssm->SetActivationLowEnergyLimit(highEnergyLimit);
+			ph->RegisterProcess(ss, particle);
 
-			// // Ionisation
-			// G4eIonisation* eIoni = new G4eIonisation();
-			// G4VEmModel* eIoniModel = new G4LivermoreIonisationModel();
-			// eIoniModel->SetDeexcitationFlag(true);
-			// eIoni->SetFluctModel(new G4UrbanFluctuation());
-			// eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
-			// eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
-			// ph->RegisterProcess(eIoni, particle);
+			// Ionisation
+			G4eIonisation* eIoni = new G4eIonisation();
+			G4VEmModel* eIoniModel = new G4LivermoreIonisationModel();
+			eIoniModel->SetDeexcitationFlag(true);
+			eIoni->SetFluctModel(new G4UrbanFluctuation());
+			eIoniModel->SetHighEnergyLimit(0.1*CLHEP::MeV);
+			eIoni->AddEmModel(0, eIoniModel, new G4UniversalFluctuation());
+			ph->RegisterProcess(eIoni, particle);
 
 			//Bremsstrahlung
 			G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
