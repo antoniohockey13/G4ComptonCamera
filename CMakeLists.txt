@@ -19,7 +19,13 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 file(GLOB MACRO_FILES
 	"*.mac"
 )
+# Copy txt files, the source spectrum files 
 file(COPY ${MACRO_FILES} DESTINATION ${PROJECT_BINARY_DIR})
+
+file(GLOB TEXT_FILES
+	"*.txt"
+)
+file(COPY ${TEXT_FILES} DESTINATION ${PROJECT_BINARY_DIR})
 
 # Add the executable, and link it to the Geant4 libraries
 add_executable(ComptCamera sim.cc ${sources} ${headers})

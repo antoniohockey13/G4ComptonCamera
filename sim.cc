@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     G4VisManager *visManager = new G4VisExecutive();
     visManager->Initialize();
 
-    //Get teh user interface pointer manager
+    //Get the user interface pointer manager
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
     if(argc == 1)
     {

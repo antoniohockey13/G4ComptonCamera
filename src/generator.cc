@@ -23,7 +23,12 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetPosDist()->SetPosRot2(G4ThreeVector(0, 0, 1));
     current_source->GetPosDist()->SetRadius(1*mm);
 
-    current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));    
+    current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));   
+
+    current_source->GetEneDist()->SetEnergyDisType("Arb");
+G4cout << "Current source: " << current_source << G4endl;
+    current_source->GetEneDist()->ArbEnergyHistoFile("Source_sim_biased_109.txt"); 
+G4cout << "Personalised energy distribution" << G4endl;
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
