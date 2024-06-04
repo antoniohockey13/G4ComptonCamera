@@ -28,6 +28,8 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetEneDist()->SetEnergyDisType("Arb");
 G4cout << "Current source: " << current_source << G4endl;
     current_source->GetEneDist()->ArbEnergyHistoFile("Source_sim_biased_109.txt"); 
+    current_source->GetEneDist()->ArbInterpolate("Lin");
+
 G4cout << "Personalised energy distribution" << G4endl;
 }
 
