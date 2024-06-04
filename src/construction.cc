@@ -174,7 +174,7 @@ void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
     rot->rotateX(90*deg);
     rot->rotateY(90*deg);
 
-    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
+    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ+10, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
 }
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
@@ -188,7 +188,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2+10, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }

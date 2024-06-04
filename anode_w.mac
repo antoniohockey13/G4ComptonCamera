@@ -1,6 +1,6 @@
 # Source definition  for W anode
-/gps/pos/centre -21. 0 10 mm
-/gps/pos/radius 0..01 um
+/gps/pos/centre -48/2+10. 0 10 mm
+/gps/pos/radius 0.01 um
 /gps/direction 0 0 -1
 /gps/particle e-
 /gps/ene/mono 35 keV
