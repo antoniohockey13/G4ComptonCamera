@@ -1,10 +1,12 @@
 #include "run.hh"
 
 #include "G4AnalysisManager.hh" 
+#include "G4RunManager.hh"
 
 ComptCameraRunAction::ComptCameraRunAction()
 {
-    G4AnalysisManager *anManager = G4AnalysisManager::Instance();
+    // Print-out every x-event
+    G4RunManager::GetRunManager()->SetPrintProgress(10000);
 
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     anManager->SetNtupleMerging(true);
