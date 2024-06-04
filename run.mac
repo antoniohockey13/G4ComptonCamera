@@ -1,4 +1,4 @@
 /random/setSeeds 10 10
 /run/printProgress 1000
-/run/beamOn 500000000
+/run/beamOn 100000000
 

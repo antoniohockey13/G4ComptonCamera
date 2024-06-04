@@ -27,7 +27,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _messenger(nullptr)
 {
     // Define world size including walls 
-    _world_width = 68*mm;
+    _world_width = 48*mm; //68
     _world_height = 56*mm;
     _world_depth = 35*mm;
     // Define detector size
@@ -157,7 +157,7 @@ void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
     G4ThreeVector lowNorm(0, -std::sin(12*deg), -std::cos(12*deg));
     G4ThreeVector highNorm(0, std::sin(12*deg), std::cos(12*deg));
 
-    const G4double dZ = 2*mm;
+    const G4double dZ = 1*um;
     G4CutTubs * anode_w = new G4CutTubs("Anode", 
             0., 
             10/2*mm, 
@@ -174,7 +174,7 @@ void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
     rot->rotateX(90*deg);
     rot->rotateY(90*deg);
 
-    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
+    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ+10, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
 }
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
@@ -182,13 +182,13 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     // Create phantom detector
     G4String name = "PhantomDetector";
 
-    G4Box* solid_phantom_detector = new G4Box(name, 1*mm, _world_height/2, _world_depth/2); 
+    G4Box* solid_phantom_detector = new G4Box(name, 1*um, 1*mm, 1*mm); 
     // Create phantom detector logical volume
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2+10, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }
