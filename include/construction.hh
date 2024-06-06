@@ -19,11 +19,11 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 
     private:
         std::map<G4int, G4LogicalVolume*> _detector_map;
-        G4LogicalVolume * _logic_phantom_detector;
+        G4LogicalVolume * _logic_phantom_detector, *_logic_world;
         G4Material *_world_material, *_detector_material;
 
         void _DefineMaterials();
-        void _ConstructWorld();
+        G4VPhysicalVolume* _ConstructWorld();
         void _ConstructDetector(G4LogicalVolume * logic_world,
                 G4int detector_number, 
                 G4double distance,

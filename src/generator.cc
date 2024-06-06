@@ -23,13 +23,13 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     // Number of particles per event
     
 
-    /*
+    
     // Define angle
     // alpha angle with y axis
     G4double alpha = 0;
     // phi angle with z axis
-    G4double phi = 0.4;    
-    */
+    G4double phi = 0.0;    
+    /*
     // Define particle gun with an isotropic distribution
     G4double alpha_min = -0.9;
     G4double alpha_max = 0.9;
@@ -39,7 +39,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
 
     G4double alpha = G4UniformRand()*(alpha_max - alpha_min) + alpha_min;
     G4double phi = G4UniformRand()*(phi_max - phi_min) + phi_min;
-
+    */
     G4ThreeVector mom = G4ThreeVector(cos(phi)*cos(alpha), sin(alpha)*cos(phi), cos(alpha)*sin(phi));
     _particle_gun->SetParticleMomentumDirection(mom);
 }
