@@ -1,3 +1,7 @@
-/random/setSeeds 10 10
-/run/beamOn 500000000
+/gps/hist/inter Lin
+/run/printProgress 10000
+
+/random/setSeeds 1039348 6582264
+
+/run/beamOn 5000
 

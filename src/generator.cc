@@ -26,12 +26,9 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));   
 
     current_source->GetEneDist()->SetEnergyDisType("Arb");
-G4cout << "Current source: " << current_source << G4endl;
-    current_source->GetEneDist()->ArbEnergyHistoFile("Source_sim_biased_109.txt"); 
+    current_source->GetEneDist()->ArbEnergyHistoFile("source_sim_5108.txt"); 
     // --> Need to use macro, not working yet!!! --> use /gps/hist/inter Lin
     //current_source->GetEneDist()->ArbInterpolate("Lin");
-
-G4cout << "Personalised energy distribution" << G4endl;
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
