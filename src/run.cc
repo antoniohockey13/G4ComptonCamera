@@ -8,6 +8,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     // Print-out every x-event
     G4RunManager::GetRunManager()->SetPrintProgress(10000);
 
+    G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     anManager->SetNtupleMerging(true);
 
     // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes
