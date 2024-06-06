@@ -34,8 +34,8 @@ int main(int argc, char** argv)
     if(argc == 1)
     {
         G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-	UImanager->ApplyCommand("/control/execute vis.mac");
-	ui->SessionStart();
+        UImanager->ApplyCommand("/control/execute vis.mac");
+        ui->SessionStart();
         delete ui;
     }
     else
