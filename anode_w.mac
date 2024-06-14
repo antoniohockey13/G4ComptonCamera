@@ -1,13 +1,19 @@
 # Source definition  for W anode
-/gps/pos/centre -48/2+10. 0 10 mm
-/gps/pos/radius 0.01 um
+/gps/pos/centre -21 0 10 mm
+/gps/pos/radius 100 um
 /gps/direction 0 0 -1
 /gps/particle e-
 /gps/ene/mono 35 keV
 
-/process/em/setSecBiasing eBrem World 10000 100 MeV
+/run/setCutForRegion AnodeRegion 0.1 um
+
+#/process/inactivate msc e-
+#/process/inactivate eIoni e-
+
+/process/em/setSecBiasing eBrem AnodeRegion 100000 100 MeV
 
 /run/printProgress 10000
 
-/random/setSeeds 1039348 6582264
-/run/beamOn 500000
+/random/setSeeds 938463 2132464
+#/run/beamOn 500000000
+/run/beamOn 5000000

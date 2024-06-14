@@ -31,6 +31,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         void _ConstructDetectorsGrid(G4int y_nb_detector, G4int z_nb_detector, G4int const _detector_number, G4double const _detector_distance);
         void _ConstructPCB(G4double const _detector_distance);
         void _ConstructPhantomDetector();
+        void _ConstructCollimator();
         void _ConstructTungstenAnode();
         virtual void ConstructSDandField() override;
 

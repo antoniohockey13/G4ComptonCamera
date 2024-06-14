@@ -1,3 +1,15 @@
+# Source definition  for W anode
+/gps/pos/centre -21.0 0 10 mm
+/gps/pos/radius 100 um
+/gps/direction 0 0 -1
+/gps/particle e-
+/gps/ene/mono 35 keV
+
+/run/setCutForRegion AnodeRegion 0.1 um
+
+#/process/inactivate msc e-
+#/process/inactivate eIoni e-
+
 /vis/open OGL
 /vis/viewer/set/viewpointVector 1 1 1
 /vis/drawVolume

@@ -9,6 +9,7 @@
 #include "G4VPhysicalVolume.hh" 
 #include "G4LogicalVolume.hh"
 #include "G4Box.hh" 
+#include "G4Tubs.hh"
 #include "G4CutTubs.hh" 
 #include "G4PVPlacement.hh" 
 #include "G4SystemOfUnits.hh" 
@@ -16,6 +17,7 @@
 #include "G4VSensitiveDetector.hh" 
 #include "G4NistManager.hh" 
 #include "G4VisAttributes.hh"
+#include "G4Region.hh"
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _logic_world(nullptr),
@@ -27,7 +29,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _messenger(nullptr)
 {
     // Define world size including walls 
-    _world_width = 48*mm; //68
+    _world_width = 48*mm; //48
     _world_height = 56*mm;
     _world_depth = 35*mm;
     // Define detector size
@@ -42,7 +44,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
 
     //Define map with distances
     
-    _detector_distance = 15*mm;
+    _detector_distance = 0*mm;
     // Define PCB thickness
     _pcb_thickness = 1*mm;
 
@@ -77,8 +79,8 @@ ComptCameraDetectorConstruction::~ComptCameraDetectorConstruction()
 void ComptCameraDetectorConstruction::_DefineMaterials()
 {
     G4NistManager* nist = G4NistManager::Instance();
-    // World material is air
-    _world_material = nist->FindOrBuildMaterial("G4_AIR");
+    // World material is vacuum
+    _world_material = nist->FindOrBuildMaterial("G4_Galactic");
 
     // Detector material is silicon (LGAD detectors)
     _detector_material = nist->FindOrBuildMaterial("G4_Si");
@@ -105,6 +107,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     //_ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
     //_ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
     _ConstructTungstenAnode();
+    _ConstructCollimator();
     
     if(_phantom_detector)
     {
@@ -154,10 +157,12 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
 void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
 {
     // Cut vectors: 
-    G4ThreeVector lowNorm(0, -std::sin(12*deg), -std::cos(12*deg));
-    G4ThreeVector highNorm(0, std::sin(12*deg), std::cos(12*deg));
+    // Anode angle
+    // https://www.phywe.com/equipment-accessories/phywe-xr-4-0-x-ray-equipment-accessories/xr4-x-ray-plug-in-w-tube_1740/
+    G4ThreeVector lowNorm(0, -std::sin(19*deg), -std::cos(19*deg));
+    G4ThreeVector highNorm(0, std::sin(19*deg), std::cos(19*deg));
 
-    const G4double dZ = 1*um;
+    const G4double dZ = 1*mm;
     G4CutTubs * anode_w = new G4CutTubs("Anode", 
             0., 
             10/2*mm, 
@@ -170,11 +175,70 @@ void ComptCameraDetectorConstruction::_ConstructTungstenAnode()
     G4LogicalVolume* logic_anode_w = new G4LogicalVolume(anode_w, _tungsten, "Anode");
     logic_anode_w->SetVisAttributes( G4Color(0.3, 0.534, 0.3, 0.7) );
 
+    G4Region* anode_region = new G4Region("AnodeRegion");
+    logic_anode_w->SetRegion(anode_region);
+    anode_region->AddRootLogicalVolume(logic_anode_w);
+
     G4RotationMatrix* rot = new G4RotationMatrix;
     rot->rotateX(90*deg);
     rot->rotateY(90*deg);
 
-    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2.0+dZ+10, 0., 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
+    new G4PVPlacement(rot, G4ThreeVector(-_world_width/2+2.5*mm, 0.0, 0.0), logic_anode_w, "Anode", _logic_world, false, 0);
+
+    // Create the Duran glass recovering, just a box of a few mm in front of
+    G4NistManager* nist = G4NistManager::Instance();
+     // Elements
+    G4Element* O = nist->FindOrBuildElement("O");
+    G4Element* Si = nist->FindOrBuildElement("Si");
+    G4Element* B = nist->FindOrBuildElement("B");
+    G4Element* Na = nist->FindOrBuildElement("Na");
+    G4Element* Al = nist->FindOrBuildElement("Al");
+
+    // Composition of Duran glass (Borosilicate glass)
+    G4Material* duranGlass = new G4Material("DuranGlass", 2.23*g/cm3, 5);
+    duranGlass->AddElement(O, 65.0 * perCent);
+    duranGlass->AddElement(Si, 22.0 * perCent);
+    duranGlass->AddElement(B, 12.0 * perCent);
+    duranGlass->AddElement(Na, 0.5 * perCent);
+    duranGlass->AddElement(Al, 0.5 * perCent);
+
+    // Create phantom detector
+    G4String name = "cover";
+    G4Box* solid_cover = new G4Box(name, 0.5*mm, 2*mm, 2*mm); 
+    // Create phantom detector logical volume
+    G4LogicalVolume* logic_cover = new G4LogicalVolume(solid_cover, duranGlass, G4String("logic_"+name));
+    logic_cover->SetVisAttributes( G4Color(0.95,0.95,0.90,0.2) );
+
+    // Create phantom detector physical volume
+    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+7*mm, 0, 0), logic_cover, name, _logic_world, false, 0);
+}
+
+
+void ComptCameraDetectorConstruction::_ConstructCollimator()
+{
+    // Create collimator
+    const G4String name = "collimator";
+    G4Tubs* solid_collimator = new G4Tubs(name,
+            0.5*mm,
+            11*mm,
+            15*mm,
+            0,
+            360.0*deg); 
+    
+    G4NistManager* nist = G4NistManager::Instance();
+    G4Material*  collimator_material = nist->FindOrBuildMaterial("G4_Pb");
+
+
+    // Create phantom detector logical volume
+    G4LogicalVolume* logic_collimator = new G4LogicalVolume(solid_collimator, collimator_material, G4String("logic_"+name));
+    logic_collimator->SetVisAttributes( G4Color(0.9,0.9,0.9,0.3) );
+    
+    G4RotationMatrix* rot = new G4RotationMatrix;
+    rot->rotateY(90*deg);
+
+    // Create phantom detector physical volume
+    new G4PVPlacement(rot, G4ThreeVector(0, 0, 0), logic_collimator, name, _logic_world, false, 0);
+
 }
 
 void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
@@ -188,7 +252,7 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(-_world_width/2+_detector_distance/2+10, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(_world_width/2-2.5*mm, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }
