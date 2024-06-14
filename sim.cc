@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "G4RunManagerFactory.hh"
+#include "G4Threading.hh"
 #include "G4UImanager.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
@@ -16,8 +17,9 @@
 int main(int argc, char** argv)
 {
     auto* runManager = G4RunManagerFactory::CreateRunManager();
-    
-    runManager->SetNumberOfThreads(3);
+    G4int nThreads = std::max(1,G4Threading::G4GetNumberOfCores()-2);
+    runManager->SetNumberOfThreads(nThreads);
+
     auto * detector = new ComptCameraDetectorConstruction();
     runManager->SetUserInitialization(detector);
     runManager->SetUserInitialization(new ComptCameraPhysicsList());
