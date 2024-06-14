@@ -29,25 +29,19 @@ class phantomHit : public G4VHit
         void SetPos(G4ThreeVector pos) { _pos = pos;};
         void SetMom(G4ThreeVector mom) { _pre_mom = mom;};
         void SetParticleID(G4int particle_id) { _particle_id = particle_id;};
-        void SetEnergyLost(G4double elost){ _edep = elost;};
         void SetKineticEnergy(G4double kinetic_energy) { _kinetic_energy = kinetic_energy;};
-        void SetProcessName(G4String process_name) { _process_name = process_name;};
 
         //getters
         G4int GetParticleID() const { return _particle_id;};
         G4ThreeVector GetPos() const { return _pos;};
         G4ThreeVector GetMom() const { return _pre_mom;};
-        G4double GetEnergyLost() const { return _edep;};
         G4double GetKineticEnergy() const { return _kinetic_energy;};
-        G4String GetProcessName() const { return _process_name;};
 
     private:
         G4int _particle_id;
-        G4double _edep;
         G4double _kinetic_energy;
         G4ThreeVector _pos;
         G4ThreeVector _pre_mom;
-        G4String _process_name;
 };
 
 

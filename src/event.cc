@@ -119,11 +119,8 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
             anManager->FillNtupleDColumn(2, 4, (*hit_collection_phantom)[i]->GetMom()[0]/keV);
             anManager->FillNtupleDColumn(2, 5, (*hit_collection_phantom)[i]->GetMom()[1]/keV);
             anManager->FillNtupleDColumn(2, 6, (*hit_collection_phantom)[i]->GetMom()[2]/keV);
-            anManager->FillNtupleDColumn(2, 7, (*hit_collection_phantom)[i]->GetEnergyLost()/keV);
-            anManager->FillNtupleDColumn(2, 8, (*hit_collection_phantom)[i]->GetKineticEnergy()/keV);
-            anManager->FillNtupleIColumn(2, 9, (*hit_collection_phantom)[i]->GetParticleID());
-            anManager->FillNtupleSColumn(2, 10, (*hit_collection_phantom)[i]->GetProcessName());
-            anManager->FillNtupleIColumn(2, 9, (*hit_collection_phantom)[i]->GetParticleID());
+            anManager->FillNtupleDColumn(2, 7, (*hit_collection_phantom)[i]->GetKineticEnergy()/keV);
+            anManager->FillNtupleIColumn(2, 8, (*hit_collection_phantom)[i]->GetParticleID());
             anManager->AddNtupleRow(2);
         }
     }

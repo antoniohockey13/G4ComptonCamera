@@ -28,9 +28,7 @@ G4bool phantomSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition());
     _new_hit->SetMom (aStep->GetPreStepPoint()->GetMomentum());
     _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
-    _new_hit->SetEnergyLost(aStep->GetTotalEnergyDeposit());
     _new_hit->SetKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
-    _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
 
     _hits_collection_phantom->insert(_new_hit);
     

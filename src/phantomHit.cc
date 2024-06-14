@@ -37,8 +37,6 @@ void phantomHit::Print()
     G4cout
     << "Particle: "
     << _particle_id
-    << " Edep: "
-    << std::setw(7) << G4BestUnit(_edep,"Energy")
     << " Position: "
     << std::setw(7) << G4BestUnit( _pos,"Length")
     << G4endl;

@@ -65,10 +65,8 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumX");//4
     anManager->CreateNtupleDColumn("MomentumY"); //5
     anManager->CreateNtupleDColumn("MomentumZ"); //6
-    anManager->CreateNtupleDColumn("ELost"); //7
-    anManager->CreateNtupleDColumn("KineticEnergy"); //8
-    anManager->CreateNtupleIColumn("ParticleID"); //9
-    anManager->CreateNtupleSColumn("ProcessName"); //10
+    anManager->CreateNtupleDColumn("KineticEnergy"); //7
+    anManager->CreateNtupleIColumn("ParticleID"); //8
     anManager->FinishNtuple(2); 
 
 }
