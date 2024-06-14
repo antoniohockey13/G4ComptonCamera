@@ -1,25 +1,13 @@
 #ifndef PHYSICS_HH
 #define PHYSICS_HH
 
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 
-class G4VMscModel;
-
-class ComptCameraPhysicsList : public G4VUserPhysicsList
+class ComptCameraPhysicsList : public G4VModularPhysicsList
 {
-public:
-	explicit ComptCameraPhysicsList();
-	~ComptCameraPhysicsList() override;
-
-protected:
-	void ConstructParticle() override;
-	void ConstructBosons();
-	void ConstructLeptons();
-	void ConstructProcess() override;
-	void ConstructEM();
-	void ConstructGeneral();
-
-	
+    public:
+        explicit ComptCameraPhysicsList();
+        ~ComptCameraPhysicsList() override;
 };
 
 #endif
