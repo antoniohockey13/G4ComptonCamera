@@ -6,7 +6,6 @@ __Author: Antonio Gómez Carrera__
 - `main`: Compton camera simulation to generate data for the algorithm. Source emitting photons with E = 70 keV towards to big parallel planar detectors of silicon.
 - `Realistic_Construction`: Code to generate a realistic simulation of the used setup  with a source emitting photons with an energy spectrum which is read from a file and 4 silicon pieces (where the E deposition is measured) with an epoxy structure.
 - `tungsten-anode`: X-ray machine radiation field simulation
-- 
 
 ## Code structure
 
