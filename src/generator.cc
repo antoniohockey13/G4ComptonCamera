@@ -2,6 +2,7 @@
 #include "construction.hh"
 
 #include "G4SystemOfUnits.hh"
+
 #include "G4ParticleTable.hh" 
 #include "Randomize.hh"
 
@@ -19,7 +20,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     // Particle type 
     _particle_gun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
     // Particle energy
-    _particle_gun->SetParticleEnergy(70* keV);
+    _particle_gun->SetParticleEnergy(35 * keV);
     // Number of particles per event
     
 
