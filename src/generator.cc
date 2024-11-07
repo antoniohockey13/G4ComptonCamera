@@ -2,30 +2,29 @@
 #include "construction.hh"
 
 #include "G4SystemOfUnits.hh"
-
-#include "G4ParticleTable.hh" 
+#include "G4GeneralParticleSource.hh"
+#include "G4Gamma.hh"
 #include "Randomize.hh"
 
-
-ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
+ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
+    _general_particle_source(nullptr),
+    _world_width(-1)
 {   
-    _particle_gun = new G4ParticleGun(1); 
     // Get world width from detector construction
     ComptCameraDetectorConstruction detectorConstruction;
     _world_width = detectorConstruction.GetWorldWidth();
-
-    G4ThreeVector pos = G4ThreeVector(-_world_width/2, 0.0, 0.0);
-    _particle_gun->SetParticlePosition(pos);
-
-    // Particle type 
-    _particle_gun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("gamma"));
-    // Particle energy
-    _particle_gun->SetParticleEnergy(35 * keV);
-    // Number of particles per event
+    // Define particle gun
+    _general_particle_source = new G4GeneralParticleSource();
+    _general_particle_source->SetParticleDefinition(G4Gamma::Definition());
+    auto current_source = _general_particle_source->GetCurrentSource();
+    current_source->GetPosDist()->SetCentreCoords(G4ThreeVector(-_world_width/2, 0.0, 0.0));   
+    current_source->GetPosDist()->SetPosDisShape("Circle");
+    current_source->GetPosDist()->SetPosRot1(G4ThreeVector(0, 1, 0));
+    current_source->GetPosDist()->SetPosRot2(G4ThreeVector(0, 0, 1));
+    // Simulate 1mm collimator
+    current_source->GetPosDist()->SetRadius(1*mm);
     
-
-    
-    // Define angle
+    // Define angle to launch particles
     // alpha angle with y axis
     G4double alpha = 0;
     // phi angle with z axis
@@ -42,19 +41,24 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator()
     G4double phi = G4UniformRand()*(phi_max - phi_min) + phi_min;
     */
     G4ThreeVector mom = G4ThreeVector(cos(phi)*cos(alpha), sin(alpha)*cos(phi), cos(alpha)*sin(phi));
-    _particle_gun->SetParticleMomentumDirection(mom);
+    current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));   
+
+    current_source->GetEneDist()->SetEnergyDisType("Arb");
+    current_source->GetEneDist()->ArbEnergyHistoFile("source_sim_5108.txt"); 
+    // --> Need to use macro, not working yet!!! --> use /gps/hist/inter Lin
+    //current_source->GetEneDist()->ArbInterpolate("Lin");
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()
 {
-    if( _particle_gun != nullptr ) 
+    if( _general_particle_source != nullptr ) 
     {
-        delete _particle_gun;
-        _particle_gun = nullptr;
+        delete _general_particle_source;
+        _general_particle_source = nullptr;
     }
 }
 
 void ComptCameraPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
-    _particle_gun->GeneratePrimaryVertex(anEvent);
+    _general_particle_source->GeneratePrimaryVertex(anEvent);
 }
