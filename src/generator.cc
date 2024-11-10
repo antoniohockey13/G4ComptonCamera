@@ -44,7 +44,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));   
 
     current_source->GetEneDist()->SetEnergyDisType("Arb");
-    current_source->GetEneDist()->ArbEnergyHistoFile("source_sim_5108.txt"); 
+    current_source->GetEneDist()->ArbEnergyHistoFile("xray-Anode_W-19deg_Glass_35kV_50M.txt"); 
     // --> Need to use macro, not working yet!!! --> use /gps/hist/inter Lin
     //current_source->GetEneDist()->ArbInterpolate("Lin");
 }
