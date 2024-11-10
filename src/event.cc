@@ -46,7 +46,9 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
             {
                 if (((*hit_collection_lgad)[j]->GetParticleID() == 22) & ((*hit_collection_lgad)[j]->GetDetectorNb() == 2) &
                     ((*hit_collection_lgad)[j]->GetTrackID() == (*hit_collection_lgad)[i]->GetTrackID()) &
-                    ((*hit_collection_lgad)[j]->GetTime() > (*hit_collection_lgad)[i]->GetTime()))
+                    ((*hit_collection_lgad)[j]->GetTime() > (*hit_collection_lgad)[i]->GetTime()) &
+                    // Add this line to avoid multiple compton
+                    ((*hit_collection_lgad)[i]->GetPostMom() == (*hit_collection_lgad)[j]->GetPreMom()))
 
                 // Check if the particle is a photon, hit the second detector and the same track than the first detector hit
             
@@ -69,6 +71,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
                     anManager->FillNtupleDColumn(0, 15, (*hit_collection_lgad)[i]->GetComptonAngle());
                     anManager->FillNtupleDColumn(0, 16, (*hit_collection_lgad)[i]->GetEnergyLost()/keV);
                     anManager->FillNtupleDColumn(0, 17, (*hit_collection_lgad)[j]->GetEnergyLost()/keV);
+                    anManager->FillNtupleDColumn(0, 18, (*hit_collection_lgad)[i]->GetPreKineticEnergy()/keV);
                     anManager->AddNtupleRow(0);
                 
                 }
@@ -77,7 +80,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         
     }
 
-        /*
+    /*
     // Remove Hits to save space in the final file
     for (size_t i = 0; i < hit_collection_lgad->entries(); ++i)
     {

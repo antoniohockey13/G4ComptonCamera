@@ -27,9 +27,11 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ComptonAngle"); //15
     anManager->CreateNtupleDColumn("Elost1"); //16
     anManager->CreateNtupleDColumn("Elost2"); //17
+    anManager->CreateNtupleDColumn("PreKineticEnergy"); //18
     anManager->FinishNtuple(0);
 
-        /* Llenar solo Compton Hits para reducir el tamaño del archivo
+    
+    //Llenar solo Compton Hits para reducir el tamaño del archivo
     // Whenever you change this lines in run.cc you should go to lgadSD.cc to make the same changes
     anManager->CreateNtuple("Hits", "Hits");
     anManager->CreateNtupleIColumn("Event"); //0
@@ -54,7 +56,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ComptonAngle"); //19
     anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->FinishNtuple(1); 
-    */
+    
 
     /*
     anManager->CreateNtuple("PhantomHits", "Phantom Hits");
