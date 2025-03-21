@@ -43,6 +43,8 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _detector_distance = 15*mm;
     // Define PCB thickness
     _pcb_thickness = 1*mm;
+    // Define duct tape thickness
+    _ducttape_thickness = 0.31*mm;
 
     //Space between subdetectors
     _spacing = 0.1*mm;
@@ -58,7 +60,7 @@ ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     // Messenge does NOT work with maps
     //_messenger->DeclareProperty("detector_distance", _detector_distance[_number], "Detector distance, /run/reinitializeGeometry to update");
 
-    _phantom_detector = true;
+    _phantom_detector = false;
 
     _DefineMaterials();
 }
@@ -90,6 +92,21 @@ void ComptCameraDetectorConstruction::_DefineMaterials()
     _pcb_material->AddMaterial(nist->FindOrBuildMaterial("G4_SILICON_DIOXIDE"), 0.773);
     _pcb_material->AddMaterial(_epoxy, 0.147);
     _pcb_material->AddElement(nist->FindOrBuildElement("Cl"), 0.08);
+    // Duct tape
+    _duct_tape_material = new G4Material("DuctTape", 1.1*g/cm3, 3);
+    // Polyethylene for the tape
+    G4Material* _polyethylene = new G4Material("Polyethylene", 0.94*g/cm3, 2);
+    _polyethylene->AddElement(nist->FindOrBuildElement("C"), 2);
+    _polyethylene->AddElement(nist->FindOrBuildElement("H"), 4);
+    _duct_tape_material->AddMaterial(_polyethylene, 0.6);  // 60% polyethylene
+    // Rubber for the adhesive
+    G4Material* _rubber = new G4Material("Rubber", 1.1*g/cm3, 2);
+    _rubber->AddElement(nist->FindOrBuildElement("C"), 5);
+    _rubber->AddElement(nist->FindOrBuildElement("H"), 8);
+    _duct_tape_material->AddMaterial(_rubber, 0.3);       // 30% rubber
+    // Aluminum for the backing
+    G4Material* _aluminum = nist->FindOrBuildMaterial("G4_Al");
+    _duct_tape_material->AddMaterial(_aluminum, 0.1);     // 10% aluminum
 }
 
 G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
@@ -97,6 +114,7 @@ G4VPhysicalVolume* ComptCameraDetectorConstruction::Construct()
     // Construct world and phantom detector
     auto * phys_vol =_ConstructWorld();
 
+    _ConstructDuctTape(_detector_distance-_detector_thickness-_ducttape_thickness);
     _ConstructDetectorsGrid(_y_nb_detector, _z_nb_detector, 1, _detector_distance);
     _ConstructPCB(_detector_distance+_detector_thickness+_pcb_thickness);
     
@@ -199,5 +217,16 @@ void ComptCameraDetectorConstruction::_ConstructPCB(G4double distance)
     logic_pcb->SetVisAttributes( G4Color(4./255, 99/255., 7/255.) );
     // Create PCB physical volume
     new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), logic_pcb, "PCB", _logic_world, false, 0);
+    // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
+}
+
+void ComptCameraDetectorConstruction::_ConstructDuctTape(G4double distance)
+{
+    G4Box* solid_duct_tape= new G4Box("duct_tape", _ducttape_thickness, 20/2*mm, 20/2*mm); 
+    // Create duct tape logical volume
+    G4LogicalVolume* logic_duct_tape = new G4LogicalVolume(solid_duct_tape, _duct_tape_material, "duct_tape");
+    logic_duct_tape->SetVisAttributes( G4Color(0.8, 0.6, 0.2) );
+    // Create duct tape physical volume
+    new G4PVPlacement(0, G4ThreeVector(distance-_world_width/2, 0, 0), logic_duct_tape, "duct_tape", _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 }

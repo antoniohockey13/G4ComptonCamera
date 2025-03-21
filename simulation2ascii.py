@@ -26,7 +26,7 @@ def write_ascii(h, name):
 @click.argument('input_file')
 def main(input_file):
     f = ROOT.TFile(input_file)
-    histo = ROOT.TH1F("energy", "", 100, 0, 35)
+    histo = ROOT.TH1F("energy", "", 1000, 0, 40)
     f.PhantomHits.Project("energy", "KineticEnergy", "ParticleID == 22")
     histo.Draw()
     if not omit_plot:
