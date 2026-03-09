@@ -7,11 +7,8 @@
 
 ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     _general_particle_source(nullptr),
-    _world_width(-1)
+    _world_width(200*mm)
 {
-    // Get world width from detector construction
-    ComptCameraDetectorConstruction detectorConstruction;
-    _world_width = detectorConstruction.GetWorldWidth();
     // Define particle gun
     _general_particle_source = new G4GeneralParticleSource();
     _general_particle_source->SetParticleDefinition(G4Gamma::Definition());
@@ -21,7 +18,8 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     current_source->GetPosDist()->SetPosDisShape("Circle");
     current_source->GetPosDist()->SetPosRot1(G4ThreeVector(0, 1, 0));
     current_source->GetPosDist()->SetPosRot2(G4ThreeVector(0, 0, 1));
-    current_source->GetPosDist()->SetRadius(1*mm);
+    // Simulate 5mm collimator
+    current_source->GetPosDist()->SetRadius(2.5*mm);
 
     current_source->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));   
 
@@ -30,7 +28,7 @@ ComptCameraPrimaryGenerator::ComptCameraPrimaryGenerator():
     // --> Need to use macro, not working yet!!! --> use /gps/hist/inter Lin
     //current_source->GetEneDist()->ArbInterpolate("Lin");
     //current_source->GetEneDist()->SetEnergyDisType("Mono");
-    //current_source->GetEneDist()->SetMonoEnergy(70*keV);
+    //current_source->GetEneDist()->SetMonoEnergy(60*keV);
 }
 
 ComptCameraPrimaryGenerator::~ComptCameraPrimaryGenerator()

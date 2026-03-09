@@ -18,6 +18,8 @@ class ComptCameraEventAction : public G4UserEventAction
 
     private:
         bool _is_phantom;
+        G4int _lgadHCID = -1;
+        G4int _phantomHCID = -1;
 };
 
 #endif

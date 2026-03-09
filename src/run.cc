@@ -66,6 +66,23 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleIColumn("ParticleID"); //8
     anManager->FinishNtuple(2); 
 
+    anManager->CreateNtuple("ComptonPairs", "All det1-det2 candidate pairs");
+    anManager->CreateNtupleIColumn("Event"); //0
+    anManager->CreateNtupleDColumn("X1"); //1
+    anManager->CreateNtupleDColumn("Y1"); //2
+    anManager->CreateNtupleDColumn("Z1"); //3
+    anManager->CreateNtupleDColumn("X2"); //4
+    anManager->CreateNtupleDColumn("Y2"); //5
+    anManager->CreateNtupleDColumn("Z2"); //6
+    anManager->CreateNtupleDColumn("Time1");//7
+    anManager->CreateNtupleDColumn("Time2");//8
+    anManager->CreateNtupleDColumn("TrackID1"); //9
+    anManager->CreateNtupleDColumn("TrackID2"); //10
+    anManager->CreateNtupleDColumn("ParticleID1"); //11
+    anManager->CreateNtupleDColumn("ParticleID2"); //12
+    anManager->CreateNtupleDColumn("samePhoton"); //13
+    anManager->FinishNtuple(3);
+
 }
 
 ComptCameraRunAction::~ComptCameraRunAction() {}

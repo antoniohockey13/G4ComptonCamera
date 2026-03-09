@@ -29,8 +29,10 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
         return false;
     }
     auto _new_hit = new lgadHit();
-    _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
+
+
     _new_hit->SetDetectorNb(aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume()->GetName());
+    _new_hit->SetTrackID  (aStep->GetTrack()->GetTrackID());
     _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition());
     _new_hit->SetPreMom (aStep->GetPreStepPoint()->GetMomentum());
     _new_hit->SetPostMom (aStep->GetPostStepPoint()->GetMomentum());

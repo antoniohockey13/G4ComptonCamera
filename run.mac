@@ -1,7 +1,8 @@
 /gps/hist/inter Lin
+/run/initialize
 /run/printProgress 10000
 
 /random/setSeeds 1039348 6582264
 
-/run/beamOn 5000
+/run/beamOn 100000000
 

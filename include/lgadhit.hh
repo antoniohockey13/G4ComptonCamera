@@ -27,7 +27,9 @@ class lgadHit : public G4VHit
         //setters
         void SetTrackID(G4int track_id) { _track_id = track_id;};
         //Transform name of the from DetectorXYZ to int(X)
-        void SetDetectorNb(G4String detector_name) { _detector_nb = std::stoi(detector_name.substr(9, 1));};
+        void SetDetectorNb(G4String detector_name) { size_t first = detector_name.find("_") + 1; 
+            size_t second = detector_name.find("_", first); 
+            _detector_nb = std::stoi(detector_name.substr(first, second - first)); }
         void SetPos(G4ThreeVector pos) { _pos = pos;};
         void SetPreMom(G4ThreeVector pre_mom) { _pre_mom = pre_mom;};
         void SetPostMom(G4ThreeVector post_mom) { _post_mom = post_mom;};

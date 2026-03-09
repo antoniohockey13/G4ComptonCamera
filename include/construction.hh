@@ -3,6 +3,9 @@
 
 #include "G4VUserDetectorConstruction.hh" 
 #include "G4NistManager.hh" 
+#include "G4Colour.hh"
+#include <map>
+#include "globals.hh"
 
 class G4GenericMessenger;
 
@@ -18,51 +21,70 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4VPhysicalVolume* Construct();
 
     private:
+        // Geometry containers
         std::map<G4String, G4LogicalVolume*> _detector_map;
+
         G4LogicalVolume* _logic_world;
         G4LogicalVolume*_logic_phantom_detector;
-        G4Material *_world_material;
-        G4Material *_detector_material;
-        G4Material *_pcb_material;
-        G4Material *_duct_tape_material;
+        // Materials
+        G4Material* _world_material;
+        G4Material* _detector_material;
+        G4Material* _pcb_material;
+        G4Material* _duct_tape_material;
+        G4Material* _service_hybrid_material;
+        G4Material* _epoxy_material;
+        G4Material* _aln_material;
+        G4Material* _laird_material;
+        G4Material* _tin_material;
 
         void _DefineMaterials();
         G4VPhysicalVolume* _ConstructWorld();
-        void _ConstructDetectorsGrid(G4int y_nb_detector, G4int z_nb_detector, G4int const _detector_number, G4double const _detector_distance);
-        void _ConstructPCB(G4double const _detector_distance);
-        void _ConstructDuctTape(G4double const _detector_distance);  
         void _ConstructPhantomDetector();
         virtual void ConstructSDandField() override;
+        void _ConstructModuleStack(const G4String& moduleName, G4double xFrontFace, G4double yModuleCenter, G4double zModuleCenter);
+        void _ConstructPixelGrid(G4LogicalVolume* logic_active, const G4String& moduleName);
+        G4LogicalVolume* _PlaceLayer(const G4String& name, G4Material* material, G4double thickness, G4double sizeY, G4double sizeZ, G4double xCenter, G4double yCenter, G4double zCenter, const G4Colour& colour);
 
-        // Distance between source and detectors
-        G4double _detector_distance;
-        // Number of detectors in y and z axis
+        // World dimensions
+        G4double _world_width;
+        G4double _world_height;
+        G4double _world_depth;
+        // Module transverse dimensions
+        G4double _module_size_y;
+        G4double _module_size_z;
+        // LGAD / ETROC transverse sizes
+        G4double _lgad_size_y;
+        G4double _lgad_size_z;
+        G4double _etroc_size_y;
+        G4double _etroc_size_z;
+        // Layer thicknesses
+        G4double _ducttape_thickness;
+        G4double _thermalpad_thickness;
+        G4double _lairdfilm_thickness;
+        G4double _alnbase_thickness;
+        G4double _gluelgad_thickness;
+        G4double _lgad_thickness;
+        G4double _lgad_active_thickness;
+        G4double _lgad_sub_thickness;
+        G4double _bumpbonds_thickness;
+        G4double _etroc_thickness;
+        G4double _glueetroc_thickness;
+        G4double _modulepcb_thickness;
+        G4double _connectorsgap_thickness;
+        G4double _readoutboard_thickness;
+        G4double _services_thickness;
+        // Pixel grid
         G4int _y_nb_detector;
         G4int _z_nb_detector;
         G4int _detector_number;
-        G4int _number;
-        // World dimension in x axis, width
-        G4double _world_width;
-        // World dimension in y axis, height 
-        G4double _world_height;
-        // World dimension in z axis, depth	
-        G4double _world_depth; 
-        
-        // Detector size in x and y axis
         G4double _detector_size;
-        // Detector thickness in z axis
         G4double _detector_thickness;
-    
-        // Space between subdetectors
         G4double _spacing;
-        // PCB thickness
-        G4double _pcb_thickness;
-        // Duct tape thickness
-        G4double _ducttape_thickness;
-
+        // Distances from source plane
+        G4double _detector1_distance;
+        G4double _detector2_distance;
         // Phantom detector
         G4bool _phantom_detector;
-
         // Messenger
         G4GenericMessenger *_messenger;
 };
