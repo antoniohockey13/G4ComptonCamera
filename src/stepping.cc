@@ -50,11 +50,6 @@ void ComptCameraSteppingAction::UserSteppingAction(const G4Step* step)
     G4String postVol = post->GetTouchableHandle()->GetVolume()
                      ? post->GetTouchableHandle()->GetVolume()->GetName() : "None";
 
-
-    // ============================
-    // NUEVO TRACK
-    // ============================
-
     if (track->GetCurrentStepNumber() == 1)
     {
         G4cout
@@ -77,11 +72,6 @@ void ComptCameraSteppingAction::UserSteppingAction(const G4Step* step)
         << "\n=============================="
         << G4endl;
     }
-
-
-    // ============================
-    // STEPS
-    // ============================
 
     G4cout
     << "\n[STEP]"
@@ -115,11 +105,6 @@ void ComptCameraSteppingAction::UserSteppingAction(const G4Step* step)
     << " mm Process=" << stepProcess
     << G4endl;
 
-
-    // ============================
-    // SECUNDARIOS GENERADOS
-    // ============================
-
     const auto* secondaries = step->GetSecondaryInCurrentStep();
 
     if (secondaries && !secondaries->empty())
@@ -151,11 +136,6 @@ void ComptCameraSteppingAction::UserSteppingAction(const G4Step* step)
             << G4endl;
         }
     }
-
-
-    // ============================
-    // FIN DEL TRACK
-    // ============================
 
     if (track->GetTrackStatus() == fStopAndKill)
     {
