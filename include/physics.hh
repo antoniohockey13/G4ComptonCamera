@@ -7,7 +7,7 @@ class ComptCameraPhysicsList : public G4VModularPhysicsList
 {
 public:
 	ComptCameraPhysicsList();
-	~ComptCameraPhysicsList();
+	virtual ~ComptCameraPhysicsList();
 };
 
 #endif

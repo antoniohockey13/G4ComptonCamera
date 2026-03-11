@@ -28,6 +28,10 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {
         return false;
     }
+    const G4int pdg = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+
+    // Keep gamma and electron only
+    if (pdg != 22) return false;
     auto _new_hit = new lgadHit();
 
 
@@ -45,6 +49,7 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
     _new_hit->SetStepLength(aStep->GetStepLength());
     _new_hit->SetEnergyLost(aStep->GetTotalEnergyDeposit());
+    _new_hit->SetWeight(aStep->GetTrack()->GetWeight());
     
     _hits_collection_lgad->insert(_new_hit);
     //_new_hit->Print();

@@ -4,5 +4,5 @@
 
 /random/setSeeds 1039348 6582264
 
-/run/beamOn 1000
+/run/beamOn 100000
 

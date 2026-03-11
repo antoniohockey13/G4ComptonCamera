@@ -84,6 +84,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleSColumn(0, 18, (*hit_collection_lgad)[i]->GetProcessName());
         anManager->FillNtupleDColumn(0, 19, (*hit_collection_lgad)[i]->GetComptonAngle());
         anManager->FillNtupleDColumn(0, 20, (*hit_collection_lgad)[i]->GetStepLength()/mm);
+        anManager->FillNtupleDColumn(0, 21, (*hit_collection_lgad)[i]->GetWeight());
         anManager->AddNtupleRow(0);
 
         if ((*hit_collection_lgad)[i]->GetDetectorNb()==1)

@@ -89,3 +89,10 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4GenericMessenger *_messenger;
 };
 #endif
+
+
+class ChangeCrossSection:
+{
+    private:
+        ChangeCrossSection* _compton_bias_operator = nullptr;
+};

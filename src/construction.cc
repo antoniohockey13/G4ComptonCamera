@@ -327,6 +327,22 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     {
         detector.second->SetSensitiveDetector(algadSD);
     }
+    
+    // Create biasing operator once
+    if (_compton_bias_operator == nullptr)
+    {
+        _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1");
+    }
+
+    // Attach biasing ONLY to detector 1 pixels
+    for (auto& detector : _detector_map)
+    {
+        const G4String& volName = detector.first;
+        if (volName.contains("detector_1_pixel_"))
+        {
+            _compton_bias_operator->AttachTo(detector.second);
+        }
+    }
 
     if (_phantom_detector)
     {

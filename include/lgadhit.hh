@@ -41,6 +41,7 @@ class lgadHit : public G4VHit
         void SetProcessName(G4String process_name) { _process_name = process_name;};
         void SetStepLength(G4double step_length) { _step_length = step_length;};
         void SetEnergyLost(G4double e_dep) { _e_dep = e_dep; };
+        void SetWeight(G4double weight) { _weight = weight; }
 
         //getters
         G4int GetTrackID() const { return _track_id;};
@@ -58,6 +59,7 @@ class lgadHit : public G4VHit
         G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
         G4String GetProcessName() const { return _process_name;};
         G4double GetStepLength() const { return _step_length;};
+        G4double GetWeight() const { return _weight; }
 
     private:
         G4int _track_id;
@@ -73,6 +75,7 @@ class lgadHit : public G4VHit
         G4ThreeVector _post_mom;
         G4String _process_name;
         G4double _step_length;
+        G4double _weight = 1.0;
 };
 
 

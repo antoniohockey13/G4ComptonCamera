@@ -32,6 +32,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleSColumn("ProcessName"); //18
     anManager->CreateNtupleDColumn("ComptonAngle"); //19
     anManager->CreateNtupleDColumn("StepLength"); //20
+    anManager->CreateNtupleDColumn("Weight"); //21
     anManager->FinishNtuple(0); 
 
     anManager->CreateNtuple("ComptonHits", "Compton events hits");
