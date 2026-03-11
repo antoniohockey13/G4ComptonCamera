@@ -1,6 +1,7 @@
 #include "run.hh"
-
+#include <fstream>
 #include "G4AnalysisManager.hh" 
+#include <unistd.h>
 
 ComptCameraRunAction::ComptCameraRunAction()
 {
@@ -74,13 +75,15 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("X2"); //4
     anManager->CreateNtupleDColumn("Y2"); //5
     anManager->CreateNtupleDColumn("Z2"); //6
-    anManager->CreateNtupleDColumn("Time1");//7
-    anManager->CreateNtupleDColumn("Time2");//8
-    anManager->CreateNtupleDColumn("TrackID1"); //9
-    anManager->CreateNtupleDColumn("TrackID2"); //10
-    anManager->CreateNtupleDColumn("ParticleID1"); //11
-    anManager->CreateNtupleDColumn("ParticleID2"); //12
-    anManager->CreateNtupleDColumn("samePhoton"); //13
+    anManager->CreateNtupleDColumn("Time1"); //7
+    anManager->CreateNtupleDColumn("Time2"); //8
+    anManager->CreateNtupleDColumn("Elost1"); //9
+    anManager->CreateNtupleDColumn("Elost2"); //10
+    anManager->CreateNtupleIColumn("TrackID1"); //11
+    anManager->CreateNtupleIColumn("TrackID2"); //12
+    anManager->CreateNtupleIColumn("ParticleID1"); //13
+    anManager->CreateNtupleIColumn("ParticleID2"); //14
+    anManager->CreateNtupleIColumn("samePhoton"); //15
     anManager->FinishNtuple(3);
 
 }
@@ -94,7 +97,9 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     std::string strRunID = std::to_string(runNumber);
     G4int thread_number = G4Threading::G4GetThreadId();
     std::string strThreadID = std::to_string(thread_number);
-    anManager->OpenFile("output" + strRunID  + ".root");
+    int pid = getpid();
+    anManager->OpenFile("output_run" + std::to_string(runNumber)
+                        + "_pid" + std::to_string(pid) + ".root");
 }
 
 

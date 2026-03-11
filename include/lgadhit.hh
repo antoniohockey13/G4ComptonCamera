@@ -40,6 +40,7 @@ class lgadHit : public G4VHit
         void SetPreKineticEnergy(G4double pre_kinetic_energy) { _pre_kinetic_energy = pre_kinetic_energy;};
         void SetProcessName(G4String process_name) { _process_name = process_name;};
         void SetStepLength(G4double step_length) { _step_length = step_length;};
+        void SetEnergyLost(G4double e_dep) { _e_dep = e_dep; };
 
         //getters
         G4int GetTrackID() const { return _track_id;};
@@ -52,7 +53,8 @@ class lgadHit : public G4VHit
         G4ThreeVector GetPostMom() const { return _post_mom;};
         G4double GetPreKineticEnergy() const { return _pre_kinetic_energy;};
         G4double GetPostKineticEnergy() const { return _post_kinetic_energy;};
-        G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
+        //G4double GetEnergyLost() const { return _pre_kinetic_energy-_post_kinetic_energy;};
+        G4double GetEnergyLost() const { return _e_dep; };
         G4double GetComptonAngle() const { return _pre_mom.angle(_post_mom);};
         G4String GetProcessName() const { return _process_name;};
         G4double GetStepLength() const { return _step_length;};
