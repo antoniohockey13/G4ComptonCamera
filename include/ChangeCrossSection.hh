@@ -43,7 +43,7 @@ private:
   
 private:
     // -- List of associations between processes and biasing operations:
-    std::map< const G4BiasingProcessInterface*, G4BOptnChangeCrossSection*> _change_cross_section_operations;
+    G4BOptnChangeCrossSection* _gamma_operation;
     G4bool _setup;
     const G4ParticleDefinition* _particle_to_bias;
     G4double _xs_factor;

@@ -1,6 +1,7 @@
 #include "construction.hh"
 #include "lgadSD.hh" 
 #include "phantomSD.hh"
+#include "ChangeCrossSection.hh"
 
 #include "globals.hh" 
 
@@ -327,18 +328,18 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     {
         detector.second->SetSensitiveDetector(algadSD);
     }
-    
+
     // Create biasing operator once
     if (_compton_bias_operator == nullptr)
     {
-        _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1");
+        _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1Det2");
     }
 
-    // Attach biasing ONLY to detector 1 pixels
+    // Attach biasing ONLY to detector 2 pixels
     for (auto& detector : _detector_map)
     {
         const G4String& volName = detector.first;
-        if (volName.contains("detector_1_pixel_"))
+        if (volName.find("detector_2_pixel_") != std::string::npos)
         {
             _compton_bias_operator->AttachTo(detector.second);
         }

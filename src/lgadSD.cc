@@ -23,15 +23,27 @@ void lgadSD::Initialize(G4HCofThisEvent* hit_collection_lgad)
 
 G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    // Only lower than because energy is always positive
-    if (aStep->GetTotalEnergyDeposit() <1e-10) 
-    {
-        return false;
-    }
-    const G4int pdg = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+    // // Only lower than because energy is always positive
+    // if (aStep->GetTotalEnergyDeposit() <1e-10) 
+    // {
+    //     return false;
+    // }
+    // const G4int pdg = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
-    // Keep gamma and electron only
-    if (pdg != 22) return false;
+    // // Keep gamma only
+    // if (pdg != 22) return false;
+
+    const auto* track = aStep->GetTrack();
+    if (track->GetParticleDefinition()->GetPDGEncoding() != 22) return false;
+
+    const auto* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+    if (!proc) return false;
+
+    const G4String procName = proc->GetProcessName();
+
+    // registrar solo interacciones reales del gamma
+    if (procName == "Transportation") return false;
+    
     auto _new_hit = new lgadHit();
 
 
@@ -48,7 +60,9 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
     _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
     _new_hit->SetStepLength(aStep->GetStepLength());
-    _new_hit->SetEnergyLost(aStep->GetTotalEnergyDeposit());
+    _new_hit->SetEnergyLost(aStep->GetPreStepPoint()->GetKineticEnergy()
+                          - aStep->GetPostStepPoint()->GetKineticEnergy());
+    // _new_hit->SetEnergyLost(aStep->GetTotalEnergyDeposit());
     _new_hit->SetWeight(aStep->GetTrack()->GetWeight());
     
     _hits_collection_lgad->insert(_new_hit);

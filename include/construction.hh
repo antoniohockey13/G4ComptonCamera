@@ -8,6 +8,10 @@
 #include "globals.hh"
 
 class G4GenericMessenger;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
+class G4Material;
+class ChangeCrossSection;
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -19,6 +23,15 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4bool IsPhantomDetector() {return _phantom_detector;}
         
         G4VPhysicalVolume* Construct();
+
+    private:
+        void _DefineMaterials();
+        G4VPhysicalVolume* _ConstructWorld();
+        void _ConstructPhantomDetector();
+        virtual void ConstructSDandField() override;
+        void _ConstructModuleStack(const G4String& moduleName, G4double xFrontFace, G4double yModuleCenter, G4double zModuleCenter);
+        void _ConstructPixelGrid(G4LogicalVolume* logic_active, const G4String& moduleName);
+        G4LogicalVolume* _PlaceLayer(const G4String& name, G4Material* material, G4double thickness, G4double sizeY, G4double sizeZ, G4double xCenter, G4double yCenter, G4double zCenter, const G4Colour& colour);
 
     private:
         // Geometry containers
@@ -37,13 +50,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4Material* _laird_material;
         G4Material* _tin_material;
 
-        void _DefineMaterials();
-        G4VPhysicalVolume* _ConstructWorld();
-        void _ConstructPhantomDetector();
-        virtual void ConstructSDandField() override;
-        void _ConstructModuleStack(const G4String& moduleName, G4double xFrontFace, G4double yModuleCenter, G4double zModuleCenter);
-        void _ConstructPixelGrid(G4LogicalVolume* logic_active, const G4String& moduleName);
-        G4LogicalVolume* _PlaceLayer(const G4String& name, G4Material* material, G4double thickness, G4double sizeY, G4double sizeZ, G4double xCenter, G4double yCenter, G4double zCenter, const G4Colour& colour);
+        ChangeCrossSection* _compton_bias_operator = nullptr;
 
         // World dimensions
         G4double _world_width;
@@ -89,10 +96,3 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4GenericMessenger *_messenger;
 };
 #endif
-
-
-class ChangeCrossSection:
-{
-    private:
-        ChangeCrossSection* _compton_bias_operator = nullptr;
-};

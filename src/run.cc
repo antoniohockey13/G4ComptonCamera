@@ -54,6 +54,10 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ComptonAngle"); //15
     anManager->CreateNtupleDColumn("Elost1"); //16
     anManager->CreateNtupleDColumn("Elost2"); //17
+    anManager->CreateNtupleDColumn("ThetaMom"); //18
+    anManager->CreateNtupleDColumn("ThetaGeom"); //19
+    anManager->CreateNtupleDColumn("Weight1"); //20
+    anManager->CreateNtupleDColumn("Weight2"); //21
     anManager->FinishNtuple(1);
 
     anManager->CreateNtuple("PhantomHits", "Phantom Hits");
@@ -66,27 +70,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumZ"); //6
     anManager->CreateNtupleDColumn("ELost"); //7
     anManager->CreateNtupleIColumn("ParticleID"); //8
-    anManager->FinishNtuple(2); 
-
-    anManager->CreateNtuple("ComptonPairs", "All det1-det2 candidate pairs");
-    anManager->CreateNtupleIColumn("Event"); //0
-    anManager->CreateNtupleDColumn("X1"); //1
-    anManager->CreateNtupleDColumn("Y1"); //2
-    anManager->CreateNtupleDColumn("Z1"); //3
-    anManager->CreateNtupleDColumn("X2"); //4
-    anManager->CreateNtupleDColumn("Y2"); //5
-    anManager->CreateNtupleDColumn("Z2"); //6
-    anManager->CreateNtupleDColumn("Time1"); //7
-    anManager->CreateNtupleDColumn("Time2"); //8
-    anManager->CreateNtupleDColumn("Elost1"); //9
-    anManager->CreateNtupleDColumn("Elost2"); //10
-    anManager->CreateNtupleIColumn("TrackID1"); //11
-    anManager->CreateNtupleIColumn("TrackID2"); //12
-    anManager->CreateNtupleIColumn("ParticleID1"); //13
-    anManager->CreateNtupleIColumn("ParticleID2"); //14
-    anManager->CreateNtupleIColumn("samePhoton"); //15
-    anManager->FinishNtuple(3);
-
+    anManager->FinishNtuple(2);
 }
 
 ComptCameraRunAction::~ComptCameraRunAction() {}
