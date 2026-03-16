@@ -15,11 +15,13 @@ class ComptCameraEventAction : public G4UserEventAction
         
         virtual void BeginOfEventAction(const G4Event *) override;
         virtual void EndOfEventAction(const G4Event *) override;
+        G4int GetCurrentEventID() const { return fCurrentEventID; }
 
     private:
         bool _is_phantom;
         G4int _lgadHCID = -1;
         G4int _phantomHCID = -1;
+        G4int fCurrentEventID = -1;
 };
 
 #endif

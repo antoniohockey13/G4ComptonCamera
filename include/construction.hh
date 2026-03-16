@@ -6,11 +6,13 @@
 #include "G4Colour.hh"
 #include <map>
 #include "globals.hh"
+#include "G4BOptrForceCollision.hh"
 
 class G4GenericMessenger;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
+class BiasCompton;
 class ChangeCrossSection;
 
 class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
@@ -18,10 +20,15 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
     public:
         ComptCameraDetectorConstruction();
         ~ComptCameraDetectorConstruction();
-        // Get world width
-        G4double GetWorldWidth() {return _world_width;}
-        G4bool IsPhantomDetector() {return _phantom_detector;}
-        
+        G4double GetWorldWidth() { return _world_width; }
+        G4bool IsPhantomDetector() { return _phantom_detector; }
+
+        G4double GetModule2FrontFaceX() const
+        {
+            G4double x_source_plane = -_world_width / 2.0;
+            return x_source_plane + _detector2_distance;
+        }
+
         G4VPhysicalVolume* Construct();
 
     private:
@@ -39,6 +46,8 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
 
         G4LogicalVolume* _logic_world;
         G4LogicalVolume*_logic_phantom_detector;
+        G4LogicalVolume* _logic_module1_active = nullptr;
+        G4LogicalVolume* _logic_module2_active = nullptr;
         // Materials
         G4Material* _world_material;
         G4Material* _detector_material;
@@ -51,6 +60,7 @@ class ComptCameraDetectorConstruction : public G4VUserDetectorConstruction
         G4Material* _tin_material;
 
         ChangeCrossSection* _compton_bias_operator = nullptr;
+        G4BOptrForceCollision* _forceCollisionOperator = nullptr;
 
         // World dimensions
         G4double _world_width;

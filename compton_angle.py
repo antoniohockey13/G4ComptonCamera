@@ -4,9 +4,66 @@ import sifca_utils
 
 sifca_utils.plotting.set_sifca_style()
 
+# ------------------------------------------------------------
+# Geometry / pixelization
+# ------------------------------------------------------------
+sensor_size_y = 21.2   # mm
+sensor_size_z = 21.2   # mm
+npix_y = 16
+npix_z = 16
+half_y = sensor_size_y / 2.0
+half_z = sensor_size_z / 2.0
+pitch_y = sensor_size_y / npix_y
+pitch_z = sensor_size_z / npix_z
+
 f = ROOT.TFile.Open(sys.argv[1])
 if not f or f.IsZombie():
     raise RuntimeError(f"Cannot open file: {sys.argv[1]}")
+
+# cp = f.Get("ComptonPairs")
+
+# c = ROOT.TCanvas("c","Compton angle")
+# cp.Draw("X2.X2-X1.X1")
+# c.Update()
+# input("Press Enter to continue...")
+
+# cp.Draw("(Y2.Y2-Y1.Y1)")
+# c.Update()
+# input("Press Enter to continue...")
+
+# cp.Draw("(Z2.Z2-Z1.Z1)")
+# c.Update()
+# input("Press Enter to continue...")
+
+# cp.Draw(
+# "acos((X2.X2-X1.X1)/sqrt((X2.X2-X1.X1)*(X2.X2-X1.X1)+(Y2.Y2-Y1.Y1)*(Y2.Y2-Y1.Y1)+(Z2.Z2-Z1.Z1)*(Z2.Z2-Z1.Z1)))*180/3.141592653589793>>h(180,0,180)",
+# "",
+# "hist"
+# )
+
+# c.Update()
+# input("Press Enter to continue...")
+
+ch = f.Get("ComptonPairs")
+
+
+c = ROOT.TCanvas("c","Compton angle")
+
+# Histograma TH1F
+h_angle = ROOT.TH1F("h_angle", "; #theta [deg];Entries", 150, 0, 15)
+
+ch.Draw(
+"acos((X2.X2-X1.X1)/sqrt((X2.X2-X1.X1)*(X2.X2-X1.X1)+(Y2.Y2-Y1.Y1)*(Y2.Y2-Y1.Y1)+(Z2.Z2-Z1.Z1)*(Z2.Z2-Z1.Z1)))*180/TMath::Pi()>>h_angle",
+"",
+"hist"
+)
+
+c.Update()
+input("Press Enter to continue...")
+
+
+
+
 
 t = f.Get("ComptonHits")
 if not t:

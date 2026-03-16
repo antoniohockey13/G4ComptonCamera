@@ -1,7 +1,6 @@
 #include "construction.hh"
 #include "lgadSD.hh" 
 #include "phantomSD.hh"
-#include "ChangeCrossSection.hh"
 
 #include "globals.hh" 
 
@@ -16,6 +15,9 @@
 #include "G4VSensitiveDetector.hh" 
 #include "G4NistManager.hh" 
 #include "G4VisAttributes.hh"
+#include "G4Gamma.hh"
+#include "G4BOptrForceCollision.hh"
+#include "ChangeCrossSection.hh"
 
 ComptCameraDetectorConstruction::ComptCameraDetectorConstruction() :
     _logic_world(nullptr),
@@ -276,6 +278,9 @@ void ComptCameraDetectorConstruction::_ConstructModuleStack(const G4String& modu
     new G4PVPlacement(0, G4ThreeVector(xLocalActive, 0.0, 0.0), logic_active, moduleName + "_LGAD_active", logic_lgad, false, 0);
     _ConstructPixelGrid(logic_active, moduleName);
 
+    if (moduleName == "Module1") _logic_module1_active = logic_active;
+    if (moduleName == "Module2") _logic_module2_active = logic_active;
+
     xLGADCursor += _lgad_active_thickness;
 
     // Substrate
@@ -329,17 +334,29 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         detector.second->SetSensitiveDetector(algadSD);
     }
 
-    // Create biasing operator once
+    // Force collision operator in detector 1 pixels only
+    // if (_forceCollisionOperator == nullptr)
+    // {
+    //     _forceCollisionOperator = new G4BOptrForceCollision("gamma", "ForceCollisionK3");
+    // }
+
+    // if (_logic_module1_active)
+    // {
+    //     _forceCollisionOperator->AttachTo(_logic_module1_active);
+    // }
+
+
+    // // Create biasing operator once
     if (_compton_bias_operator == nullptr)
     {
         _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1Det2");
     }
 
-    // Attach biasing ONLY to detector 2 pixels
+    // Attach biasing ONLY to detector 1 pixels
     for (auto& detector : _detector_map)
     {
         const G4String& volName = detector.first;
-        if (volName.find("detector_2_pixel_") != std::string::npos)
+        if (volName.find("detector_1_pixel_") != std::string::npos)
         {
             _compton_bias_operator->AttachTo(detector.second);
         }

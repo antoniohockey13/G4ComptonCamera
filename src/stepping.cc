@@ -1,16 +1,24 @@
 #include "stepping.hh"
+#include "event.hh"
+#include "GammaTrackInfo.hh"
+
+#include "G4Gamma.hh"
+#include "G4Step.hh"
+#include "G4StepPoint.hh"
+#include "G4Track.hh"
+#include "G4EventManager.hh"
+#include "G4StackManager.hh"
+#include "G4VProcess.hh"
+#include "G4StepStatus.hh"
+
 
 #include "construction.hh"
-#include "event.hh"
-
-#include "G4Step.hh"
-#include "G4Track.hh"
 #include "G4RunManager.hh"
-#include "G4Event.hh"
+#include "G4AnalysisManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4VProcess.hh"
 
-ComptCameraSteppingAction::ComptCameraSteppingAction(ComptCameraEventAction*)
+ComptCameraSteppingAction::ComptCameraSteppingAction(ComptCameraEventAction* eventAction)
+: fEventAction(eventAction)
 {
 }
 
@@ -20,139 +28,80 @@ ComptCameraSteppingAction::~ComptCameraSteppingAction()
 
 void ComptCameraSteppingAction::UserSteppingAction(const G4Step* step)
 {
-    auto* track = step->GetTrack();
+    if (!fEnableSplitting) return;
 
-    auto* event = G4RunManager::GetRunManager()->GetCurrentEvent();
-    G4int eventID = event ? event->GetEventID() : -1;
-
-    // limitar debug
-    if (eventID >= 10) return;
+    G4Track* track = step->GetTrack();
+    if (!track) return;
+    if (track->GetDefinition() != G4Gamma::Definition()) return;
 
     auto* pre  = step->GetPreStepPoint();
     auto* post = step->GetPostStepPoint();
+    if (!pre || !post) return;
+    if (!pre->GetPhysicalVolume() || !post->GetPhysicalVolume()) return;
 
-    G4String particle = track->GetDefinition()->GetParticleName();
-
-    G4int trackID  = track->GetTrackID();
-    G4int parentID = track->GetParentID();
-
-    G4String creator = "primary";
-    if (track->GetCreatorProcess())
-        creator = track->GetCreatorProcess()->GetProcessName();
-
-    G4String stepProcess = "none";
-    if (post->GetProcessDefinedStep())
-        stepProcess = post->GetProcessDefinedStep()->GetProcessName();
-
-    G4String preVol  = pre->GetTouchableHandle()->GetVolume()
-                     ? pre->GetTouchableHandle()->GetVolume()->GetName() : "None";
-
-    G4String postVol = post->GetTouchableHandle()->GetVolume()
-                     ? post->GetTouchableHandle()->GetVolume()->GetName() : "None";
-
-    if (track->GetCurrentStepNumber() == 1)
+    auto* info = dynamic_cast<GammaTrackInfo*>(track->GetUserInformation());
+    if (!info)
     {
-        G4cout
-        << "\n=============================="
-        << "\n[NEW TRACK]"
-        << "\n Event=" << eventID
-        << " TrackID=" << trackID
-        << " ParentID=" << parentID
-        << " Particle=" << particle
-        << " Creator=" << creator
-        << "\n StartPos=("
-        << track->GetPosition().x()/mm << ", "
-        << track->GetPosition().y()/mm << ", "
-        << track->GetPosition().z()/mm << ") mm"
-        << "\n StartMom=("
-        << track->GetMomentum().x()/keV << ", "
-        << track->GetMomentum().y()/keV << ", "
-        << track->GetMomentum().z()/keV << ") keV"
-        << "\n StartEkin=" << track->GetKineticEnergy()/keV << " keV"
-        << "\n=============================="
-        << G4endl;
+        info = new GammaTrackInfo(track->GetTrackID());
+        track->SetUserInformation(info);
     }
 
-    G4cout
-    << "\n[STEP]"
-    << " Event=" << eventID
-    << " TrackID=" << trackID
-    << " ParentID=" << parentID
-    << " Particle=" << particle
-    << "\n PreVol=" << preVol
-    << " PostVol=" << postVol
-    << "\n PrePos=("
-    << pre->GetPosition().x()/mm << ", "
-    << pre->GetPosition().y()/mm << ", "
-    << pre->GetPosition().z()/mm << ") mm"
-    << "\n PostPos=("
-    << post->GetPosition().x()/mm << ", "
-    << post->GetPosition().y()/mm << ", "
-    << post->GetPosition().z()/mm << ") mm"
-    << "\n PreMom=("
-    << pre->GetMomentum().x()/keV << ", "
-    << pre->GetMomentum().y()/keV << ", "
-    << pre->GetMomentum().z()/keV << ") keV"
-    << "\n PostMom=("
-    << post->GetMomentum().x()/keV << ", "
-    << post->GetMomentum().y()/keV << ", "
-    << post->GetMomentum().z()/keV << ") keV"
-    << "\n PreEkin=" << pre->GetKineticEnergy()/keV
-    << " keV PostEkin=" << post->GetKineticEnergy()/keV
-    << " keV Edep=" << step->GetTotalEnergyDeposit()/keV
-    << " keV"
-    << "\n StepLength=" << step->GetStepLength()/mm
-    << " mm Process=" << stepProcess
-    << G4endl;
+    const G4String preVolName  = pre->GetPhysicalVolume()->GetName();
+    const G4String postVolName = post->GetPhysicalVolume()->GetName();
 
-    const auto* secondaries = step->GetSecondaryInCurrentStep();
+    const G4VProcess* proc = post->GetProcessDefinedStep();
+    const G4String procName = proc ? proc->GetProcessName() : "";
 
-    if (secondaries && !secondaries->empty())
+    if (preVolName.find("detector_1_pixel_") != std::string::npos)
     {
-        G4cout
-        << "\n[SECONDARIES CREATED]"
-        << " Event=" << eventID
-        << " ParentTrackID=" << trackID
-        << " ParentParticle=" << particle
-        << G4endl;
-
-        for (const auto* sec : *secondaries)
+        if (procName == "compt" && post->GetKineticEnergy() > 0.)
         {
-            G4String secCreator = "unknown";
-            if (sec->GetCreatorProcess())
-                secCreator = sec->GetCreatorProcess()->GetProcessName();
-
-            G4cout
-            << "  -> TrackID=" << sec->GetTrackID()
-            << " ParentID=" << sec->GetParentID()
-            << " Particle=" << sec->GetDefinition()->GetParticleName()
-            << " Creator=" << secCreator
-            << "\n     Pos=("
-            << sec->GetPosition().x()/mm << ", "
-            << sec->GetPosition().y()/mm << ", "
-            << sec->GetPosition().z()/mm << ") mm"
-            << "  Ekin=" << sec->GetKineticEnergy()/keV
-            << " keV"
-            << G4endl;
+            info->SetHasComptonInK3(true);
         }
     }
 
-    if (track->GetTrackStatus() == fStopAndKill)
+    if (!info->GetHasComptonInK3()) return;
+
+
+    const auto* det =
+        static_cast<const ComptCameraDetectorConstruction*>(
+            G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+
+    const G4double xDiag = det->GetModule2FrontFaceX() - 1.0*CLHEP::um;
+
+    const G4double x1 = pre->GetPosition().x();
+    const G4double x2 = post->GetPosition().x();
+
+    // solo fotones que avanzan hacia +x y cruzan el plano
+    if (!info->GetCrossedK2Plane() && x1 < xDiag && x2 >= xDiag)
     {
-        G4cout
-        << "\n[TRACK END]"
-        << " Event=" << eventID
-        << " TrackID=" << trackID
-        << " Particle=" << particle
-        << "\n FinalPos=("
-        << post->GetPosition().x()/mm << ", "
-        << post->GetPosition().y()/mm << ", "
-        << post->GetPosition().z()/mm << ") mm"
-        << "\n FinalEkin=" << post->GetKineticEnergy()/keV
-        << " keV"
-        << "\n FinalVolume=" << postVol
-        << "\n=============================="
-        << G4endl;
+        info->SetCrossedK2Plane(true);
+
+        G4ThreeVector p1 = pre->GetPosition();
+        G4ThreeVector p2 = post->GetPosition();
+
+        G4double frac = (xDiag - x1) / (x2 - x1);
+        G4ThreeVector crossPos = p1 + frac * (p2 - p1);
+
+        G4ThreeVector dir = pre->GetMomentumDirection();
+
+        G4AnalysisManager* anManager = G4AnalysisManager::Instance();
+
+        G4int eventID = -1;
+        if (fEventAction) eventID = fEventAction->GetCurrentEventID();
+
+        anManager->FillNtupleIColumn(3, 0, eventID);
+        anManager->FillNtupleIColumn(3, 1, track->GetTrackID());
+        anManager->FillNtupleIColumn(3, 2, info->GetHistoryID());
+        anManager->FillNtupleDColumn(3, 3, track->GetWeight());
+        anManager->FillNtupleDColumn(3, 4, crossPos.x()/mm);
+        anManager->FillNtupleDColumn(3, 5, crossPos.y()/mm);
+        anManager->FillNtupleDColumn(3, 6, crossPos.z()/mm);
+        anManager->FillNtupleDColumn(3, 7, dir.x());
+        anManager->FillNtupleDColumn(3, 8, dir.y());
+        anManager->FillNtupleDColumn(3, 9, dir.z());
+        anManager->FillNtupleDColumn(3,10, pre->GetKineticEnergy()/keV);
+        anManager->AddNtupleRow(3);
     }
 
 }

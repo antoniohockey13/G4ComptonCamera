@@ -16,5 +16,10 @@ class ComptCameraSteppingAction : public G4UserSteppingAction
         ~ComptCameraSteppingAction();
 
         virtual void UserSteppingAction(const G4Step* step);
+
+    private:
+        ComptCameraEventAction* fEventAction;
+        int fSplitFactor = 100; // Number of splits for each gamma track exiting K3
+        bool fEnableSplitting = false;
 };
 #endif 

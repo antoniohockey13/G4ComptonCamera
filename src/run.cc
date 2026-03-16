@@ -33,6 +33,8 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ComptonAngle"); //19
     anManager->CreateNtupleDColumn("StepLength"); //20
     anManager->CreateNtupleDColumn("Weight"); //21
+    anManager->CreateNtupleIColumn("HistoryID"); //22
+    anManager->CreateNtupleIColumn("FromComptonK3"); //23
     anManager->FinishNtuple(0); 
 
     anManager->CreateNtuple("ComptonHits", "Compton events hits");
@@ -71,6 +73,20 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("ELost"); //7
     anManager->CreateNtupleIColumn("ParticleID"); //8
     anManager->FinishNtuple(2);
+
+    anManager->CreateNtuple("K2Plane", "Gamma crossings at K2 plane");
+    anManager->CreateNtupleIColumn("Event");       // 0
+    anManager->CreateNtupleIColumn("TrackID");     // 1
+    anManager->CreateNtupleIColumn("HistoryID");   // 2
+    anManager->CreateNtupleDColumn("Weight");      // 3
+    anManager->CreateNtupleDColumn("X");           // 4
+    anManager->CreateNtupleDColumn("Y");           // 5
+    anManager->CreateNtupleDColumn("Z");           // 6
+    anManager->CreateNtupleDColumn("DirX");        // 7
+    anManager->CreateNtupleDColumn("DirY");        // 8
+    anManager->CreateNtupleDColumn("DirZ");        // 9
+    anManager->CreateNtupleDColumn("Energy");      // 10
+    anManager->FinishNtuple(3);
 }
 
 ComptCameraRunAction::~ComptCameraRunAction() {}

@@ -17,7 +17,7 @@ ChangeCrossSection::ChangeCrossSection(G4String name)
   _gamma_operation(nullptr),
   _setup(true),
   _particle_to_bias(nullptr),
-  _xs_factor(50.0)
+  _xs_factor(100.0)
 {
     _particle_to_bias = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 }

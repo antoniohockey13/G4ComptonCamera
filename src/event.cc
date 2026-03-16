@@ -21,8 +21,9 @@ ComptCameraEventAction::~ComptCameraEventAction()
 {
 }
 
-void ComptCameraEventAction::BeginOfEventAction(const G4Event *)
+void ComptCameraEventAction::BeginOfEventAction(const G4Event * event)
 {
+    fCurrentEventID = event->GetEventID();
 }
 
 void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
@@ -81,7 +82,10 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(0,19, hit->GetComptonAngle());
         anManager->FillNtupleDColumn(0,20, hit->GetStepLength() / mm);
         anManager->FillNtupleDColumn(0,21, hit->GetWeight());
+        anManager->FillNtupleIColumn(0, 22, hit->GetHistoryID());
+        anManager->FillNtupleIColumn(0, 23, hit->GetFromComptonK3());
         anManager->AddNtupleRow(0);
+    }
 
     // For each gamma track:
     // 1) first hit hit in detector 1
@@ -92,7 +96,8 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         lgadHit* firstDet2After = nullptr;
     };
 
-    std::map<G4int, TrackPairInfo> trackMap;
+    // std::map<G4int, TrackPairInfo> trackMap;
+    std::map<G4int, TrackPairInfo> historyMap;
 
     // First gamma hit with energy loss in detector 1
     for (size_t i = 0; i < hit_collection_lgad->entries(); ++i)
@@ -104,14 +109,18 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         G4double deltaE = hit->GetPreKineticEnergy() - hit->GetPostKineticEnergy();
         if (deltaE <= 0.) continue;
 
-        G4int trackID = hit->GetTrackID();
+        //G4int trackID = hit->GetTrackID();
+        G4int historyID = hit->GetHistoryID();
 
-        auto it = trackMap.find(trackID);
-        if (it == trackMap.end())
+        // auto it = trackMap.find(trackID);
+        auto it = historyMap.find(historyID);
+        // if (it == trackMap.end())
+        if (it == historyMap.end())
         {
             TrackPairInfo info;
             info.firstDet1Interaction = hit;
-            trackMap[trackID] = info;
+            //trackMap[trackID] = info;
+            historyMap[historyID] = info;
         }
         else
         {
@@ -130,13 +139,14 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
 
         if (hit->GetParticleID() != 22) continue;
         if (hit->GetDetectorNb() != 2) continue;
-        G4double deltaE2 = hit->GetPreKineticEnergy() - hit->GetPostKineticEnergy();
-        if (deltaE2 <= 0.) continue;
 
-        G4int trackID = hit->GetTrackID();
+        // G4int trackID = hit->GetTrackID();
+        G4int historyID = hit->GetHistoryID();
 
-        auto it = trackMap.find(trackID);
-        if (it == trackMap.end()) continue;
+        // auto it = trackMap.find(trackID);
+        // if (it == trackMap.end()) continue;
+        auto it = historyMap.find(historyID);
+        if (it == historyMap.end()) continue;
         if (it->second.firstDet1Interaction == nullptr) continue;
 
         auto* hit1 = it->second.firstDet1Interaction;
@@ -151,9 +161,10 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
     }
 
     // Fill ComptonHits ntuple with one row per selected gamma track
-    for (const auto& kv : trackMap)
+    // for (const auto& kv : trackMap)
+    for (const auto& kv : historyMap)
     {
-        G4int trackID = kv.first;
+        // G4int trackID = kv.first;
         auto* hit1 = kv.second.firstDet1Interaction;
         auto* hit2 = kv.second.firstDet2After;
 

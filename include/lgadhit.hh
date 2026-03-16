@@ -42,12 +42,14 @@ class lgadHit : public G4VHit
         void SetStepLength(G4double step_length) { _step_length = step_length;};
         void SetEnergyLost(G4double e_dep) { _e_dep = e_dep; };
         void SetWeight(G4double weight) { _weight = weight; }
+        void SetHistoryID(G4int id) { _history_id = id; }
 
         //getters
         G4int GetTrackID() const { return _track_id;};
         G4int GetParticleID() const { return _particle_id;};
         G4int GetParentID() const { return _parent_id;};
         G4int GetDetectorNb() const { return _detector_nb;};
+        G4int GetHistoryID() const { return _history_id; }
         G4double GetTime() const { return _time;};
         G4ThreeVector GetPos() const { return _pos;};
         G4ThreeVector GetPreMom() const { return _pre_mom;};
@@ -60,6 +62,11 @@ class lgadHit : public G4VHit
         G4String GetProcessName() const { return _process_name;};
         G4double GetStepLength() const { return _step_length;};
         G4double GetWeight() const { return _weight; }
+
+        void SetFromComptonK3(G4bool v) { _fromComptonK3 = v; }
+        G4bool GetFromComptonK3() const { return _fromComptonK3; }
+
+
 
     private:
         G4int _track_id;
@@ -76,6 +83,8 @@ class lgadHit : public G4VHit
         G4String _process_name;
         G4double _step_length;
         G4double _weight = 1.0;
+        G4int _history_id = -1;
+        G4bool _fromComptonK3 = false;
 };
 
 

@@ -31,9 +31,10 @@ void ComptCameraActionInitialization::Build() const
 	ComptCameraEventAction *eventAction = new ComptCameraEventAction(_is_phantom_present);
 	SetUserAction(eventAction);
 	
-        // XXX -- Why is needed?
-	//ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
-	//SetUserAction(steppingAction); 
+    // XXX -- Why is needed?
+	// ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
+	// SetUserAction(steppingAction); 
+
 }
 
 

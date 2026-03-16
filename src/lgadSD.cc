@@ -4,6 +4,7 @@
 #include "G4Step.hh"
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
+#include "GammaTrackInfo.hh"
 
 lgadSD::lgadSD(const G4String& name, const G4String& hitsCollectionName)
     : G4VSensitiveDetector(name)
@@ -31,8 +32,6 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     // const G4int pdg = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
     // // Keep gamma only
-    // if (pdg != 22) return false;
-
     const auto* track = aStep->GetTrack();
     if (track->GetParticleDefinition()->GetPDGEncoding() != 22) return false;
 
@@ -65,6 +64,19 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     // _new_hit->SetEnergyLost(aStep->GetTotalEnergyDeposit());
     _new_hit->SetWeight(aStep->GetTrack()->GetWeight());
     
+    // Attach history ID if available
+    auto* info = dynamic_cast<GammaTrackInfo*>(aStep->GetTrack()->GetUserInformation());
+    if (info)
+    {
+        _new_hit->SetHistoryID(info->GetHistoryID());
+        _new_hit->SetFromComptonK3(info->GetHasComptonInK3());
+    }
+    else
+    {
+        _new_hit->SetHistoryID(aStep->GetTrack()->GetTrackID());
+        _new_hit->SetFromComptonK3(false);
+    }
+
     _hits_collection_lgad->insert(_new_hit);
     //_new_hit->Print();
     return true;
