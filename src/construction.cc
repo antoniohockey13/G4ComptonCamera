@@ -246,13 +246,13 @@ void ComptCameraDetectorConstruction::_ConstructPhantomDetector()
     // Create phantom detector
     G4String name = "PhantomDetector";
 
-    G4Box* solid_phantom_detector = new G4Box(name, 1*um, 1*mm, 1*mm); 
+    G4Box* solid_phantom_detector = new G4Box(name, 1*um, 10*mm, 10*mm); 
     // Create phantom detector logical volume
     _logic_phantom_detector = new G4LogicalVolume(solid_phantom_detector, _world_material, name);
     _logic_phantom_detector->SetVisAttributes( G4Color(0.6784,0.8471,0.902,0.3) );
     
     // Create phantom detector physical volume
-    new G4PVPlacement(0, G4ThreeVector(_world_width/2-2.5*mm, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(15*mm, 0, 0), _logic_phantom_detector, name, _logic_world, false, 0);
     // 0 rotation,  translation, logical volume, name, mother volume, boolean operation, copy numbers
 
 }

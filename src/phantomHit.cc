@@ -35,10 +35,10 @@ void phantomHit::Draw()
 void phantomHit::Print()
 {
     G4cout
-    << "Particle: "
-    << _particle_id
-    << " Position: "
-    << std::setw(7) << G4BestUnit( _pos,"Length")
+    << "Particle: " << _particle_id
+    << " Position: " << std::setw(7) << G4BestUnit( _pos,"Length")
+    << " Ekin: " << std::setw(7) << G4BestUnit(_kinetic_energy,"Energy")
+    << " Weight: " << _weight
     << G4endl;
 }
 

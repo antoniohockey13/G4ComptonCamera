@@ -24,15 +24,22 @@ void phantomSD::Initialize(G4HCofThisEvent* hit_collection_phantom)
 
 G4bool phantomSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-    auto _new_hit = new phantomHit();
-    _new_hit->SetPos (aStep->GetPostStepPoint()->GetPosition());
-    _new_hit->SetMom (aStep->GetPreStepPoint()->GetMomentum());
-    _new_hit->SetParticleID(aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding());
+    auto* track = aStep->GetTrack();
+
+    if (track->GetParticleDefinition()->GetPDGEncoding() != 22)
+        return false;
+
+    if (aStep->GetPreStepPoint()->GetStepStatus() != fGeomBoundary)
+        return false;
+
+    auto* _new_hit = new phantomHit();
+    _new_hit->SetPos(aStep->GetPostStepPoint()->GetPosition());
+    _new_hit->SetMom(aStep->GetPreStepPoint()->GetMomentum());
+    _new_hit->SetParticleID(22);
     _new_hit->SetKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
+    _new_hit->SetWeight(track->GetWeight());
 
     _hits_collection_phantom->insert(_new_hit);
-    
-    //_new_hit->Print();
     return true;
 }
 

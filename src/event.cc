@@ -121,6 +121,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
             anManager->FillNtupleDColumn(2, 6, (*hit_collection_phantom)[i]->GetMom()[2]/keV);
             anManager->FillNtupleDColumn(2, 7, (*hit_collection_phantom)[i]->GetKineticEnergy()/keV);
             anManager->FillNtupleIColumn(2, 8, (*hit_collection_phantom)[i]->GetParticleID());
+            anManager->FillNtupleDColumn(2, 9, (*hit_collection_phantom)[i]->GetWeight());
             anManager->AddNtupleRow(2);
         }
     }

@@ -67,6 +67,7 @@ ComptCameraRunAction::ComptCameraRunAction()
     anManager->CreateNtupleDColumn("MomentumZ"); //6
     anManager->CreateNtupleDColumn("KineticEnergy"); //7
     anManager->CreateNtupleIColumn("ParticleID"); //8
+    anManager->CreateNtupleDColumn("Weight"); //9
     anManager->FinishNtuple(2); 
 
 }
@@ -78,7 +79,7 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     G4int runNumber = run->GetRunID();
     std::string strRunID = std::to_string(runNumber);
-    anManager->SetFileName("output_run" + strRunID  + ".root");
+    anManager->SetFileName("output_run_anode_1mmcol" + strRunID  + ".root");
 
     anManager->OpenFile();
 }

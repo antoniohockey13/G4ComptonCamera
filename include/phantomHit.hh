@@ -30,16 +30,19 @@ class phantomHit : public G4VHit
         void SetMom(G4ThreeVector mom) { _pre_mom = mom;};
         void SetParticleID(G4int particle_id) { _particle_id = particle_id;};
         void SetKineticEnergy(G4double kinetic_energy) { _kinetic_energy = kinetic_energy;};
+        void SetWeight(G4double weight) { _weight = weight;};
 
         //getters
         G4int GetParticleID() const { return _particle_id;};
         G4ThreeVector GetPos() const { return _pos;};
         G4ThreeVector GetMom() const { return _pre_mom;};
         G4double GetKineticEnergy() const { return _kinetic_energy;};
+        G4double GetWeight() const { return _weight;};
 
     private:
         G4int _particle_id;
         G4double _kinetic_energy;
+        G4double _weight = 1.0;
         G4ThreeVector _pos;
         G4ThreeVector _pre_mom;
 };
