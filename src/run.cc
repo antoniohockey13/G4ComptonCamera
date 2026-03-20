@@ -79,7 +79,7 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     G4AnalysisManager *anManager = G4AnalysisManager::Instance();
     G4int runNumber = run->GetRunID();
     std::string strRunID = std::to_string(runNumber);
-    anManager->SetFileName("output_run_anode_1mmcol" + strRunID  + ".root");
+    anManager->SetFileName("output_run_anode_5mmcol" + strRunID  + ".root");
 
     anManager->OpenFile();
 }

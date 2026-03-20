@@ -219,7 +219,7 @@ void ComptCameraDetectorConstruction::_ConstructCollimator()
     // Create collimator
     const G4String name = "collimator";
     G4Tubs* solid_collimator = new G4Tubs(name,
-            0.5*mm,
+            2.5*mm,
             11*mm,
             15*mm,
             0,
