@@ -17,7 +17,7 @@ ChangeCrossSection::ChangeCrossSection(G4String name)
   _gamma_operation(nullptr),
   _setup(true),
   _particle_to_bias(nullptr),
-  _xs_factor(100.0)
+  _xs_factor(50.0)
 {
     _particle_to_bias = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 }
@@ -135,23 +135,9 @@ ChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track,
     }
     else
     {
+        _gamma_operation->UpdateForStep(callingProcess->GetPreviousStepSize());
         _gamma_operation->SetBiasedCrossSection(_xs_factor * analogXS);
-        // if (_gamma_operation->GetInteractionOccured())
-        // {
-        //     _gamma_operation->SetBiasedCrossSection(_xs_factor * analogXS);
-        //     _gamma_operation->Sample();
-        // }
-        // else
-        // {
-        //     // -- update the 'interaction length' and underneath 'number of interaction lengths'
-        //     // -- for past step  (this takes into accout the previous step cross-section value)
-        //     _gamma_operation->UpdateForStep(callingProcess->GetPreviousStepSize());
-        //     // -- update the cross-section value:
-        //     _gamma_operation->SetBiasedCrossSection(_xs_factor * analogXS);
-        //     // -- forces recomputation of the 'interaction length' taking into account above
-        //     // -- new cross-section value [tricky : to be improved]
-        //     _gamma_operation->UpdateForStep(0.0);
-        // }
+        _gamma_operation->UpdateForStep(0.0);
     }
 
     return _gamma_operation;

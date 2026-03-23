@@ -20,7 +20,7 @@ f = ROOT.TFile.Open(sys.argv[1])
 if not f or f.IsZombie():
     raise RuntimeError(f"Cannot open file: {sys.argv[1]}")
 
-# cp = f.Get("ComptonPairs")
+cp = f.Get("ComptonHits")
 
 # c = ROOT.TCanvas("c","Compton angle")
 # cp.Draw("X2.X2-X1.X1")
@@ -44,22 +44,36 @@ if not f or f.IsZombie():
 # c.Update()
 # input("Press Enter to continue...")
 
-ch = f.Get("ComptonPairs")
+# ch = f.Get("ComptonHits")
 
 
-c = ROOT.TCanvas("c","Compton angle")
+# c = ROOT.TCanvas("c","Compton angle")
 
-# Histograma TH1F
-h_angle = ROOT.TH1F("h_angle", "; #theta [deg];Entries", 150, 0, 15)
+# # Histograma TH1F
+# h_angle = ROOT.TH1F("h_angle", "; #theta [deg];Entries", 150, 0, 15)
 
-ch.Draw(
-"acos((X2.X2-X1.X1)/sqrt((X2.X2-X1.X1)*(X2.X2-X1.X1)+(Y2.Y2-Y1.Y1)*(Y2.Y2-Y1.Y1)+(Z2.Z2-Z1.Z1)*(Z2.Z2-Z1.Z1)))*180/TMath::Pi()>>h_angle",
-"",
-"hist"
-)
+# ch.Draw(
+# "acos((X2.X2-X1.X1)/sqrt((X2.X2-X1.X1)*(X2.X2-X1.X1)+(Y2.Y2-Y1.Y1)*(Y2.Y2-Y1.Y1)+(Z2.Z2-Z1.Z1)*(Z2.Z2-Z1.Z1)))*180/TMath::Pi()>>h_angle",
+# "",
+# "hist"
+# )
+
+# c.Update()
+# input("Press Enter to continue...")
+
+
+c = ROOT.TCanvas("c_dt", "DeltaT")
+
+h_true = ROOT.TH1F("compton_hits_dt", ";#Delta t [ps];Entries", 1600, 200, 400)
+
+# self_base = "Elost1>0 && Elost2>0"
+
+cp.Draw("(Time2-Time1)>>compton_hits_dt")
+
+h_true.Draw("hist")
 
 c.Update()
-input("Press Enter to continue...")
+input("Press Enter to exit...")
 
 
 

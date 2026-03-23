@@ -32,8 +32,8 @@ void ComptCameraActionInitialization::Build() const
 	SetUserAction(eventAction);
 	
     // XXX -- Why is needed?
-	// ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
-	// SetUserAction(steppingAction); 
+	ComptCameraSteppingAction *steppingAction = new ComptCameraSteppingAction(eventAction);
+	SetUserAction(steppingAction); 
 
 }
 

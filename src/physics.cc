@@ -12,8 +12,7 @@ ComptCameraPhysicsList::ComptCameraPhysicsList()
 	RegisterPhysics(new G4EmStandardPhysics_option4());
 
 	auto* biasingPhysics = new G4GenericBiasingPhysics();
-	// Bias gamma only, to speed up the simulation. Biasing is needed to have enough statistics in the detector, 
-	// as the Compton cross section is small.
+	// Bias gamma only, to speed up the simulation.
 	biasingPhysics->PhysicsBias("gamma");
 	RegisterPhysics(biasingPhysics);
 }

@@ -346,22 +346,22 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
     // }
 
 
-    // // Create biasing operator once
-    if (_compton_bias_operator == nullptr)
-    {
-        _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1Det2");
-    }
+    // Create biasing operator once
+    // if (_compton_bias_operator == nullptr)
+    // {
+    //     _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1Det2");
+    // }
 
-    // Attach biasing ONLY to detector 1 pixels
-    for (auto& detector : _detector_map)
-    {
-        const G4String& volName = detector.first;
-        if (volName.find("detector_1_pixel_") != std::string::npos)
-        {
-            _compton_bias_operator->AttachTo(detector.second);
-        }
-    }
-
+    // // Attach biasing ONLY to detector 2 pixels
+    // for (auto& detector : _detector_map)
+    // {
+    //     const G4String& volName = detector.first;
+    //     if (volName.find("detector_2_pixel_") != std::string::npos)
+    //     {
+    //         _compton_bias_operator->AttachTo(detector.second);
+    //     }
+    // }
+    
     if (_phantom_detector)
     {
         G4String phantomSDname = "phantomSD";

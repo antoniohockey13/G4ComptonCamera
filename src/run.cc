@@ -101,6 +101,9 @@ void ComptCameraRunAction::BeginOfRunAction(const G4Run *run)
     int pid = getpid();
     anManager->OpenFile("output_run" + std::to_string(runNumber)
                         + "_pid" + std::to_string(pid) + ".root");
+    G4cout << "[RUN] Opening file: "
+        << "output_run" << run->GetRunID()
+        << "_pid" << getpid() << ".root" << G4endl;
 }
 
 
