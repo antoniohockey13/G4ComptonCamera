@@ -2,12 +2,23 @@
 #define PHYSICS_HH
 
 #include "G4VModularPhysicsList.hh"
+#include "G4VPhysicsConstructor.hh"
 
-class ComptCameraPhysicsList : public G4VModularPhysicsList 
+class ComptCameraEMPhysics : public G4VPhysicsConstructor
 {
 public:
-	ComptCameraPhysicsList();
-	virtual ~ComptCameraPhysicsList();
+    explicit ComptCameraEMPhysics(const G4String& name = "ComptCameraEM");
+    virtual ~ComptCameraEMPhysics();
+
+    virtual void ConstructParticle() override;
+    virtual void ConstructProcess() override;
+};
+
+class ComptCameraPhysicsList : public G4VModularPhysicsList
+{
+public:
+    ComptCameraPhysicsList();
+    virtual ~ComptCameraPhysicsList();
 };
 
 #endif

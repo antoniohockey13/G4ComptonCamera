@@ -334,33 +334,19 @@ void ComptCameraDetectorConstruction::ConstructSDandField()
         detector.second->SetSensitiveDetector(algadSD);
     }
 
-    // Force collision operator in detector 1 pixels only
-    // if (_forceCollisionOperator == nullptr)
-    // {
-    //     _forceCollisionOperator = new G4BOptrForceCollision("gamma", "ForceCollisionK3");
-    // }
+    if (_compton_bias_operator == nullptr)
+    {
+        _compton_bias_operator = new ChangeCrossSection("ComptonBiasK3Only");
+    }
 
-    // if (_logic_module1_active)
-    // {
-    //     _forceCollisionOperator->AttachTo(_logic_module1_active);
-    // }
-
-
-    // Create biasing operator once
-    // if (_compton_bias_operator == nullptr)
-    // {
-    //     _compton_bias_operator = new ChangeCrossSection("ComptonBiasDet1Det2");
-    // }
-
-    // // Attach biasing ONLY to detector 2 pixels
-    // for (auto& detector : _detector_map)
-    // {
-    //     const G4String& volName = detector.first;
-    //     if (volName.find("detector_2_pixel_") != std::string::npos)
-    //     {
-    //         _compton_bias_operator->AttachTo(detector.second);
-    //     }
-    // }
+    for (auto& detector : _detector_map)
+    {
+        const G4String& volName = detector.first;
+        if (volName.find("detector_1_pixel_") != std::string::npos)
+        {
+            _compton_bias_operator->AttachTo(detector.second);
+        }
+    }
     
     if (_phantom_detector)
     {

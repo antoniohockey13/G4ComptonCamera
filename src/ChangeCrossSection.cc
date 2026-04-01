@@ -9,52 +9,111 @@
 #include "G4Track.hh"
 #include "G4ProcessManager.hh"
 #include "G4BiasingProcessSharedData.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4ios.hh"
 
 #include <cfloat>
 
 ChangeCrossSection::ChangeCrossSection(G4String name)
 : G4VBiasingOperator(name),
-  _gamma_operation(nullptr),
+  _compton_operation(nullptr),
   _setup(true),
+  _compton_wrapper_found(false),
   _particle_to_bias(nullptr),
-  _xs_factor(50.0)
+  _xs_factor(10.0),
+  _bias_only_primary_gamma(true),
+  _biased_volume_prefix("detector_1_pixel_")
 {
     _particle_to_bias = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 }
 
 ChangeCrossSection::~ChangeCrossSection()
 {
-    delete _gamma_operation;
+    delete _compton_operation;
 }
 
+G4bool ChangeCrossSection::IsComptonWrappedProcess(const G4String& procName) const
+{
+    return (procName == "compt" ||
+            procName == "Compton" ||
+            procName == "compton" ||
+            procName == "G4ComptonScattering");
+}
+
+G4bool ChangeCrossSection::IsInBiasedVolume(const G4Track* track) const
+{
+    if (!track) return false;
+    if (!track->GetVolume()) return false;
+
+    const G4String volName = track->GetVolume()->GetName();
+    return (volName.find(_biased_volume_prefix) != std::string::npos);
+}
+
+G4bool ChangeCrossSection::IsEligibleTrack(const G4Track* track) const
+{
+    if (!track) return false;
+    if (track->GetDefinition() != _particle_to_bias) return false;
+    if (_bias_only_primary_gamma && track->GetParentID() != 0) return false;
+    if (!IsInBiasedVolume(track)) return false;
+    if (track->GetKineticEnergy() <= 0.) return false;
+    return true;
+}
 void ChangeCrossSection::StartRun()
 {
     if (!_setup) return;
+    if (_particle_to_bias == nullptr)
+    {
+        G4cout << "[BIAS] Gamma particle definition not found. Biasing disabled." << G4endl;
+        _setup = false;
+        return;
+    }
     const G4ProcessManager* processManager = _particle_to_bias->GetProcessManager();
     const G4BiasingProcessSharedData* sharedData =
         G4BiasingProcessInterface::GetSharedData(processManager);
         
     if (!sharedData)
     {
+        G4cout << "[BIAS] No shared biasing data found for gamma. Biasing disabled." << G4endl;
         _setup = false;
         return;
     }
 
+    G4cout << "[BIAS] Wrapped gamma processes available:" << G4endl;
     for (size_t i = 0; i < sharedData->GetPhysicsBiasingProcessInterfaces().size(); ++i)
     {
         const G4BiasingProcessInterface* wrapperProcess =
             sharedData->GetPhysicsBiasingProcessInterfaces()[i];
         const G4String procName = wrapperProcess->GetWrappedProcess()->GetProcessName();
+        G4cout << "        - " << procName << G4endl;
 
-        if (procName == "GammaGeneralProc")
+        if (IsComptonWrappedProcess(procName))
         {
-            if (_gamma_operation == nullptr)
+            _compton_wrapper_found = true;
+            if (_compton_operation == nullptr)
             {
-                _gamma_operation = new G4BOptnChangeCrossSection("XSchange-GammaGeneralProc");
+                _compton_operation =
+                    new G4BOptnChangeCrossSection("XSchange-ComptonOnly");
             }
         }
     }
 
+    if (!_compton_wrapper_found)
+    {
+        G4cout
+            << "[BIAS] No standalone Compton wrapper found. "
+            << "Compton-only biasing disabled to avoid biasing GammaGeneralProc."
+            << G4endl;
+    }
+    else
+    {
+        G4cout
+            << "[BIAS] Compton-only biasing enabled with factor "
+            << _xs_factor
+            << " in volumes matching prefix '"
+            << _biased_volume_prefix
+            << "'."
+            << G4endl;
+    }
     _setup = false;
 }
 
@@ -62,61 +121,36 @@ G4VBiasingOperation*
 ChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track, 
                                                     const G4BiasingProcessInterface* callingProcess)
 {
-    if (_setup || _gamma_operation == nullptr)
-    {
-        StartRun();
-    }
-
-    if (_gamma_operation == nullptr)
-    {
-        _gamma_operation = new G4BOptnChangeCrossSection("XSchange-GammaGeneralProc");
-    }
-
-    static int nEntryPrint = 0;
-    if (nEntryPrint < 30)
-    {
-        G4String volName = "NULL";
-        if (track->GetVolume())
-            volName = track->GetVolume()->GetName();
-
-        ++nEntryPrint;
-    }
+    if (_setup) StartRun();
     // -- Check if current particle type is the one to bias:
-    if (track->GetDefinition() != _particle_to_bias) return nullptr;
+    if (!_compton_wrapper_found) return nullptr;
+    if (_compton_operation == nullptr) return nullptr;
+    if (!callingProcess) return nullptr;
+    if (!IsEligibleTrack(track)) return nullptr;
 
     // -- select and setup the biasing operation for current callingProcess:
     const G4String procName = callingProcess->GetWrappedProcess()->GetProcessName();
-    if (procName != "GammaGeneralProc") return nullptr;
+    if (!IsComptonWrappedProcess(procName)) return nullptr;
 
-    if (_gamma_operation == nullptr)
-    {
-        G4cout << "[BIAS-EXIT] _gamma_operation is null" << G4endl;
-        return nullptr;
-    }
     // -- Check if the analog cross-section well defined
     // -- process for a gamma below e+e- creation threshold has an DBL_MAX interaction
     // -- length. Nothing is done in this case (ie, let analog process to deal with the case)
-    G4double analogInteractionLength =
+    const G4double analogInteractionLength =
         callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
 
-    if (analogInteractionLength > DBL_MAX / 10.)
-    {
-        G4cout << "[BIAS-EXIT] analogInteractionLength too large = "
-               << analogInteractionLength << G4endl;
-        return nullptr;
-    }
-
+    if (analogInteractionLength <= 0.) return nullptr;
+    if (analogInteractionLength > DBL_MAX / 10.) return nullptr;
 
     // -- Analog cross-section is well-defined:
-    G4double analogXS = 1.0 / analogInteractionLength;
+    const G4double analogXS = 1.0 / analogInteractionLength;
     // -- Choose a constant cross-section bias. But at this level, this factor can be made
     // -- direction dependent, like in the exponential transform MCNP case, or it
     // -- can be chosen differently, depending on the process, etc.
     // -- fetch the operation associated to this callingProcess:
     // -- get the operation that was proposed to the process in the previous step:
-   G4VBiasingOperation* previousOperation =
+    G4VBiasingOperation* previousOperation =
         callingProcess->GetPreviousOccurenceBiasingOperation();
-  
+
     // -- now setup the operation to be returned to the process: this
     // -- consists in setting the biased cross-section, and in asking
     // -- the operation to sample its exponential interaction law.
@@ -128,36 +162,37 @@ ChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track,
     // -- only on the first time the operation is proposed, or if the interaction
     // -- occured. If the interaction did not occur for the process in the previous,
     // -- we update the number of interaction length instead of resampling.
-    if (previousOperation == nullptr || _gamma_operation->GetInteractionOccured())
+    if (previousOperation == nullptr || _compton_operation->GetInteractionOccured())
     {
-        _gamma_operation->SetBiasedCrossSection(_xs_factor * analogXS);
-        _gamma_operation->Sample();
+        _compton_operation->SetBiasedCrossSection(_xs_factor * analogXS);
+        _compton_operation->Sample();
     }
     else
     {
-        _gamma_operation->UpdateForStep(callingProcess->GetPreviousStepSize());
-        _gamma_operation->SetBiasedCrossSection(_xs_factor * analogXS);
-        _gamma_operation->UpdateForStep(0.0);
+        _compton_operation->UpdateForStep(callingProcess->GetPreviousStepSize());
+        _compton_operation->SetBiasedCrossSection(_xs_factor * analogXS);
+        _compton_operation->UpdateForStep(0.0);
     }
 
-    return _gamma_operation;
+    return _compton_operation;
 }
-
 
 void ChangeCrossSection::OperationApplied(const G4BiasingProcessInterface* callingProcess,
                                           G4BiasingAppliedCase,
                                           G4VBiasingOperation* occurenceOperationApplied,
-                                          G4double weightForOccurenceInteraction,
+                                          G4double,
                                           G4VBiasingOperation*,
                                           const G4VParticleChange*)
 {
-    if (_gamma_operation == nullptr) return;
+    if (!_compton_wrapper_found) return;
+    if (_compton_operation == nullptr) return;
+    if (!callingProcess) return;
 
     const G4String procName = callingProcess->GetWrappedProcess()->GetProcessName();
-    if (procName != "GammaGeneralProc") return;
+    if (!IsComptonWrappedProcess(procName)) return;
 
-    if (_gamma_operation == occurenceOperationApplied)
+    if (_compton_operation == occurenceOperationApplied)
     {
-        _gamma_operation->SetInteractionOccured();
+        _compton_operation->SetInteractionOccured();
     }
 }

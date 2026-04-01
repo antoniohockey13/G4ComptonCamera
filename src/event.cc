@@ -170,6 +170,14 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
 
         if (!hit1 || !hit2) continue;
 
+        // Require K3 and K2 to fall in the same 12.5 ns clock bin
+        const G4double clockTick = 12.5 * ns;
+
+        G4long bin1 = static_cast<G4long>(hit1->GetTime() / clockTick);
+        G4long bin2 = static_cast<G4long>(hit2->GetTime() / clockTick);
+
+        if (bin1 != bin2) continue;
+
         G4ThreeVector dir1 = hit1->GetPreMom().unit();
         G4ThreeVector dir2 = hit2->GetPreMom().unit();
         G4double theta_mom = dir1.angle(dir2);
@@ -201,6 +209,7 @@ void ComptCameraEventAction::EndOfEventAction(const G4Event* event)
         anManager->FillNtupleDColumn(1,21, hit2->GetWeight());
         anManager->AddNtupleRow(1);
     }
+
 
     // Phantom hits
     if (_is_phantom)

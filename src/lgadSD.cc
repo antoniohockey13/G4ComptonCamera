@@ -5,6 +5,7 @@
 #include "G4SDManager.hh"
 #include "G4RunManager.hh"
 #include "GammaTrackInfo.hh"
+#include "G4BiasingProcessInterface.hh"
 
 lgadSD::lgadSD(const G4String& name, const G4String& hitsCollectionName)
     : G4VSensitiveDetector(name)
@@ -38,7 +39,17 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     const auto* proc = aStep->GetPostStepPoint()->GetProcessDefinedStep();
     if (!proc) return false;
 
-    const G4String procName = proc->GetProcessName();
+    G4String procName = proc->GetProcessName();
+
+    const auto* biasProc = dynamic_cast<const G4BiasingProcessInterface*>(proc);
+    if (biasProc)
+    {
+        const auto* wrapped = biasProc->GetWrappedProcess();
+        if (wrapped)
+        {
+            procName = wrapped->GetProcessName();
+        }
+    }
 
     // registrar solo interacciones reales del gamma
     if (procName == "Transportation") return false;
@@ -57,7 +68,7 @@ G4bool lgadSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     _new_hit->SetTrackID(aStep->GetTrack()->GetTrackID());
     _new_hit->SetPostKineticEnergy(aStep->GetPostStepPoint()->GetKineticEnergy());
     _new_hit->SetPreKineticEnergy(aStep->GetPreStepPoint()->GetKineticEnergy());
-    _new_hit->SetProcessName(aStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+    _new_hit->SetProcessName(procName);
     _new_hit->SetStepLength(aStep->GetStepLength());
     _new_hit->SetEnergyLost(aStep->GetPreStepPoint()->GetKineticEnergy()
                           - aStep->GetPostStepPoint()->GetKineticEnergy());

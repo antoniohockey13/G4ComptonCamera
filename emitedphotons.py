@@ -177,12 +177,7 @@ def photons_interacting_k2(det_root, debug=True):
     )
     return n_unique, w_sum
 
-
 def photons_compton_k3(det_root, debug=True):
-    """
-    Count unique Compton events in K3 using ROOT TTree selection.
-    """
-
     f = ROOT.TFile.Open(det_root)
     if not f or f.IsZombie():
         raise OSError(f"Could not open ROOT file: {det_root}")
@@ -192,49 +187,43 @@ def photons_compton_k3(det_root, debug=True):
         f.Close()
         raise ValueError("Tree 'Hits' not found")
 
-    selection = 'DetectorID==1 && ParticleID==22 && ProcessName=="compt"'
-
-    # Enable only needed branches
-    hits.SetBranchStatus("*", 0)
-    hits.SetBranchStatus("Event", 1)
-    hits.SetBranchStatus("Weight", 1)
-    hits.SetBranchStatus("DetectorID", 1)
-    hits.SetBranchStatus("ParticleID", 1)
-    hits.SetBranchStatus("ProcessName", 1)
-
-    hits.Draw("Event:Weight", selection, "goff")
-    n = hits.GetSelectedRows()
-
-    if n <= 0:
-        if debug:
-            print("\n=== UNIQUE COMPTON EVENTS IN K3 ===")
-            print(f"Selected rows: {n}")
-            print("Unique events: 0")
-            print("Sum of event weights: 0.000000e+00")
-        f.Close()
-        return 0, 0.0
-
-    ev = hits.GetV1()
-    wt = hits.GetV2()
-
     event_to_weight = {}
+    n_rows = 0
 
-    for i in range(n):
-        evt = int(ev[i])
-        weight = float(wt[i])
+    for entry in hits:
+        if entry.DetectorID != 1:
+            continue
+        if entry.ParticleID != 22:
+            continue
+
+        raw = entry.ProcessName
+
+        try:
+            proc = bytes(raw).decode("utf-8", errors="ignore").split("\x00", 1)[0].strip()
+        except Exception:
+            try:
+                proc = "".join(chr(c) if isinstance(c, int) else c for c in raw).split("\x00", 1)[0].strip()
+            except Exception:
+                proc = str(raw).split("\x00", 1)[0].strip()
+
+        if proc != "compt":
+            continue
+
+        n_rows += 1
+        evt = int(entry.Event)
+        weight = float(entry.Weight)
 
         if evt not in event_to_weight:
             event_to_weight[evt] = weight
-        else:
-            if event_to_weight[evt] == 0.0 and weight != 0.0:
-                event_to_weight[evt] = weight
+        elif event_to_weight[evt] == 0.0 and weight != 0.0:
+            event_to_weight[evt] = weight
 
     n_unique = len(event_to_weight)
-    w_sum = sum(event_to_weight.values())
+    w_sum = float(sum(event_to_weight.values()))
 
     if debug:
         print("\n=== UNIQUE COMPTON EVENTS IN K3 ===")
-        print(f"Selected rows: {n}")
+        print(f"Selected rows: {n_rows}")
         print(f"Unique events: {n_unique}")
         print(f"Sum of event weights: {w_sum:.6e}")
 
